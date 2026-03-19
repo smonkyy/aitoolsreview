@@ -1,67 +1,301 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const recentPosts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
+
+const categories = [
+	{
+		icon: '✍️',
+		title: 'Scrittura',
+		description: 'Blog, copy, script, email. Dall\'AI che scrive come un umano a quella che aiuta con la strategia.',
+		tools: ['Claude 4', 'ChatGPT-4o', 'Jasper AI'],
+		href: '/strumenti#scrittura',
+		accent: 'from-purple-500/20 to-blue-500/10',
+	},
+	{
+		icon: '🎨',
+		title: 'Immagini',
+		description: 'Generatori visivi per creativi e marketer. Confronti onesti su qualità e prezzi reali.',
+		tools: ['Midjourney', 'Adobe Firefly', 'DALL-E 3'],
+		href: '/strumenti#immagini',
+		accent: 'from-pink-500/20 to-orange-500/10',
+	},
+	{
+		icon: '🎬',
+		title: 'Video',
+		description: 'Il settore più in fermento del 2026. Nuovi tool ogni mese, enormi differenze di qualità.',
+		tools: ['Runway Gen-3', 'Kling AI', 'Sora'],
+		href: '/strumenti#video',
+		accent: 'from-red-500/20 to-yellow-500/10',
+	},
+	{
+		icon: '⚡',
+		title: 'Produttività',
+		description: 'Automazioni, riassunti, gestione task. L\'AI che lavora in background per te.',
+		tools: ['Notion AI', 'Make', 'Zapier AI'],
+		href: '/strumenti#produttivita',
+		accent: 'from-green-500/20 to-teal-500/10',
+	},
+];
 ---
 
 <!doctype html>
-<html lang="it">
+<html lang="it" class="dark">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
-	<body>
+	<body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
 		<Header />
-		<main>
-			<section style="text-align: center; padding: 4rem 2rem 2rem;">
-				<h1 style="font-size: 2.2rem; line-height: 1.2;">Smetti di perdere ore a scegliere il tool AI sbagliato</h1>
-				<p style="font-size: 1.2rem; color: #666; max-width: 600px; margin: 1rem auto;">
-					Testato da chi li usa ogni giorno — in italiano, senza filtri.
+
+		<!-- ── HERO ─────────────────────────────────────────────── -->
+		<section class="relative min-h-[88vh] flex items-center justify-center overflow-hidden px-4">
+			<!-- Subtle grid background -->
+			<div
+				class="absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
+				style="background-image: linear-gradient(var(--color-ai-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-ai-border) 1px, transparent 1px); background-size: 40px 40px;"
+			></div>
+			<!-- Purple glow -->
+			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
+				style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.12) 0%, transparent 65%);"
+			></div>
+
+			<div class="relative z-10 text-center max-w-4xl mx-auto">
+				<!-- Badge -->
+				<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-8
+					bg-purple-50 border-purple-200 text-purple-700
+					dark:bg-ai-purple/10 dark:border-ai-purple/30 dark:text-ai-purple
+					text-sm font-medium">
+					<span class="w-2 h-2 rounded-full bg-ai-green animate-pulse"></span>
+					Recensioni aggiornate ogni settimana
+				</div>
+
+				<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6
+					text-light-text dark:text-ai-text">
+					Smetti di perdere ore<br />
+					<span class="text-ai-purple">sul tool AI sbagliato</span>
+				</h1>
+
+				<p class="text-lg sm:text-xl text-light-muted dark:text-ai-muted max-w-2xl mx-auto mb-10 leading-relaxed">
+					Recensioni oneste da chi li usa ogni giorno — in italiano, senza filtri.<br class="hidden sm:inline" />
+					Trova il tool giusto in 5 minuti.
 				</p>
-			</section>
 
-			<section style="max-width: 700px; margin: 0 auto; padding: 0 2rem 2rem;">
-				<p>Ci sono passato anch'io. Ore su YouTube a guardare review in inglese di tool che poi non funzionavano come promesso, o peggio — erano già superati. Ho provato Jasper quando costava un occhio, ho abbandonato Notion AI dopo una settimana, ho pagato abbonamenti che non ho mai usato davvero.</p>
-				<p>Così ho deciso di creare il sito che avrei voluto trovare io: recensioni scritte da qualcuno che i tool li apre ogni mattina, non da chi li guarda in un video di 20 minuti e mette il link in bio.</p>
-			</section>
+				<div class="flex flex-wrap gap-4 justify-center">
+					<a
+						href="#categorie"
+						class="inline-flex items-center gap-2 px-6 py-3 bg-ai-purple hover:bg-ai-purple-dark text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
+						style="box-shadow: 0 0 0 0 rgba(168,85,247,0); transition: box-shadow 0.2s, transform 0.2s, background-color 0.2s;"
+						onmouseover="this.style.boxShadow='0 8px 30px rgba(168,85,247,0.3)'"
+						onmouseout="this.style.boxShadow='0 0 0 0 rgba(168,85,247,0)'"
+					>
+						Scopri i migliori tool <span aria-hidden="true">→</span>
+					</a>
+					<a
+						href="/blog"
+						class="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-xl border transition-all duration-200
+							text-light-text border-light-border hover:bg-light-bg2
+							dark:text-ai-text dark:border-ai-border dark:hover:bg-ai-card"
+					>
+						Leggi le recensioni
+					</a>
+				</div>
 
-			<section style="max-width: 900px; margin: 0 auto; padding: 2rem;">
-				<h2 style="text-align: center; margin-bottom: 2rem;">Le categorie più cercate</h2>
-				<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
-						<h3>✍️ Scrittura</h3>
-						<p style="color: #666;">Dai blog agli script per video, l'AI ha cambiato tutto. Ma non tutti i tool scrivono allo stesso modo.</p>
-						<p style="font-size: 0.9rem; color: #888;">Claude, ChatGPT, Notion AI</p>
-						<a href="/blog">Scopri →</a>
+				<!-- Stats -->
+				<div class="flex flex-wrap gap-10 justify-center mt-14">
+					<div class="text-center">
+						<div class="text-3xl font-extrabold text-light-text dark:text-ai-text">30+</div>
+						<div class="text-sm text-light-muted dark:text-ai-muted mt-1">Tool testati</div>
 					</div>
-					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
-						<h3>🎨 Immagini</h3>
-						<p style="color: #666;">Generare un'immagine davvero buona non è scontato. Confronti onesti su qualità e prezzi reali.</p>
-						<p style="font-size: 0.9rem; color: #888;">Midjourney, Firefly, DALL-E 3</p>
-						<a href="/blog">Scopri →</a>
+					<div class="text-center">
+						<div class="text-3xl font-extrabold text-light-text dark:text-ai-text">100%</div>
+						<div class="text-sm text-light-muted dark:text-ai-muted mt-1">In italiano</div>
 					</div>
-					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
-						<h3>🎬 Video</h3>
-						<p style="color: #666;">Il settore più in fermento del momento. I tool cambiano ogni mese e le differenze di qualità sono enormi.</p>
-						<p style="font-size: 0.9rem; color: #888;">Runway, Kling, Sora</p>
-						<a href="/blog">Scopri →</a>
-					</div>
-					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
-						<h3>⚡ Produttività</h3>
-						<p style="color: #666;">Automazioni, riassunti, gestione email. L'AI che lavora mentre tu fai altro.</p>
-						<p style="font-size: 0.9rem; color: #888;">Zapier AI, Notion, Make</p>
-						<a href="/blog">Scopri →</a>
+					<div class="text-center">
+						<div class="text-3xl font-extrabold text-light-text dark:text-ai-text">2026</div>
+						<div class="text-sm text-light-muted dark:text-ai-muted mt-1">Sempre aggiornato</div>
 					</div>
 				</div>
-			</section>
+			</div>
+		</section>
 
-			<section style="text-align: center; padding: 2rem; margin-bottom: 3rem;">
-				<p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem;">Ogni recensione risponde a tre domande: <strong>Vale i soldi? Funziona davvero? Per chi è adatto?</strong> Niente stelline gonfiate. Se un tool fa schifo, lo dico.</p>
-				<a href="/blog" style="display: inline-block; padding: 0.8rem 2rem; background: #4f46e5; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">
-					Leggi le ultime recensioni →
+		<!-- ── CATEGORIES ────────────────────────────────────────── -->
+		<section id="categorie" class="py-24 px-4">
+			<div class="max-w-6xl mx-auto">
+				<div class="text-center mb-14">
+					<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-3">
+						Le categorie principali
+					</h2>
+					<p class="text-light-muted dark:text-ai-muted text-lg max-w-xl mx-auto">
+						Ogni categoria, un confronto diverso. Trova il tool che ti serve davvero.
+					</p>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+					{categories.map((cat) => (
+						<a
+							href={cat.href}
+							class="group relative p-6 rounded-2xl border transition-all duration-200 no-underline block
+								bg-light-card border-light-border hover:border-purple-300 hover:shadow-lg
+								dark:bg-ai-card dark:border-ai-border dark:hover:border-ai-purple/50 dark:hover:shadow-ai-purple/10"
+							style="hover:transform: scale(1.02);"
+						>
+							<!-- Gradient overlay on hover -->
+							<div class={`absolute inset-0 rounded-2xl bg-gradient-to-br ${cat.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-200`}></div>
+
+							<div class="relative z-10">
+								<div class="text-4xl mb-4">{cat.icon}</div>
+								<h3 class="text-lg font-bold text-light-text dark:text-ai-text mb-2">{cat.title}</h3>
+								<p class="text-sm text-light-muted dark:text-ai-muted mb-4 leading-relaxed">{cat.description}</p>
+								<div class="flex flex-wrap gap-1.5 mb-5">
+									{cat.tools.map((tool) => (
+										<span class="px-2 py-0.5 text-xs rounded-full
+											bg-light-bg2 text-light-faint
+											dark:bg-ai-bg dark:text-ai-faint">
+											{tool}
+										</span>
+									))}
+								</div>
+								<span class="text-ai-purple text-sm font-semibold group-hover:underline">
+									Esplora →
+								</span>
+							</div>
+						</a>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<!-- ── LATEST REVIEWS ────────────────────────────────────── -->
+		<section class="py-24 px-4 bg-light-bg2 dark:bg-ai-bg2">
+			<div class="max-w-6xl mx-auto">
+				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-14">
+					<div>
+						<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-2">
+							Ultime recensioni
+						</h2>
+						<p class="text-light-muted dark:text-ai-muted">
+							Recensioni approfondite, aggiornate e senza filtri
+						</p>
+					</div>
+					<a
+						href="/blog"
+						class="shrink-0 text-sm font-semibold text-ai-purple hover:text-ai-purple-dark transition-colors"
+					>
+						Vedi tutte →
+					</a>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{recentPosts.map((post, i) => {
+						const gradients = [
+							'from-purple-500/25 via-blue-500/15 to-transparent',
+							'from-pink-500/25 via-purple-500/15 to-transparent',
+							'from-blue-500/25 via-teal-500/15 to-transparent',
+						];
+						return (
+							<a
+								href={`/blog/${post.id}/`}
+								class="group block rounded-2xl border overflow-hidden transition-all duration-200 no-underline
+									bg-light-card border-light-border hover:border-purple-300 hover:shadow-xl
+									dark:bg-ai-card dark:border-ai-border dark:hover:border-ai-purple/50 dark:hover:shadow-ai-purple/10"
+							>
+								<!-- Cover gradient placeholder -->
+								<div class={`h-44 bg-gradient-to-br ${gradients[i % 3]} relative overflow-hidden
+									bg-light-bg2 dark:bg-ai-bg2`}>
+									<div class="absolute inset-0 flex items-end p-4">
+										<span class="px-2.5 py-1 text-xs font-semibold rounded-full
+											bg-ai-purple/20 text-ai-purple border border-ai-purple/30">
+											Recensione
+										</span>
+									</div>
+								</div>
+
+								<div class="p-5">
+									<p class="text-xs text-light-faint dark:text-ai-faint mb-2">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+									<h3 class="font-bold text-base leading-snug mb-2 line-clamp-2
+										text-light-text dark:text-ai-text group-hover:text-ai-purple transition-colors duration-150">
+										{post.data.title}
+									</h3>
+									<p class="text-sm leading-relaxed line-clamp-2
+										text-light-muted dark:text-ai-muted">
+										{post.data.description}
+									</p>
+								</div>
+							</a>
+						);
+					})}
+				</div>
+			</div>
+		</section>
+
+		<!-- ── TRUST / PERSONAL STORY ────────────────────────────── -->
+		<section class="py-24 px-4">
+			<div class="max-w-3xl mx-auto text-center">
+				<div class="text-5xl mb-6">🤝</div>
+				<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-6">
+					Il sito che avrei voluto trovare io
+				</h2>
+				<div class="text-left space-y-4 text-light-muted dark:text-ai-muted text-lg leading-relaxed">
+					<p>
+						Ci sono passato anch'io. Ore su YouTube a guardare review in inglese di tool che poi non funzionavano
+						come promesso, o peggio — erano già superati. Ho provato Jasper quando costava un occhio, ho
+						abbandonato Notion AI dopo una settimana, ho pagato abbonamenti che non ho mai usato davvero.
+					</p>
+					<p>
+						Così ho deciso di creare il sito che avrei voluto trovare io: <strong class="font-semibold text-light-text dark:text-ai-text">recensioni scritte da qualcuno che i tool li
+						apre ogni mattina</strong>, non da chi li guarda in un video di 20 minuti e mette il link in bio.
+					</p>
+				</div>
+
+				<!-- Promise badges -->
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12">
+					{[
+						{ icon: '🔍', label: 'Testato davvero', desc: 'Ogni tool usato per almeno 2 settimane' },
+						{ icon: '🇮🇹', label: 'In italiano', desc: 'Nessuna traduzione automatica' },
+						{ icon: '💬', label: 'Senza filtri', desc: 'Se fa schifo, lo diciamo' },
+					].map((badge) => (
+						<div class="p-5 rounded-xl border text-center
+							bg-light-card border-light-border
+							dark:bg-ai-card dark:border-ai-border">
+							<div class="text-3xl mb-2">{badge.icon}</div>
+							<div class="font-semibold text-light-text dark:text-ai-text text-sm">{badge.label}</div>
+							<div class="text-xs text-light-muted dark:text-ai-muted mt-1">{badge.desc}</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<!-- ── CTA BANNER ───────────────────────────────────────── -->
+		<section class="py-16 px-4">
+			<div class="max-w-3xl mx-auto text-center rounded-2xl border p-10
+				bg-gradient-to-br from-ai-purple/10 to-transparent
+				border-ai-purple/20 dark:border-ai-purple/20">
+				<h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-4">
+					Ogni recensione risponde a tre domande
+				</h2>
+				<p class="text-light-muted dark:text-ai-muted text-lg mb-8 max-w-xl mx-auto">
+					<strong class="font-semibold text-light-text dark:text-ai-text">Vale i soldi? Funziona davvero? Per chi è adatto?</strong><br />
+					Niente stelline gonfiate. Niente hype.
+				</p>
+				<a
+					href="/blog"
+					class="inline-flex items-center gap-2 px-7 py-3.5 bg-ai-green hover:bg-emerald-600 text-white font-bold rounded-xl transition-all duration-200 hover:scale-[1.02] text-base"
+				>
+					Leggi le ultime recensioni <span aria-hidden="true">→</span>
 				</a>
-			</section>
-		</main>
+			</div>
+		</section>
+
 		<Footer />
 	</body>
 </html>

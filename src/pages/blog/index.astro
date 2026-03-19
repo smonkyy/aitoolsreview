@@ -9,57 +9,91 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const gradients = [
+	'from-purple-500/25 via-blue-500/15',
+	'from-pink-500/25 via-purple-500/15',
+	'from-blue-500/25 via-teal-500/15',
+	'from-amber-500/25 via-orange-500/15',
+	'from-green-500/25 via-emerald-500/15',
+	'from-red-500/25 via-pink-500/15',
+];
 ---
 
 <!doctype html>
-<html lang="it">
+<html lang="it" class="dark">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main { width: 960px; }
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li { width: calc(50% - 1rem); }
-			ul li a {
-				display: block;
-				text-decoration: none;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4 { color: rgb(var(--accent)); }
-		</style>
+		<BaseHead
+			title={`Blog & Recensioni | ${SITE_TITLE}`}
+			description="Tutte le recensioni e i confronti dei migliori tool AI — aggiornati e in italiano."
+		/>
 	</head>
-	<body>
+	<body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
 		<Header />
-		<main>
-			<section>
-				<ul>
-					{posts.map((post) => (
-						<li>
-							<a href={`/blog/${post.id}/`}>
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
-						</li>
-					))}
-				</ul>
-			</section>
+
+		<main class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+			<!-- Page header -->
+			<div class="mb-14">
+				<h1 class="text-4xl sm:text-5xl font-extrabold text-light-text dark:text-ai-text mb-4">
+					Blog & Recensioni
+				</h1>
+				<p class="text-light-muted dark:text-ai-muted text-xl max-w-2xl leading-relaxed">
+					{posts.length} recensioni approfondite, confronti e guide — tutto in italiano, testato davvero.
+				</p>
+			</div>
+
+			<!-- Grid -->
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				{posts.map((post, i) => (
+					<a
+						href={`/blog/${post.id}/`}
+						class="group block rounded-2xl border overflow-hidden transition-all duration-200 no-underline
+							bg-light-card border-light-border hover:border-purple-300 hover:shadow-xl hover:-translate-y-0.5
+							dark:bg-ai-card dark:border-ai-border dark:hover:border-ai-purple/50 dark:hover:shadow-ai-purple/10"
+					>
+						<!-- Cover -->
+						<div class={`h-44 bg-gradient-to-br ${gradients[i % gradients.length]} to-transparent relative overflow-hidden bg-light-bg2 dark:bg-ai-bg2`}>
+							<div class="absolute inset-0 flex items-end p-4">
+								<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-ai-purple/20 text-ai-purple border border-ai-purple/30">
+									Recensione
+								</span>
+							</div>
+						</div>
+
+						<!-- Content -->
+						<div class="p-5">
+							<p class="text-xs text-light-faint dark:text-ai-faint mb-2">
+								<FormattedDate date={post.data.pubDate} />
+							</p>
+							<h2 class="font-bold text-base leading-snug mb-3 line-clamp-2
+								text-light-text dark:text-ai-text group-hover:text-ai-purple transition-colors duration-150">
+								{post.data.title}
+							</h2>
+							<p class="text-sm leading-relaxed line-clamp-3 text-light-muted dark:text-ai-muted">
+								{post.data.description}
+							</p>
+
+							<div class="mt-4 pt-4 border-t border-light-border dark:border-ai-border flex justify-between items-center">
+								<span class="text-xs text-ai-purple font-semibold group-hover:underline">
+									Leggi la recensione →
+								</span>
+							</div>
+						</div>
+					</a>
+				))}
+			</div>
+
+			<!-- Empty state -->
+			{posts.length === 0 && (
+				<div class="text-center py-24">
+					<div class="text-5xl mb-4">📝</div>
+					<p class="text-light-muted dark:text-ai-muted text-lg">
+						Le prime recensioni stanno arrivando. Torna presto!
+					</p>
+				</div>
+			)}
 		</main>
+
 		<Footer />
 	</body>
 </html>

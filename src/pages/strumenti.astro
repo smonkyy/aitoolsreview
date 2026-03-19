@@ -2,170 +2,188 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+
+const categories = [
+	{
+		id: 'scrittura',
+		icon: '✍️',
+		title: 'Scrittura',
+		description: 'Per chi produce testi ogni giorno — articoli, email, copy, script. Questi tool cambiano davvero il flusso di lavoro.',
+		color: 'border-purple-500/30 hover:border-purple-500/60',
+		badge: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+		tools: [
+			{ name: 'Claude 4', desc: 'Il migliore per qualità di testo e ragionamento profondo.', href: '/blog/claude-4-recensione-2026' },
+			{ name: 'ChatGPT-4o', desc: 'Il più versatile, con accesso internet e generazione immagini.', href: '/blog/chatgpt-vs-claude' },
+			{ name: 'Jasper AI', desc: 'Pensato per il marketing, ottimo per copy e landing page.', href: '/blog/migliori-tool-ai-scrittura' },
+			{ name: 'Copy.ai', desc: 'Veloce per generare varianti di testo e headline.', href: '/blog/migliori-tool-ai-scrittura' },
+		],
+	},
+	{
+		id: 'immagini',
+		icon: '🎨',
+		title: 'Immagini',
+		description: 'Generatori visivi per creativi, designer e marketer. La qualità varia moltissimo — qui trovi solo quelli che valgono.',
+		color: 'border-pink-500/30 hover:border-pink-500/60',
+		badge: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
+		tools: [
+			{ name: 'Midjourney', desc: 'La qualità più alta disponibile oggi. Punto.', href: '/blog/midjourney-recensione' },
+			{ name: 'Adobe Firefly', desc: 'Integrato in Photoshop, perfetto per chi usa già Adobe.', href: '/blog' },
+			{ name: 'DALL-E 3', desc: 'Integrato in ChatGPT Plus, comodo se usi già OpenAI.', href: '/blog' },
+			{ name: 'Stable Diffusion', desc: 'Open source e gratuito, per chi vuole controllo totale.', href: '/blog' },
+		],
+	},
+	{
+		id: 'video',
+		icon: '🎬',
+		title: 'Video',
+		description: 'Il settore che cresce più velocemente. Nuovi tool ogni mese — questi sono quelli che resistono al test del tempo.',
+		color: 'border-red-500/30 hover:border-red-500/60',
+		badge: 'bg-red-500/10 text-red-400 border-red-500/20',
+		tools: [
+			{ name: 'Runway Gen-3', desc: 'Il riferimento per generazione video professionale.', href: '/blog' },
+			{ name: 'Kling AI', desc: 'Il competitor cinese che sta sorprendendo tutti per qualità.', href: '/blog' },
+			{ name: 'Sora', desc: 'OpenAI entra nel video — risultati impressionanti ma costosi.', href: '/blog' },
+			{ name: 'HeyGen', desc: 'Avatar AI per presentazioni e contenuti corporate.', href: '/blog' },
+		],
+	},
+	{
+		id: 'audio',
+		icon: '🎙️',
+		title: 'Audio e Voce',
+		description: 'Clonazione vocale, text-to-speech, trascrizioni. Strumenti che un anno fa sembravano fantascienza.',
+		color: 'border-amber-500/30 hover:border-amber-500/60',
+		badge: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+		tools: [
+			{ name: 'ElevenLabs', desc: 'La voce AI più realistica disponibile oggi. Impressionante.', href: '/blog' },
+			{ name: 'Whisper', desc: 'Trascrizione audio di OpenAI — precisa e gratuita.', href: '/blog' },
+		],
+	},
+	{
+		id: 'produttivita',
+		icon: '⚡',
+		title: 'Produttività',
+		description: 'Automazioni, riassunti, gestione task. L\'AI che lavora in background mentre ti concentri su altro.',
+		color: 'border-green-500/30 hover:border-green-500/60',
+		badge: 'bg-green-500/10 text-green-400 border-green-500/20',
+		tools: [
+			{ name: 'Notion AI', desc: 'Integrato nel tuo workspace, per riassunti e note veloci.', href: '/blog' },
+			{ name: 'Make (ex Integromat)', desc: 'Automazioni potenti senza codice. Il migliore per i workflow.', href: '/blog' },
+			{ name: 'Zapier AI', desc: 'Connette tutto con tutto, ora con intelligenza artificiale.', href: '/blog' },
+			{ name: 'Otter.ai', desc: 'Trascrizione automatica di meeting e chiamate.', href: '/blog' },
+		],
+	},
+	{
+		id: 'coding',
+		icon: '💻',
+		title: 'Coding',
+		description: 'Per sviluppatori e chi vuole imparare a programmare. Questi tool hanno cambiato il modo di scrivere codice.',
+		color: 'border-blue-500/30 hover:border-blue-500/60',
+		badge: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+		tools: [
+			{ name: 'GitHub Copilot', desc: 'Il riferimento per autocomplete intelligente nel codice.', href: '/blog' },
+			{ name: 'Cursor', desc: "L'editor che molti sviluppatori stanno adottando nel 2026.", href: '/blog' },
+			{ name: 'Replit AI', desc: 'Per chi inizia a programmare — ambiente completo nel browser.', href: '/blog' },
+			{ name: 'Claude per il codice', desc: 'Ottimo per spiegare e debuggare codice complesso.', href: '/blog/claude-4-recensione-2026' },
+		],
+	},
+];
 ---
 
 <!doctype html>
-<html lang="it">
+<html lang="it" class="dark">
 	<head>
-		<BaseHead title="Tutti gli Strumenti AI | AI Tools Review" description="Scopri i migliori tool AI divisi per categoria: scrittura, immagini, video, audio, produttività, coding e molto altro." />
+		<BaseHead
+			title="Tutti gli Strumenti AI | AI Tools Review"
+			description="Scopri i migliori tool AI divisi per categoria: scrittura, immagini, video, audio, produttività, coding e molto altro. Testati e recensiti in italiano."
+		/>
 	</head>
-	<body>
+	<body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
 		<Header />
-		<main style="max-width: 900px; margin: 0 auto; padding: 3rem 1rem; width: 100%; box-sizing: border-box;">
-			<h1>Tutti gli strumenti AI</h1>
-			<p style="font-size: 1.1rem; color: #666; margin-bottom: 3rem;">
-				Oltre 30 tool testati e recensiti, divisi per categoria. Trova quello giusto per il tuo lavoro.
-			</p>
 
-			<!-- Scrittura -->
-			<section style="margin-bottom: 3rem;">
-				<h2>✍️ Scrittura</h2>
-				<p style="color: #666;">Per chi produce testi ogni giorno — articoli, email, copy, script. Questi tool cambiano davvero il flusso di lavoro.</p>
-				<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
-					<a href="/blog/claude-4-recensione-2026" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Claude 4</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Il migliore per qualità di testo e ragionamento profondo.</p>
-					</a>
-					<a href="/blog/chatgpt-vs-claude" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>ChatGPT-4o</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Il più versatile, con accesso internet e generazione immagini.</p>
-					</a>
-					<a href="/blog/migliori-tool-ai-scrittura" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Jasper AI</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Pensato per il marketing, ottimo per copy e landing page.</p>
-					</a>
-					<a href="/blog/migliori-tool-ai-scrittura" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Copy.ai</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Veloce per generare varianti di testo e headline.</p>
-					</a>
-				</div>
-			</section>
+		<main class="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+			<!-- Page header -->
+			<div class="mb-16">
+				<h1 class="text-4xl sm:text-5xl font-extrabold text-light-text dark:text-ai-text mb-4">
+					Tutti gli strumenti AI
+				</h1>
+				<p class="text-light-muted dark:text-ai-muted text-xl max-w-2xl leading-relaxed">
+					Oltre 30 tool testati e recensiti, divisi per categoria. Trova quello giusto per il tuo lavoro.
+				</p>
+			</div>
 
-			<!-- Immagini -->
-			<section style="margin-bottom: 3rem;">
-				<h2>🎨 Immagini</h2>
-				<p style="color: #666;">Generatori di immagini AI per creativi, designer e marketer. La qualità varia moltissimo — qui trovi solo quelli che valgono.</p>
-				<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
-					<a href="/blog/midjourney-recensione" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Midjourney</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">La qualità più alta disponibile oggi. Punto.</p>
+			<!-- Quick nav -->
+			<div class="flex flex-wrap gap-2 mb-16">
+				{categories.map((cat) => (
+					<a
+						href={`#${cat.id}`}
+						class="px-4 py-2 rounded-full text-sm font-medium border transition-all duration-150 no-underline
+							text-light-muted border-light-border hover:text-light-text hover:bg-light-bg2
+							dark:text-ai-muted dark:border-ai-border dark:hover:text-ai-text dark:hover:bg-ai-card"
+					>
+						{cat.icon} {cat.title}
 					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Adobe Firefly</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Integrato in Photoshop, perfetto per chi usa già Adobe.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>DALL-E 3</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Integrato in ChatGPT Plus, comodo se usi già OpenAI.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Stable Diffusion</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Open source e gratuito, per chi vuole controllo totale.</p>
-					</a>
-				</div>
-			</section>
+				))}
+			</div>
 
-			<!-- Video -->
-			<section style="margin-bottom: 3rem;">
-				<h2>🎬 Video</h2>
-				<p style="color: #666;">Il settore che cresce più velocemente. Nuovi tool ogni mese — questi sono quelli che resistono al test del tempo.</p>
-				<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Runway Gen-3</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Il riferimento per generazione video professionale.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Kling AI</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Il competitor cinese che sta sorprendendo tutti per qualità.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Sora</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">OpenAI entra nel video — risultati impressionanti ma costosi.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>HeyGen</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Avatar AI per presentazioni e contenuti corporate.</p>
-					</a>
-				</div>
-			</section>
+			<!-- Categories -->
+			<div class="space-y-16">
+				{categories.map((cat) => (
+					<section id={cat.id}>
+						<!-- Category header -->
+						<div class="flex items-start gap-4 mb-6">
+							<div class="text-4xl mt-1">{cat.icon}</div>
+							<div>
+								<h2 class="text-2xl font-extrabold text-light-text dark:text-ai-text mb-1">{cat.title}</h2>
+								<p class="text-light-muted dark:text-ai-muted">{cat.description}</p>
+							</div>
+						</div>
 
-			<!-- Audio -->
-			<section style="margin-bottom: 3rem;">
-				<h2>🎙️ Audio e Voce</h2>
-				<p style="color: #666;">Clonazione vocale, text-to-speech, trascrizioni. Strumenti che un anno fa sembravano fantascienza.</p>
-				<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>ElevenLabs</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">La voce AI più realistica disponibile oggi. Impressionante.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Whisper</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Trascrizione audio di OpenAI — precisa e gratuita.</p>
-					</a>
-				</div>
-			</section>
+						<!-- Tool cards -->
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							{cat.tools.map((tool) => (
+								<a
+									href={tool.href}
+									class={`group block p-5 rounded-xl border transition-all duration-150 no-underline
+										bg-light-card dark:bg-ai-card
+										${cat.color}`}
+								>
+									<div class="flex items-start justify-between gap-3">
+										<div>
+											<strong class="font-bold text-light-text dark:text-ai-text group-hover:text-ai-purple transition-colors duration-150 block mb-1">
+												{tool.name}
+											</strong>
+											<p class="text-sm text-light-muted dark:text-ai-muted leading-relaxed">{tool.desc}</p>
+										</div>
+										<span class={`shrink-0 px-2 py-0.5 text-xs rounded-full border font-medium ${cat.badge}`}>
+											{cat.icon}
+										</span>
+									</div>
+									<div class="mt-3 text-xs text-ai-purple font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+										Leggi la recensione →
+									</div>
+								</a>
+							))}
+						</div>
+					</section>
+				))}
+			</div>
 
-			<!-- Produttività -->
-			<section style="margin-bottom: 3rem;">
-				<h2>⚡ Produttività</h2>
-				<p style="color: #666;">Automazioni, riassunti, gestione task. L'AI che lavora in background mentre tu ti concentri su altro.</p>
-				<div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem;">
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Notion AI</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Integrato nel tuo workspace, per riassunti e note veloci.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Make (ex Integromat)</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Automazioni potenti senza codice. Il migliore per i workflow.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Zapier AI</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Connette tutto con tutto, ora con intelligenza artificiale.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Otter.ai</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Trascrizione automatica di meeting e chiamate.</p>
-					</a>
-				</div>
-			</section>
-
-			<!-- Coding -->
-			<section style="margin-bottom: 3rem;">
-				<h2>💻 Coding</h2>
-				<p style="color: #666;">Per sviluppatori e chi vuole imparare a programmare. Questi tool hanno cambiato il modo di scrivere codice.</p>
-				<div style="display: grid; grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem;">; gap: 1rem; margin-top: 1rem;">
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>GitHub Copilot</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Il riferimento per autocomplete intelligente nel codice.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Cursor</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">L'editor che molti sviluppatori stanno adottando nel 2026.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Replit AI</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Per chi inizia a programmare — ambiente completo nel browser.</p>
-					</a>
-					<a href="/blog" style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: inherit;">
-						<strong>Claude per il codice</strong>
-						<p style="margin: 0.3rem 0 0; font-size: 0.9rem; color: #666;">Ottimo per spiegare e debuggare codice complesso.</p>
-					</a>
-				</div>
-			</section>
-
-			<section style="text-align: center; padding: 2rem; background: #f9fafb; border-radius: 12px;">
-				<p style="font-size: 1.1rem; margin-bottom: 1rem;">Nuove recensioni ogni settimana. Torna spesso!</p>
-				<a href="/blog" style="display: inline-block; padding: 0.8rem 2rem; background: #4f46e5; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">
+			<!-- Bottom CTA -->
+			<div class="mt-20 p-8 rounded-2xl border text-center
+				bg-gradient-to-br from-ai-purple/10 to-transparent
+				border-ai-purple/20">
+				<p class="text-lg text-light-muted dark:text-ai-muted mb-4">
+					Nuove recensioni ogni settimana. Torna spesso!
+				</p>
+				<a
+					href="/blog"
+					class="inline-flex items-center gap-2 px-6 py-3 bg-ai-purple hover:bg-ai-purple-dark text-white font-bold rounded-xl transition-all duration-200"
+				>
 					Leggi tutte le recensioni →
 				</a>
-			</section>
+			</div>
 		</main>
+
 		<Footer />
 	</body>
-    <style>
-* {
-  box-sizing: border-box;
-  max-width: 100%;
-}
-</style>
 </html>
