@@ -1,112 +1,65 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
-
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="it">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
+			<section style="text-align: center; padding: 4rem 2rem 2rem;">
+				<h1 style="font-size: 2.2rem; line-height: 1.2;">Smetti di perdere ore a scegliere il tool AI sbagliato</h1>
+				<p style="font-size: 1.2rem; color: #666; max-width: 600px; margin: 1rem auto;">
+					Testato da chi li usa ogni giorno — in italiano, senza filtri.
+				</p>
+			</section>
+
+			<section style="max-width: 700px; margin: 0 auto; padding: 0 2rem 2rem;">
+				<p>Ci sono passato anch'io. Ore su YouTube a guardare review in inglese di tool che poi non funzionavano come promesso, o peggio — erano già superati. Ho provato Jasper quando costava un occhio, ho abbandonato Notion AI dopo una settimana, ho pagato abbonamenti che non ho mai usato davvero.</p>
+				<p>Così ho deciso di creare il sito che avrei voluto trovare io: recensioni scritte da qualcuno che i tool li apre ogni mattina, non da chi li guarda in un video di 20 minuti e mette il link in bio.</p>
+			</section>
+
+			<section style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+				<h2 style="text-align: center; margin-bottom: 2rem;">Le categorie più cercate</h2>
+				<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
+						<h3>✍️ Scrittura</h3>
+						<p style="color: #666;">Dai blog agli script per video, l'AI ha cambiato tutto. Ma non tutti i tool scrivono allo stesso modo.</p>
+						<p style="font-size: 0.9rem; color: #888;">Claude, ChatGPT, Notion AI</p>
+						<a href="/blog">Scopri →</a>
+					</div>
+					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
+						<h3>🎨 Immagini</h3>
+						<p style="color: #666;">Generare un'immagine davvero buona non è scontato. Confronti onesti su qualità e prezzi reali.</p>
+						<p style="font-size: 0.9rem; color: #888;">Midjourney, Firefly, DALL-E 3</p>
+						<a href="/blog">Scopri →</a>
+					</div>
+					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
+						<h3>🎬 Video</h3>
+						<p style="color: #666;">Il settore più in fermento del momento. I tool cambiano ogni mese e le differenze di qualità sono enormi.</p>
+						<p style="font-size: 0.9rem; color: #888;">Runway, Kling, Sora</p>
+						<a href="/blog">Scopri →</a>
+					</div>
+					<div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px;">
+						<h3>⚡ Produttività</h3>
+						<p style="color: #666;">Automazioni, riassunti, gestione email. L'AI che lavora mentre tu fai altro.</p>
+						<p style="font-size: 0.9rem; color: #888;">Zapier AI, Notion, Make</p>
+						<a href="/blog">Scopri →</a>
+					</div>
+				</div>
+			</section>
+
+			<section style="text-align: center; padding: 2rem; margin-bottom: 3rem;">
+				<p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem;">Ogni recensione risponde a tre domande: <strong>Vale i soldi? Funziona davvero? Per chi è adatto?</strong> Niente stelline gonfiate. Se un tool fa schifo, lo dico.</p>
+				<a href="/blog" style="display: inline-block; padding: 0.8rem 2rem; background: #4f46e5; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">
+					Leggi le ultime recensioni →
+				</a>
 			</section>
 		</main>
 		<Footer />
