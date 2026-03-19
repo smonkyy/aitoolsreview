@@ -11,7 +11,7 @@ import Footer from '../components/Footer.astro';
 	</head>
 	<body>
 		<Header />
-		<main style="max-width: 900px; margin: 0 auto; padding: 3rem 2rem;">
+		<main style="max-width: 900px; margin: 0 auto; padding: 3rem 1rem; width: 100%; box-sizing: border-box;">
 			<h1>Tutti gli strumenti AI</h1>
 			<p style="font-size: 1.1rem; color: #666; margin-bottom: 3rem;">
 				Oltre 30 tool testati e recensiti, divisi per categoria. Trova quello giusto per il tuo lavoro.
@@ -162,4 +162,10 @@ import Footer from '../components/Footer.astro';
 		</main>
 		<Footer />
 	</body>
+    <style>
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+</style>
 </html>
