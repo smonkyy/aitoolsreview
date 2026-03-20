@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Bot, Sparkles, CheckCircle, RotateCcw, Zap, ChevronRight, Trophy, Medal, GitCompare } from 'lucide-react';
 import { TOOLS } from '../data/tools';
 import { rankTools } from '../lib/recommender';
+import { trackAdvisorComplete, trackToolClick } from '../lib/analytics';
 
 /** Returns the canonical /confronta slug — same ordering as getStaticPaths */
 function comparisonUrl(idA, idB) {
@@ -244,6 +245,7 @@ function RankedToolCard({ rankedTool, rank, onReset }) {
       <div style={{ display: 'flex', gap: 7 }}>
         <a
           href={tool.link}
+          onClick={() => trackToolClick(tool.id, 'advisor')}
           style={{
             flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
             background: isFirst ? 'white' : 'rgba(255,255,255,0.12)',
@@ -408,6 +410,7 @@ export default function AIToolFinder() {
           budget:   newSelections.budget,
           skill:    newSelections.skill,
         }, 3);
+        if (results[0]) trackAdvisorComplete(newSelections, results[0].tool.id);
         setMessages((prev) => [
           ...prev,
           { id: Date.now() + Math.random(), type: 'results', results },

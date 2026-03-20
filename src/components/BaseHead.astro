@@ -16,6 +16,12 @@ const { title, description, image = FallbackImage, ogImage } = Astro.props;
 const ogImageUrl = ogImage ? new URL(ogImage, Astro.site) : new URL(image.src, Astro.url);
 ---
 
+<!-- Analytics: page_view event (non-blocking, fire-and-forget) -->
+<script>
+  import { trackPageView } from '../lib/analytics';
+  trackPageView(window.location.pathname);
+</script>
+
 <!-- Dark mode initialization (before render to avoid flash) -->
 <script is:inline>
 	(function () {

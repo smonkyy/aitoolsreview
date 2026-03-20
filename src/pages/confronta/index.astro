@@ -4,8 +4,12 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { TOOLS } from '../../data/tools';
 import { getTopComparisons, canonicalSlug } from '../../lib/comparison-priority';
+import { fetchTrending, buildTrendingMap } from '../../lib/trending';
 
-const topComparisons = getTopComparisons(12);
+const trending = await fetchTrending();
+const trendingMap = buildTrendingMap(trending);
+const topComparisons = getTopComparisons(12, trendingMap);
+const hasTrending = trending.length > 0;
 
 // Tool list serialized for the client-side picker script
 const toolsForPicker = TOOLS.map(t => ({ id: t.id, name: t.name, category: t.category }));
@@ -111,7 +115,7 @@ const categoryLabels: Record<string, string> = {
       <div class="mb-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-2xl font-extrabold text-light-text dark:text-ai-text">
-            Confronti più cercati
+            {hasTrending ? 'Confronti più visti questa settimana' : 'Confronti più cercati'}
           </h2>
           <!-- Category filter tabs -->
           <div class="hidden sm:flex flex-wrap gap-1.5" id="catFilters">
@@ -136,7 +140,9 @@ const categoryLabels: Record<string, string> = {
           </div>
         </div>
         <p class="text-sm text-light-muted dark:text-ai-muted mb-8">
-          Selezionati in base alla rilevanza SEO e alla frequenza di ricerca stimata.
+          {hasTrending
+            ? 'Ordinati per traffico reale degli ultimi 7 giorni + rilevanza SEO.'
+            : 'Selezionati in base alla rilevanza SEO e alla frequenza di ricerca stimata.'}
         </p>
 
         <div id="comparisonsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

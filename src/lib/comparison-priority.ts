@@ -49,8 +49,16 @@ function priorityScore(a: AITool, b: AITool): number {
 /**
  * Returns up to `limit` comparison pairs, ranked by priority score.
  * Skips pairs with no category overlap — those aren't meaningful comparisons.
+ *
+ * @param limit       How many results to return (default 12)
+ * @param trendingMap slug → normalized views (0–1) from the last 7 days.
+ *                    Built by `buildTrendingMap()` in trending.ts.
+ *                    Adds up to +15 points to observed comparisons.
  */
-export function getTopComparisons(limit = 12): PrioritizedComparison[] {
+export function getTopComparisons(
+  limit = 12,
+  trendingMap: Map<string, number> = new Map(),
+): PrioritizedComparison[] {
   const pairs: PrioritizedComparison[] = [];
 
   for (let i = 0; i < TOOLS.length; i++) {
@@ -65,11 +73,14 @@ export function getTopComparisons(limit = 12): PrioritizedComparison[] {
 
       if (!sameCategory && !overlapping) continue;
 
+      const slug = `${a.id}-vs-${b.id}`;
+      const trendBoost = Math.round((trendingMap.get(slug) ?? 0) * 15);
+
       pairs.push({
         toolA:         a,
         toolB:         b,
-        slug:          `${a.id}-vs-${b.id}`,
-        priorityScore: priorityScore(a, b),
+        slug,
+        priorityScore: Math.min(100, priorityScore(a, b) + trendBoost),
       });
     }
   }
