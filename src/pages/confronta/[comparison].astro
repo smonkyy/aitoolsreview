@@ -201,3 +201,17 @@ const faqSchema = {
     <Footer />
   </body>
 </html>
+
+<!-- Analytics: comparison_view (fires once on load) -->
+<div id="_atr-data" data-slug={comparison.slug} data-a={toolA.id} data-b={toolB.id} style="display:none" aria-hidden="true" />
+<script>
+  import { trackComparisonView, trackCtaClick } from '../../lib/analytics';
+
+  const d = document.getElementById('_atr-data') as HTMLElement;
+  trackComparisonView(d.dataset.slug!, d.dataset.a!, d.dataset.b!);
+
+  // CTA click tracking
+  document.querySelector('a[href="/#ai-advisor"]')?.addEventListener('click', () => {
+    trackCtaClick('ai-advisor', d.dataset.slug);
+  });
+</script>
