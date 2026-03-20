@@ -1,10 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import ReviewCard from '../components/ReviewCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 const allPosts = await getCollection('blog');
@@ -61,69 +61,89 @@ const categories = [
 		<Header />
 
 		<!-- ── HERO ─────────────────────────────────────────────── -->
-		<section class="relative min-h-[88vh] flex items-center justify-center overflow-hidden px-4">
-			<!-- Subtle grid background -->
+		<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden px-4">
+			<!-- Grid background -->
 			<div
-				class="absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
+				class="absolute inset-0 opacity-[0.04] dark:opacity-[0.07] pointer-events-none"
 				style="background-image: linear-gradient(var(--color-ai-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-ai-border) 1px, transparent 1px); background-size: 40px 40px;"
 			></div>
-			<!-- Purple glow -->
-			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-				style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.12) 0%, transparent 65%);"
+
+			<!-- Glow orbs -->
+			<div
+				class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full pointer-events-none"
+				style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.10) 0%, transparent 65%);"
+			></div>
+			<div
+				class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
+				style="background: radial-gradient(ellipse at top right, rgba(99,102,241,0.08) 0%, transparent 70%);"
 			></div>
 
 			<div class="relative z-10 text-center max-w-4xl mx-auto">
-				<!-- Badge -->
-				<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-8
-					bg-purple-50 border-purple-200 text-purple-700
-					dark:bg-ai-purple/10 dark:border-ai-purple/30 dark:text-ai-purple
-					text-sm font-medium">
-					<span class="w-2 h-2 rounded-full bg-ai-green animate-pulse"></span>
+				<!-- Badge — fade in first -->
+				<div
+					class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-8
+						bg-purple-50 border-purple-200 text-purple-700
+						dark:bg-ai-purple/10 dark:border-ai-purple/30 dark:text-ai-purple
+						text-sm font-medium animate-fade-in"
+				>
+					<span class="w-2 h-2 rounded-full bg-ai-green animate-pulse shrink-0"></span>
 					Recensioni aggiornate ogni settimana
 				</div>
 
-				<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6
-					text-light-text dark:text-ai-text">
+				<!-- H1 — slight delay -->
+				<h1
+					class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6
+						text-light-text dark:text-ai-text
+						animate-fade-in delay-100"
+				>
 					Smetti di perdere ore<br />
 					<span class="text-ai-purple">sul tool AI sbagliato</span>
 				</h1>
 
-				<p class="text-lg sm:text-xl text-light-muted dark:text-ai-muted max-w-2xl mx-auto mb-10 leading-relaxed">
+				<!-- Subhead -->
+				<p
+					class="text-lg sm:text-xl text-light-muted dark:text-ai-muted max-w-2xl mx-auto mb-10 leading-relaxed
+						animate-fade-in delay-200"
+				>
 					Recensioni oneste da chi li usa ogni giorno — in italiano, senza filtri.<br class="hidden sm:inline" />
 					Trova il tool giusto in 5 minuti.
 				</p>
 
-				<div class="flex flex-wrap gap-4 justify-center">
+				<!-- CTAs -->
+				<div class="flex flex-wrap gap-4 justify-center animate-fade-in delay-300">
 					<a
 						href="#categorie"
-						class="inline-flex items-center gap-2 px-6 py-3 bg-ai-purple hover:bg-ai-purple-dark text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(168,85,247,0.35)]"
+						class="inline-flex items-center gap-2 px-7 py-3.5 bg-ai-purple hover:bg-ai-purple-dark text-white font-semibold rounded-xl
+							transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(168,85,247,0.40)]"
 					>
-						Scopri i migliori tool <span aria-hidden="true">→</span>
+						Scopri i migliori tool
+						<svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+						</svg>
 					</a>
 					<a
 						href="/blog"
-						class="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-xl border transition-all duration-200
-							text-light-text border-light-border hover:bg-light-bg2
+						class="inline-flex items-center gap-2 px-7 py-3.5 font-semibold rounded-xl border transition-all duration-200
+							text-light-text border-light-border hover:bg-light-bg2 hover:border-light-border
 							dark:text-ai-text dark:border-ai-border dark:hover:bg-ai-card"
 					>
 						Leggi le recensioni
 					</a>
 				</div>
 
-				<!-- Stats -->
-				<div class="flex flex-wrap gap-10 justify-center mt-14">
-					<div class="text-center">
-						<div class="text-3xl font-extrabold text-light-text dark:text-ai-text">30+</div>
-						<div class="text-sm text-light-muted dark:text-ai-muted mt-1">Tool testati</div>
-					</div>
-					<div class="text-center">
-						<div class="text-3xl font-extrabold text-light-text dark:text-ai-text">100%</div>
-						<div class="text-sm text-light-muted dark:text-ai-muted mt-1">In italiano</div>
-					</div>
-					<div class="text-center">
-						<div class="text-3xl font-extrabold text-light-text dark:text-ai-text">2026</div>
-						<div class="text-sm text-light-muted dark:text-ai-muted mt-1">Sempre aggiornato</div>
-					</div>
+				<!-- Stats row -->
+				<div class="flex flex-wrap gap-0 justify-center mt-16 animate-fade-in delay-300">
+					{[
+						{ value: '30+', label: 'Tool testati' },
+						{ value: '100%', label: 'In italiano' },
+						{ value: '2026', label: 'Sempre aggiornato' },
+						{ value: '4', label: 'Categorie' },
+					].map((stat, i) => (
+						<div class={`text-center px-8 py-4 ${i < 3 ? 'border-r border-light-border dark:border-ai-border' : ''}`}>
+							<div class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">{stat.value}</div>
+							<div class="text-xs sm:text-sm text-light-muted dark:text-ai-muted mt-1">{stat.label}</div>
+						</div>
+					))}
 				</div>
 			</div>
 		</section>
@@ -132,6 +152,7 @@ const categories = [
 		<section id="categorie" class="py-24 px-4">
 			<div class="max-w-6xl mx-auto">
 				<div class="text-center mb-14">
+					<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Esplora per categoria</p>
 					<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-3">
 						Le categorie principali
 					</h2>
@@ -142,34 +163,14 @@ const categories = [
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 					{categories.map((cat) => (
-						<a
+						<CategoryCard
+							icon={cat.icon}
+							title={cat.title}
+							description={cat.description}
+							tools={cat.tools}
 							href={cat.href}
-							class="group relative p-6 rounded-2xl border transition-all duration-200 no-underline block
-								bg-light-card border-light-border hover:border-purple-300 hover:shadow-lg
-								dark:bg-ai-card dark:border-ai-border dark:hover:border-ai-purple/50 dark:hover:shadow-ai-purple/10"
-							style="hover:transform: scale(1.02);"
-						>
-							<!-- Gradient overlay on hover -->
-							<div class={`absolute inset-0 rounded-2xl bg-gradient-to-br ${cat.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-200`}></div>
-
-							<div class="relative z-10">
-								<div class="text-4xl mb-4">{cat.icon}</div>
-								<h3 class="text-lg font-bold text-light-text dark:text-ai-text mb-2">{cat.title}</h3>
-								<p class="text-sm text-light-muted dark:text-ai-muted mb-4 leading-relaxed">{cat.description}</p>
-								<div class="flex flex-wrap gap-1.5 mb-5">
-									{cat.tools.map((tool) => (
-										<span class="px-2 py-0.5 text-xs rounded-full
-											bg-light-bg2 text-light-faint
-											dark:bg-ai-bg dark:text-ai-faint">
-											{tool}
-										</span>
-									))}
-								</div>
-								<span class="text-ai-purple text-sm font-semibold group-hover:underline">
-									Esplora →
-								</span>
-							</div>
-						</a>
+							accent={cat.accent}
+						/>
 					))}
 				</div>
 			</div>
@@ -178,87 +179,56 @@ const categories = [
 		<!-- ── LATEST REVIEWS ────────────────────────────────────── -->
 		<section class="py-24 px-4 bg-light-bg2 dark:bg-ai-bg2">
 			<div class="max-w-6xl mx-auto">
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-14">
+				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-14">
 					<div>
+						<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Sempre freschi</p>
 						<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-2">
 							Ultime recensioni
 						</h2>
 						<p class="text-light-muted dark:text-ai-muted">
-							Recensioni approfondite, aggiornate e senza filtri
+							Approfondite, aggiornate e senza filtri
 						</p>
 					</div>
 					<a
 						href="/blog"
-						class="shrink-0 text-sm font-semibold text-ai-purple hover:text-ai-purple-dark transition-colors"
+						class="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-ai-purple hover:text-ai-purple-dark transition-colors group"
 					>
-						Vedi tutte →
+						Vedi tutte
+						<svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+						</svg>
 					</a>
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-					{recentPosts.map((post, i) => {
-						const gradients = [
-							'from-purple-500/25 via-blue-500/15 to-transparent',
-							'from-pink-500/25 via-purple-500/15 to-transparent',
-							'from-blue-500/25 via-teal-500/15 to-transparent',
-							'from-amber-500/25 via-orange-500/15 to-transparent',
-						];
-						const mins = readingTime(post.body);
-						return (
-							<a
-								href={`/blog/${post.id}/`}
-								class="group block rounded-2xl border overflow-hidden transition-all duration-200 no-underline hover:-translate-y-0.5
-									bg-light-card border-light-border hover:border-purple-300 hover:shadow-xl
-									dark:bg-ai-card dark:border-ai-border dark:hover:border-ai-purple/50 dark:hover:shadow-[0_8px_30px_rgba(168,85,247,0.12)]"
-							>
-								<!-- Cover: heroImage or gradient placeholder -->
-								{post.data.heroImage ? (
-									<Image
-										src={post.data.heroImage}
-										alt={post.data.title}
-										width={480}
-										height={176}
-										class="w-full h-44 object-cover"
-									/>
-								) : (
-									<div class={`h-44 bg-gradient-to-br ${gradients[i % 4]} relative overflow-hidden bg-light-bg2 dark:bg-ai-bg2`}>
-										<div class="absolute inset-0 flex items-end p-4">
-											<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-ai-purple/20 text-ai-purple border border-ai-purple/30">
-												Recensione
-											</span>
-										</div>
-									</div>
-								)}
-
-								<div class="p-5">
-									<div class="flex items-center gap-2 text-xs text-light-faint dark:text-ai-faint mb-2">
-										<FormattedDate date={post.data.pubDate} />
-										<span>·</span>
-										<span>{mins} min</span>
-									</div>
-									<h3 class="font-bold text-sm leading-snug mb-2 line-clamp-2
-										text-light-text dark:text-ai-text group-hover:text-ai-purple transition-colors duration-150">
-										{post.data.title}
-									</h3>
-									<p class="text-xs leading-relaxed line-clamp-2 text-light-muted dark:text-ai-muted">
-										{post.data.description}
-									</p>
-								</div>
-							</a>
-						);
-					})}
+					{recentPosts.map((post) => (
+						<ReviewCard
+							id={post.id}
+							title={post.data.title}
+							description={post.data.description}
+							pubDate={post.data.pubDate}
+							readTime={readingTime(post.body)}
+							gradient=""
+						/>
+					))}
 				</div>
 			</div>
 		</section>
 
 		<!-- ── TRUST / PERSONAL STORY ────────────────────────────── -->
 		<section class="py-24 px-4">
-			<div class="max-w-3xl mx-auto text-center">
-				<div class="text-5xl mb-6">🤝</div>
-				<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-6">
-					Il sito che avrei voluto trovare io
-				</h2>
-				<div class="text-left space-y-4 text-light-muted dark:text-ai-muted text-lg leading-relaxed">
+			<div class="max-w-3xl mx-auto">
+				<div class="text-center mb-10">
+					<div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6
+						bg-light-bg2 dark:bg-ai-card border border-light-border dark:border-ai-border">
+						🤝
+					</div>
+					<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-6">
+						Il sito che avrei voluto trovare io
+					</h2>
+				</div>
+
+				<div class="text-left space-y-4 text-light-muted dark:text-ai-muted text-lg leading-relaxed mb-12">
 					<p>
 						Ci sono passato anch'io. Ore su YouTube a guardare review in inglese di tool che poi non funzionavano
 						come promesso, o peggio — erano già superati. Ho provato Jasper quando costava un occhio, ho
@@ -271,18 +241,23 @@ const categories = [
 				</div>
 
 				<!-- Promise badges -->
-				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12">
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 					{[
 						{ icon: '🔍', label: 'Testato davvero', desc: 'Ogni tool usato per almeno 2 settimane' },
 						{ icon: '🇮🇹', label: 'In italiano', desc: 'Nessuna traduzione automatica' },
 						{ icon: '💬', label: 'Senza filtri', desc: 'Se fa schifo, lo diciamo' },
 					].map((badge) => (
-						<div class="p-5 rounded-xl border text-center
-							bg-light-card border-light-border
-							dark:bg-ai-card dark:border-ai-border">
-							<div class="text-3xl mb-2">{badge.icon}</div>
-							<div class="font-semibold text-light-text dark:text-ai-text text-sm">{badge.label}</div>
-							<div class="text-xs text-light-muted dark:text-ai-muted mt-1">{badge.desc}</div>
+						<div
+							class="p-5 rounded-xl border text-center
+								bg-light-card border-light-border
+								dark:bg-ai-card dark:border-ai-border"
+						>
+							<div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mx-auto mb-3
+								bg-light-bg2 dark:bg-ai-bg border border-light-border dark:border-ai-border">
+								{badge.icon}
+							</div>
+							<div class="font-semibold text-light-text dark:text-ai-text text-sm mb-1">{badge.label}</div>
+							<div class="text-xs text-light-muted dark:text-ai-muted">{badge.desc}</div>
 						</div>
 					))}
 				</div>
@@ -291,22 +266,36 @@ const categories = [
 
 		<!-- ── CTA BANNER ───────────────────────────────────────── -->
 		<section class="py-16 px-4">
-			<div class="max-w-3xl mx-auto text-center rounded-2xl border p-10
-				bg-gradient-to-br from-ai-purple/10 to-transparent
-				border-ai-purple/20 dark:border-ai-purple/20">
-				<h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-4">
-					Ogni recensione risponde a tre domande
-				</h2>
-				<p class="text-light-muted dark:text-ai-muted text-lg mb-8 max-w-xl mx-auto">
-					<strong class="font-semibold text-light-text dark:text-ai-text">Vale i soldi? Funziona davvero? Per chi è adatto?</strong><br />
-					Niente stelline gonfiate. Niente hype.
-				</p>
-				<a
-					href="/blog"
-					class="inline-flex items-center gap-2 px-7 py-3.5 bg-ai-green hover:bg-emerald-600 text-white font-bold rounded-xl transition-all duration-200 hover:scale-[1.02] text-base"
-				>
-					Leggi le ultime recensioni <span aria-hidden="true">→</span>
-				</a>
+			<div
+				class="max-w-3xl mx-auto text-center rounded-2xl border p-10 relative overflow-hidden
+					bg-gradient-to-br from-ai-purple/10 via-transparent to-indigo-500/5
+					border-ai-purple/20"
+			>
+				<!-- Decorative glow -->
+				<div
+					class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 pointer-events-none"
+					style="background: radial-gradient(ellipse at top, rgba(168,85,247,0.15) 0%, transparent 70%);"
+				></div>
+
+				<div class="relative z-10">
+					<h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-4">
+						Ogni recensione risponde a tre domande
+					</h2>
+					<p class="text-light-muted dark:text-ai-muted text-lg mb-8 max-w-xl mx-auto">
+						<strong class="font-semibold text-light-text dark:text-ai-text">Vale i soldi? Funziona davvero? Per chi è adatto?</strong><br />
+						Niente stelline gonfiate. Niente hype.
+					</p>
+					<a
+						href="/blog"
+						class="inline-flex items-center gap-2 px-7 py-3.5 bg-ai-green hover:bg-emerald-600 text-white font-bold rounded-xl
+							transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] text-base"
+					>
+						Leggi le ultime recensioni
+						<svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+						</svg>
+					</a>
+				</div>
 			</div>
 		</section>
 
