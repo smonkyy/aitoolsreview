@@ -1,117 +1,28 @@
 import { useState, useEffect, useRef } from 'react';
-import { Bot, Sparkles, CheckCircle, ExternalLink, RotateCcw, Zap } from 'lucide-react';
+import { Bot, Sparkles, CheckCircle, RotateCcw, Zap, ChevronRight, Trophy, Medal, GitCompare } from 'lucide-react';
+import { TOOLS } from '../data/tools';
+import { rankTools } from '../lib/recommender';
 
-const TOOLS_DB = [
-  {
-    id: 1,
-    name: 'Claude 4',
-    category: 'scrittura',
-    budget: 'free',
-    skill: 'pro',
-    link: '/blog/claude-4',
-    desc: 'Il re della scrittura creativa e del codice. Ragionamento profondo, risposte precise.',
-    match: 98,
-    badge: 'Top Pick',
-  },
-  {
-    id: 2,
-    name: 'ChatGPT-4o',
-    category: 'scrittura',
-    budget: 'paid',
-    skill: 'beginner',
-    link: '/blog/chatgpt-vs-claude',
-    desc: "L'assistente tuttofare più versatile. Interfaccia semplice, risultati affidabili.",
-    match: 95,
-    badge: 'Più Usato',
-  },
-  {
-    id: 3,
-    name: 'Midjourney',
-    category: 'immagini',
-    budget: 'paid',
-    skill: 'pro',
-    link: '/blog/midjourney-recensione',
-    desc: 'Qualità cinematografica imbattibile. Lo standard del settore per i professionisti.',
-    match: 97,
-    badge: 'Qualità Pro',
-  },
-  {
-    id: 4,
-    name: 'Leonardo.ai',
-    category: 'immagini',
-    budget: 'free',
-    skill: 'beginner',
-    link: '/strumenti#immagini',
-    desc: 'Ottimo compromesso tra potenza e facilità. Crediti gratuiti generosi.',
-    match: 94,
-    badge: 'Best Free',
-  },
-  {
-    id: 5,
-    name: 'Runway Gen-3',
-    category: 'video',
-    budget: 'paid',
-    skill: 'pro',
-    link: '/blog/video-ai',
-    desc: 'Il futuro del cinema generativo. Qualità Hollywood a portata di click.',
-    match: 96,
-    badge: 'Innovativo',
-  },
-  {
-    id: 6,
-    name: 'Canva Magic Edit',
-    category: 'immagini',
-    budget: 'free',
-    skill: 'beginner',
-    link: '/strumenti',
-    desc: 'Perfetto per grafiche veloci senza stress. Curva di apprendimento quasi nulla.',
-    match: 91,
-    badge: 'Facile',
-  },
-  {
-    id: 7,
-    name: 'Kling AI',
-    category: 'video',
-    budget: 'free',
-    skill: 'beginner',
-    link: '/strumenti#video',
-    desc: 'La sorpresa cinese che sfida Runway. Piano gratuito generoso per iniziare.',
-    match: 89,
-    badge: 'Rising Star',
-  },
-  {
-    id: 8,
-    name: 'Notion AI',
-    category: 'produttività',
-    budget: 'paid',
-    skill: 'beginner',
-    link: '/strumenti#produttivita',
-    desc: 'AI integrata nel tuo workspace. Riassunti, brainstorming e organizzazione.',
-    match: 92,
-    badge: 'All-in-One',
-  },
-  {
-    id: 9,
-    name: 'Perplexity AI',
-    category: 'produttività',
-    budget: 'free',
-    skill: 'pro',
-    link: '/strumenti#produttivita',
-    desc: 'Il motore di ricerca AI per professionisti. Fonti citate, zero allucinazioni.',
-    match: 93,
-    badge: 'Research',
-  },
-];
+/** Returns the canonical /confronta slug — same ordering as getStaticPaths */
+function comparisonUrl(idA, idB) {
+  const order = TOOLS.map(t => t.id);
+  const iA = order.indexOf(idA);
+  const iB = order.indexOf(idB);
+  const [first, second] = iA <= iB ? [idA, idB] : [idB, idA];
+  return `/confronta/${first}-vs-${second}`;
+}
 
 const FLOW = [
   {
     key: 'category',
     message: 'Ciao! Sono il tuo AI Advisor. Cosa vuoi creare o migliorare?',
     options: [
-      { value: 'scrittura', label: '✍️ Testi & Scrittura' },
-      { value: 'immagini', label: '🎨 Immagini & Design' },
-      { value: 'video', label: '🎬 Video & Animazioni' },
-      { value: 'produttività', label: '⚡ Produttività' },
+      { value: 'scrittura',    label: '✍️ Testi & Scrittura' },
+      { value: 'immagini',     label: '🎨 Immagini & Design' },
+      { value: 'video',        label: '🎬 Video & Animazioni' },
+      { value: 'produttivita', label: '⚡ Produttività' },
+      { value: 'audio',        label: '🎙️ Audio & Voce' },
+      { value: 'coding',       label: '💻 Coding & Dev' },
     ],
   },
   {
@@ -127,26 +38,19 @@ const FLOW = [
     message: 'Ultimo step: come ti definiresti in ambito AI?',
     options: [
       { value: 'beginner', label: '🐣 Sto iniziando ora' },
-      { value: 'pro', label: '🔥 Uso già strumenti AI' },
+      { value: 'pro',      label: '🔥 Uso già strumenti AI' },
     ],
   },
 ];
 
 const TYPING_DELAY = 1100;
-const RESULT_DELAY = 2000;
+const RESULT_DELAY = 1800;
 
-function findMatch(sel) {
-  return (
-    TOOLS_DB.find(
-      (t) => t.category === sel.category && t.budget === sel.budget && t.skill === sel.skill,
-    ) ||
-    TOOLS_DB.find(
-      (t) => t.category === sel.category && (t.budget === sel.budget || t.budget === 'free'),
-    ) ||
-    TOOLS_DB.find((t) => t.category === sel.category) ||
-    TOOLS_DB[0]
-  );
-}
+const RANK_CONFIG = [
+  { icon: Trophy, color: '#f59e0b', label: '#1', bg: 'rgba(245,158,11,0.12)' },
+  { icon: Medal,  color: '#94a3b8', label: '#2', bg: 'rgba(148,163,184,0.10)' },
+  { icon: Medal,  color: '#b45309', label: '#3', bg: 'rgba(180,83,9,0.10)' },
+];
 
 /* ─── Sub-components ─────────────────────────────────────────── */
 
@@ -155,21 +59,16 @@ function AIBubble({ text, options, stepIndex, onSelect, disabled }) {
     <div className="flex items-start gap-2.5" style={{ animation: 'chatFadeIn 0.3s ease both' }}>
       <div
         style={{
-          width: 28,
-          height: 28,
-          borderRadius: '50%',
+          width: 28, height: 28, borderRadius: '50%',
           background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          marginTop: 2,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0, marginTop: 2,
           boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
         }}
       >
         <Bot size={13} color="white" />
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 280 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 300 }}>
         <div className="ai-bubble">
           <p style={{ fontSize: 14, lineHeight: 1.6, margin: 0 }}>{text}</p>
         </div>
@@ -199,8 +98,7 @@ function UserBubble({ text }) {
         style={{
           background: 'linear-gradient(135deg, #2563eb, #4f46e5)',
           borderRadius: '18px 18px 4px 18px',
-          padding: '10px 16px',
-          maxWidth: 240,
+          padding: '10px 16px', maxWidth: 240,
           boxShadow: '0 4px 12px rgba(37,99,235,0.25)',
         }}
       >
@@ -215,15 +113,10 @@ function TypingIndicator() {
     <div className="flex items-start gap-2.5" style={{ animation: 'chatFadeIn 0.25s ease both' }}>
       <div
         style={{
-          width: 28,
-          height: 28,
-          borderRadius: '50%',
+          width: 28, height: 28, borderRadius: '50%',
           background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0, boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
         }}
       >
         <Bot size={13} color="white" />
@@ -234,11 +127,7 @@ function TypingIndicator() {
             <span
               key={delay}
               style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: '#94a3b8',
-                display: 'block',
+                width: 6, height: 6, borderRadius: '50%', background: '#94a3b8', display: 'block',
                 animation: `typingDot 1s ease-in-out ${delay}ms infinite`,
               }}
             />
@@ -249,104 +138,210 @@ function TypingIndicator() {
   );
 }
 
-function ResultCard({ result, onReset }) {
+/* Score bar component */
+function ScoreBar({ score }) {
   return (
-    <div style={{ animation: 'resultReveal 0.5s cubic-bezier(0.34,1.56,0.64,1) both' }}>
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1d4ed8 0%, #4338ca 60%, #312e81 100%)',
-          borderRadius: 20,
-          padding: 20,
-          boxShadow: '0 20px 40px rgba(37,99,235,0.3), 0 0 0 1px rgba(255,255,255,0.05)',
-          color: 'white',
-        }}
-      >
-        {/* Header row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <CheckCircle size={14} color="#6ee7b7" />
-          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#a5b4fc' }}>
-            Match Trovato
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.15)', borderRadius: 2, overflow: 'hidden' }}>
+        <div
+          style={{
+            height: '100%',
+            width: `${score}%`,
+            background: score >= 80 ? '#6ee7b7' : score >= 65 ? '#fbbf24' : '#94a3b8',
+            borderRadius: 2,
+            transition: 'width 0.8s ease',
+          }}
+        />
+      </div>
+      <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.8)', minWidth: 28 }}>
+        {score}%
+      </span>
+    </div>
+  );
+}
+
+/* Single ranked tool card */
+function RankedToolCard({ rankedTool, rank, onReset }) {
+  const { tool, score, explanations, tradeoffs } = rankedTool;
+  const cfg = RANK_CONFIG[rank];
+  const RankIcon = cfg.icon;
+  const isFirst = rank === 0;
+
+  return (
+    <div
+      style={{
+        background: isFirst
+          ? 'linear-gradient(135deg, #1d4ed8 0%, #4338ca 60%, #312e81 100%)'
+          : 'rgba(255,255,255,0.05)',
+        border: isFirst ? 'none' : '1px solid rgba(255,255,255,0.1)',
+        borderRadius: isFirst ? 18 : 14,
+        padding: isFirst ? 18 : 14,
+        color: 'white',
+        animation: `resultReveal 0.5s cubic-bezier(0.34,1.56,0.64,1) ${rank * 120}ms both`,
+      }}
+    >
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+        <RankIcon size={12} color={cfg.color} />
+        <span style={{ fontSize: 10, fontWeight: 700, color: cfg.color, letterSpacing: '0.08em' }}>
+          {cfg.label}
+        </span>
+        {tool.badge && (
+          <span style={{
+            fontSize: 9, fontWeight: 700, padding: '1px 7px', borderRadius: 20,
+            background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.75)',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}>
+            {tool.badge}
           </span>
-          <span
-            style={{
-              marginLeft: 'auto',
-              fontSize: 11,
-              fontWeight: 700,
-              background: 'rgba(255,255,255,0.15)',
-              borderRadius: 20,
-              padding: '2px 10px',
-            }}
-          >
-            {result.match}% match
-          </span>
+        )}
+        <div style={{ marginLeft: 'auto', flex: isFirst ? '0 0 140px' : '0 0 120px' }}>
+          <ScoreBar score={score} />
         </div>
+      </div>
 
-        {/* Badge */}
-        <div style={{ marginBottom: 6 }}>
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              background: 'rgba(110,231,183,0.2)',
-              color: '#6ee7b7',
-              padding: '2px 8px',
-              borderRadius: 20,
-              border: '1px solid rgba(110,231,183,0.3)',
-            }}
-          >
-            {result.badge}
-          </span>
+      {/* Tool name + tagline */}
+      <h3 style={{
+        fontSize: isFirst ? 22 : 16,
+        fontWeight: 900,
+        margin: '0 0 3px 0',
+        letterSpacing: '-0.02em',
+      }}>
+        {tool.name}
+      </h3>
+      <p style={{
+        fontSize: 12,
+        color: isFirst ? '#c7d2fe' : 'rgba(255,255,255,0.55)',
+        margin: '0 0 10px 0',
+        lineHeight: 1.5,
+      }}>
+        {tool.tagline}
+      </p>
+
+      {/* Explanations (solo sul primo o se è il first) */}
+      {(isFirst || explanations.length > 0) && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 12 }}>
+          {explanations.slice(0, isFirst ? 3 : 2).map((exp, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <CheckCircle size={11} color="#6ee7b7" style={{ flexShrink: 0, marginTop: 2 }} />
+              <span style={{ fontSize: 12, color: isFirst ? '#e0e7ff' : 'rgba(255,255,255,0.65)', lineHeight: 1.5 }}>
+                {exp}
+              </span>
+            </div>
+          ))}
+          {tradeoffs.length > 0 && isFirst && (
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginTop: 2 }}>
+              <span style={{ fontSize: 11, flexShrink: 0, marginTop: 1 }}>⚠️</span>
+              <span style={{ fontSize: 11, color: '#fcd34d', lineHeight: 1.5 }}>
+                {tradeoffs[0]}
+              </span>
+            </div>
+          )}
         </div>
+      )}
 
-        {/* Tool name */}
-        <h3 style={{ fontSize: 26, fontWeight: 900, margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
-          {result.name}
-        </h3>
-        <p style={{ fontSize: 13, color: '#c7d2fe', lineHeight: 1.6, margin: '0 0 16px 0' }}>
-          {result.desc}
-        </p>
-
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: 8 }}>
-          <a
-            href={result.link}
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              background: 'white',
-              color: '#1d4ed8',
-              fontWeight: 700,
-              fontSize: 13,
-              padding: '10px 16px',
-              borderRadius: 12,
-              textDecoration: 'none',
-              transition: 'background 0.15s',
-            }}
-          >
-            Vedi Recensione <ExternalLink size={13} />
-          </a>
+      {/* CTA */}
+      <div style={{ display: 'flex', gap: 7 }}>
+        <a
+          href={tool.link}
+          style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+            background: isFirst ? 'white' : 'rgba(255,255,255,0.12)',
+            color: isFirst ? '#1d4ed8' : 'white',
+            fontWeight: 700, fontSize: 12,
+            padding: isFirst ? '9px 14px' : '7px 12px',
+            borderRadius: 10, textDecoration: 'none',
+            border: isFirst ? 'none' : '1px solid rgba(255,255,255,0.15)',
+          }}
+        >
+          {isFirst ? 'Vedi Recensione' : 'Scopri di più'} <ChevronRight size={12} />
+        </a>
+        {isFirst && (
           <button
             onClick={onReset}
             title="Ricomincia"
             style={{
-              padding: '10px 12px',
+              padding: '9px 11px',
               background: 'rgba(255,255,255,0.12)',
-              border: 'none',
-              borderRadius: 12,
-              cursor: 'pointer',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              border: 'none', borderRadius: 10,
+              cursor: 'pointer', color: 'white',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            <RotateCcw size={14} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* Results container */
+function ResultsCard({ results, onReset }) {
+  const top2Url = results.length >= 2
+    ? comparisonUrl(results[0].tool.id, results[1].tool.id)
+    : null;
+
+  return (
+    <div style={{ animation: 'chatFadeIn 0.3s ease both' }}>
+      {/* Intro bubble */}
+      <div className="flex items-start gap-2.5" style={{ marginBottom: 10 }}>
+        <div
+          style={{
+            width: 28, height: 28, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0, marginTop: 2,
+            boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
+          }}
+        >
+          <Sparkles size={13} color="white" />
+        </div>
+        <div className="ai-bubble">
+          <p style={{ fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+            Ho analizzato {TOOLS.length}+ tool per te. Ecco i{' '}
+            <strong>migliori {results.length}</strong> in base al tuo profilo:
+          </p>
+        </div>
+      </div>
+
+      {/* Ranked cards */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
+          borderRadius: 20, padding: 14,
+          display: 'flex', flexDirection: 'column', gap: 10,
+          border: '1px solid rgba(99,102,241,0.2)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+        }}
+      >
+        {results.map((r, i) => (
+          <RankedToolCard key={r.tool.id} rankedTool={r} rank={i} onReset={onReset} />
+        ))}
+
+        {/* Compare top 2 CTA */}
+        {top2Url && (
+          <a
+            href={top2Url}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+              marginTop: 4, padding: '10px 14px',
+              background: 'rgba(99,102,241,0.15)',
+              border: '1px solid rgba(99,102,241,0.3)',
+              borderRadius: 12, textDecoration: 'none',
+              color: '#a5b4fc', fontWeight: 600, fontSize: 12,
               transition: 'background 0.15s',
             }}
           >
-            <RotateCcw size={15} />
-          </button>
-        </div>
+            <GitCompare size={13} />
+            Indeciso tra #1 e #2? Confronta {results[0].tool.name} vs {results[1].tool.name} →
+          </a>
+        )}
+
+        {/* Footer note */}
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', textAlign: 'center', margin: '4px 0 0' }}>
+          Score calcolato su rilevanza, qualità, budget e livello — senza affiliazioni
+        </p>
       </div>
     </div>
   );
@@ -355,24 +350,23 @@ function ResultCard({ result, onReset }) {
 /* ─── Main Component ─────────────────────────────────────────── */
 
 export default function AIToolFinder() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages]     = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
-  const [isTyping, setIsTyping] = useState(false);
-  const [done, setDone] = useState(false);
-  const bottomRef = useRef(null);
+  const [selections, setSelections]   = useState({});
+  const [isTyping, setIsTyping]     = useState(false);
+  const [done, setDone]             = useState(false);
   const chatScrollRef = useRef(null);
 
   const addAIMessage = (text, options = null) => {
     setMessages((prev) => [...prev, { id: Date.now() + Math.random(), type: 'ai', text, options }]);
   };
 
-  // Boot sequence
   useEffect(() => {
     const t = setTimeout(() => addAIMessage(FLOW[0].message, FLOW[0].options), 500);
     return () => clearTimeout(t);
   }, []);
 
-  // Auto-scroll inside chat container only
+  // Scroll interno al container chat
   useEffect(() => {
     const t = setTimeout(() => {
       if (chatScrollRef.current) {
@@ -385,22 +379,15 @@ export default function AIToolFinder() {
   const handleSelect = (stepIndex, option) => {
     if (done) return;
 
-    // Disable options on current AI message, add user bubble
+    const newSelections = { ...selections, [FLOW[stepIndex].key]: option.value };
+    setSelections(newSelections);
+
+    // Disabilita opzioni precedenti, aggiungi bolla utente
     setMessages((prev) =>
       prev
         .map((m) => (m.options ? { ...m, options: null } : m))
         .concat({ id: Date.now() + Math.random(), type: 'user', text: option.label }),
     );
-
-    const newSelections = {};
-    // Reconstruct selections from messages + current choice
-    const userMessages = messages.filter((m) => m.type === 'user');
-    userMessages.forEach((m, i) => {
-      const step = FLOW[i];
-      const match = step.options.find((o) => o.label === m.text);
-      if (match) newSelections[step.key] = match.value;
-    });
-    newSelections[FLOW[stepIndex].key] = option.value;
 
     const nextStep = stepIndex + 1;
 
@@ -412,13 +399,18 @@ export default function AIToolFinder() {
         setCurrentStep(nextStep);
       }, TYPING_DELAY);
     } else {
+      // Tutte le risposte raccolte → calcola ranking reale
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        const result = findMatch(newSelections);
+        const results = rankTools(TOOLS, {
+          category: newSelections.category,
+          budget:   newSelections.budget,
+          skill:    newSelections.skill,
+        }, 3);
         setMessages((prev) => [
           ...prev,
-          { id: Date.now() + Math.random(), type: 'result', result },
+          { id: Date.now() + Math.random(), type: 'results', results },
         ]);
         setDone(true);
       }, RESULT_DELAY);
@@ -428,6 +420,7 @@ export default function AIToolFinder() {
   const reset = () => {
     setMessages([]);
     setCurrentStep(0);
+    setSelections({});
     setIsTyping(false);
     setDone(false);
     setTimeout(() => addAIMessage(FLOW[0].message, FLOW[0].options), 500);
@@ -445,7 +438,7 @@ export default function AIToolFinder() {
           40%            { transform: translateY(-4px); opacity: 1; }
         }
         @keyframes resultReveal {
-          from { opacity: 0; transform: scale(0.92) translateY(12px); }
+          from { opacity: 0; transform: scale(0.94) translateY(10px); }
           to   { opacity: 1; transform: scale(1) translateY(0); }
         }
         .ai-bubble {
@@ -463,32 +456,22 @@ export default function AIToolFinder() {
         }
         .chip-btn {
           padding: 6px 12px;
-          font-size: 12px;
-          font-weight: 600;
+          font-size: 12px; font-weight: 600;
           border-radius: 999px;
           border: 1.5px solid #bfdbfe;
-          background: #eff6ff;
-          color: #1d4ed8;
-          cursor: pointer;
-          transition: all 0.15s;
+          background: #eff6ff; color: #1d4ed8;
+          cursor: pointer; transition: all 0.15s;
           white-space: nowrap;
         }
         .dark .chip-btn {
-          border-color: #1e3a5f;
-          background: #0f172a;
-          color: #93c5fd;
+          border-color: #1e3a5f; background: #0f172a; color: #93c5fd;
         }
         .chip-btn:hover:not(:disabled) {
-          background: #2563eb;
-          border-color: #2563eb;
-          color: white;
+          background: #2563eb; border-color: #2563eb; color: white;
           transform: translateY(-1px);
           box-shadow: 0 4px 8px rgba(37,99,235,0.25);
         }
-        .chip-btn:disabled {
-          opacity: 0.45;
-          cursor: not-allowed;
-        }
+        .chip-btn:disabled { opacity: 0.45; cursor: not-allowed; }
         .chat-scroll::-webkit-scrollbar { width: 4px; }
         .chat-scroll::-webkit-scrollbar-track { background: transparent; }
         .chat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -496,37 +479,20 @@ export default function AIToolFinder() {
       `}</style>
 
       <div
-        style={{
-          maxWidth: 520,
-          margin: '0 auto',
-          borderRadius: 20,
-          overflow: 'hidden',
-          border: '1px solid',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-        }}
+        style={{ maxWidth: 540, margin: '0 auto', borderRadius: 20, overflow: 'hidden', border: '1px solid', boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}
         className="border-slate-200 dark:border-slate-700"
       >
         {/* ── Header ── */}
         <div
           className="bg-white dark:bg-slate-900"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '14px 18px',
-            borderBottom: '1px solid',
-          }}
+          style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', borderBottom: '1px solid' }}
         >
           <div style={{ position: 'relative' }}>
             <div
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
+                width: 36, height: 36, borderRadius: '50%',
                 background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: '0 4px 12px rgba(99,102,241,0.35)',
               }}
             >
@@ -534,14 +500,9 @@ export default function AIToolFinder() {
             </div>
             <span
               style={{
-                position: 'absolute',
-                bottom: 1,
-                right: 1,
-                width: 9,
-                height: 9,
-                background: '#10b981',
-                borderRadius: '50%',
-                border: '2px solid white',
+                position: 'absolute', bottom: 1, right: 1,
+                width: 9, height: 9, background: '#10b981',
+                borderRadius: '50%', border: '2px solid white',
               }}
               className="dark:border-slate-900"
             />
@@ -552,18 +513,9 @@ export default function AIToolFinder() {
             </p>
             <p style={{ fontSize: 11, color: '#10b981', fontWeight: 600, margin: 0 }}>● Online ora</p>
           </div>
-          <div
-            style={{
-              marginLeft: 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              fontSize: 11,
-            }}
-            className="text-slate-400"
-          >
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11 }} className="text-slate-400">
             <Zap size={11} />
-            <span>30+ strumenti</span>
+            <span>{TOOLS.length}+ strumenti analizzati</span>
           </div>
         </div>
 
@@ -572,12 +524,9 @@ export default function AIToolFinder() {
           ref={chatScrollRef}
           className="chat-scroll bg-slate-50 dark:bg-slate-950"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 14,
+            display: 'flex', flexDirection: 'column', gap: 14,
             padding: '18px 16px',
-            minHeight: 260,
-            maxHeight: 400,
+            minHeight: 280, maxHeight: 520,
             overflowY: 'auto',
           }}
         >
@@ -593,26 +542,22 @@ export default function AIToolFinder() {
                   disabled={done || isTyping}
                 />
               );
-            if (msg.type === 'user') return <UserBubble key={msg.id} text={msg.text} />;
-            if (msg.type === 'result')
-              return <ResultCard key={msg.id} result={msg.result} onReset={reset} />;
+            if (msg.type === 'user')
+              return <UserBubble key={msg.id} text={msg.text} />;
+            if (msg.type === 'results')
+              return <ResultsCard key={msg.id} results={msg.results} onReset={reset} />;
             return null;
           })}
           {isTyping && <TypingIndicator />}
-          <div ref={bottomRef} />
         </div>
 
         {/* ── Footer ── */}
         <div
           className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
-          style={{
-            padding: '10px 18px',
-            borderTop: '1px solid',
-            textAlign: 'center',
-          }}
+          style={{ padding: '10px 18px', borderTop: '1px solid', textAlign: 'center' }}
         >
           <p className="text-slate-400" style={{ fontSize: 11, margin: 0 }}>
-            Database aggiornato · {new Date().getFullYear()} · Consigli imparziali
+            Ranking imparziale · Score calcolato in tempo reale · {new Date().getFullYear()}
           </p>
         </div>
       </div>
