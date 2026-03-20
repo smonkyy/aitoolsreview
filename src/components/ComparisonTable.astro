@@ -1,0 +1,232 @@
+---
+import type { ToolComparison, FeatureRow } from '../lib/comparator';
+import type { FeatureValue } from '../data/features';
+
+interface Props {
+  comparison: ToolComparison;
+}
+
+const { comparison } = Astro.props;
+const { toolA, toolB, featureMatrix, useCaseVerdicts, whyNotUse, overallWinner, tldr, ratingDiff } = comparison;
+
+// Helper: render a FeatureValue as a readable label
+function featureLabel(v: FeatureValue): string {
+  if (v === true)    return '✓';
+  if (v === false)   return '✗';
+  if (v === 'partial') return '◐';
+  if (v === null)    return '—';
+  return String(v);
+}
+
+function featureClass(v: FeatureValue): string {
+  if (v === true)    return 'text-emerald-500 font-bold text-base';
+  if (v === false)   return 'text-red-400/70 font-bold text-base';
+  if (v === 'partial') return 'text-amber-400 font-bold text-base';
+  return 'text-ai-muted text-sm';
+}
+
+// Rating bar: rende visivo il confronto su una singola dimensione
+function ratingBar(score: number): string {
+  return `width: ${(score / 5) * 100}%`;
+}
+
+const RATING_LABELS = [
+  { key: 'overall',       label: 'Voto complessivo',      a: toolA.ratings.overall,       b: toolB.ratings.overall },
+  { key: 'outputQuality', label: 'Qualità output',        a: toolA.ratings.outputQuality, b: toolB.ratings.outputQuality },
+  { key: 'easeOfUse',     label: 'Facilità d\'uso',       a: toolA.ratings.easeOfUse,     b: toolB.ratings.easeOfUse },
+  { key: 'valueForMoney', label: 'Rapporto qualità/prezzo', a: toolA.ratings.valueForMoney, b: toolB.ratings.valueForMoney },
+];
+---
+
+<div class="space-y-12">
+
+  <!-- ── TL;DR banner ───────────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+      <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-2">Scegli {toolA.name} se...</p>
+      <p class="text-light-text dark:text-ai-text font-medium leading-relaxed">{tldr.chooseA.replace(`Scegli ${toolA.name} se `, '')}</p>
+    </div>
+    <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+      <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-2">Scegli {toolB.name} se...</p>
+      <p class="text-light-text dark:text-ai-text font-medium leading-relaxed">{tldr.chooseB.replace(`Scegli ${toolB.name} se `, '')}</p>
+    </div>
+  </div>
+
+  <!-- ── Overall winner banner (solo se c'è un vincitore netto) ─────────────── -->
+  {overallWinner && (
+    <div class="p-6 rounded-2xl border text-center
+      bg-gradient-to-br from-ai-purple/10 to-transparent border-ai-purple/25">
+      <p class="text-ai-muted text-sm mb-1">Vincitore complessivo</p>
+      <p class="text-2xl font-extrabold text-light-text dark:text-ai-text">{overallWinner.name}</p>
+      <p class="text-ai-muted text-sm mt-1">{overallWinner.tagline}</p>
+    </div>
+  )}
+
+  <!-- ── Rating comparison ──────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Confronto rating</h2>
+    <div class="space-y-5">
+      {RATING_LABELS.map(({ label, a, b }) => {
+        const winnerA = a > b;
+        const winnerB = b > a;
+        return (
+          <div>
+            <p class="text-sm font-semibold text-light-muted dark:text-ai-muted mb-2">{label}</p>
+            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+              <!-- Tool A bar (right-aligned) -->
+              <div class="flex items-center justify-end gap-2">
+                <span class={`text-sm font-bold ${winnerA ? 'text-emerald-500' : 'text-light-text dark:text-ai-text'}`}>{a.toFixed(1)}</span>
+                <div class="w-28 h-2 bg-ai-border rounded-full overflow-hidden">
+                  <div
+                    class={`h-full rounded-full ${winnerA ? 'bg-emerald-500' : 'bg-ai-purple/50'}`}
+                    style={`width: ${(a/5)*100}%; margin-left: auto;`}
+                  />
+                </div>
+              </div>
+              <!-- Label centrale -->
+              <span class="text-xs text-ai-muted font-medium w-4 text-center">/5</span>
+              <!-- Tool B bar -->
+              <div class="flex items-center gap-2">
+                <div class="w-28 h-2 bg-ai-border rounded-full overflow-hidden">
+                  <div
+                    class={`h-full rounded-full ${winnerB ? 'bg-emerald-500' : 'bg-ai-purple/50'}`}
+                    style={`width: ${(b/5)*100}%`}
+                  />
+                </div>
+                <span class={`text-sm font-bold ${winnerB ? 'text-emerald-500' : 'text-light-text dark:text-ai-text'}`}>{b.toFixed(1)}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- ── Use case verdicts ──────────────────────────────────────────────────── -->
+  {useCaseVerdicts.length > 0 && (
+    <section>
+      <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Chi vince per caso d'uso</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {useCaseVerdicts.map((v) => {
+          const isA = v.winner.id === toolA.id;
+          return (
+            <div class="p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+              <div class="flex items-start justify-between gap-3 mb-1.5">
+                <p class="text-sm font-semibold text-light-text dark:text-ai-text leading-snug">{v.useCase}</p>
+                <span class={`shrink-0 px-2 py-0.5 rounded-full text-xs font-bold ${
+                  v.margin === 'netto'
+                    ? 'bg-emerald-500/15 text-emerald-500'
+                    : 'bg-amber-400/15 text-amber-400'
+                }`}>
+                  {v.margin}
+                </span>
+              </div>
+              <p class="text-xs font-bold text-ai-purple mb-1">→ {v.winner.name}</p>
+              <p class="text-xs text-light-muted dark:text-ai-muted leading-relaxed">{v.reason}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <!-- ── Feature matrix ────────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Confronto funzionalità</h2>
+    <div class="rounded-xl border border-light-border dark:border-ai-border overflow-hidden">
+      <!-- Header -->
+      <div class="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_1fr_1fr] bg-light-bg2 dark:bg-ai-bg2 px-4 py-3 border-b border-light-border dark:border-ai-border">
+        <span class="text-xs font-bold uppercase tracking-widest text-light-muted dark:text-ai-muted">Funzionalità</span>
+        <span class="text-xs font-bold text-light-text dark:text-ai-text text-center">{toolA.name}</span>
+        <span class="text-xs font-bold text-light-text dark:text-ai-text text-center">{toolB.name}</span>
+      </div>
+      <!-- Rows -->
+      {featureMatrix.map((row, i) => (
+        <div class={`grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_1fr_1fr] px-4 py-3 items-center gap-3
+          ${i % 2 === 0 ? 'bg-light-card dark:bg-ai-card' : 'bg-light-bg dark:bg-ai-bg'}`}>
+          <!-- Feature label + description -->
+          <div>
+            <p class="text-sm text-light-text dark:text-ai-text font-medium">{row.feature.label}</p>
+            {row.feature.description && (
+              <p class="text-xs text-light-muted dark:text-ai-muted mt-0.5 hidden sm:block">{row.feature.description}</p>
+            )}
+          </div>
+          <!-- Value A -->
+          <div class={`text-center ${featureClass(row.valueA)} ${row.winner === 'a' ? 'ring-1 ring-emerald-500/30 rounded-md px-2' : ''}`}>
+            {featureLabel(row.valueA)}
+          </div>
+          <!-- Value B -->
+          <div class={`text-center ${featureClass(row.valueB)} ${row.winner === 'b' ? 'ring-1 ring-emerald-500/30 rounded-md px-2' : ''}`}>
+            {featureLabel(row.valueB)}
+          </div>
+        </div>
+      ))}
+      <!-- Legend -->
+      <div class="px-4 py-3 bg-light-bg2 dark:bg-ai-bg2 border-t border-light-border dark:border-ai-border flex gap-4 flex-wrap">
+        <span class="text-xs text-light-muted dark:text-ai-muted"><span class="text-emerald-500 font-bold">✓</span> Presente</span>
+        <span class="text-xs text-light-muted dark:text-ai-muted"><span class="text-amber-400 font-bold">◐</span> Parziale</span>
+        <span class="text-xs text-light-muted dark:text-ai-muted"><span class="text-red-400/70 font-bold">✗</span> Assente</span>
+        <span class="text-xs text-light-muted dark:text-ai-muted">— Non applicabile</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── When NOT to use ───────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Quando NON usarli</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Tool A -->
+      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">Non usare {toolA.name} se...</p>
+        <ul class="space-y-2">
+          {whyNotUse.a.map(bullet => (
+            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
+              <span class="text-red-400 shrink-0 mt-0.5">✕</span>
+              {bullet}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <!-- Tool B -->
+      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">Non usare {toolB.name} se...</p>
+        <ul class="space-y-2">
+          {whyNotUse.b.map(bullet => (
+            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
+              <span class="text-red-400 shrink-0 mt-0.5">✕</span>
+              {bullet}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Strengths side by side ─────────────────────────────────────────────── -->
+  <section>
+    <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Punti di forza</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">{toolA.name}</p>
+        <ul class="space-y-2">
+          {toolA.strengths.map(s => (
+            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
+              <span class="text-emerald-500 shrink-0 mt-0.5">✓</span>{s}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">{toolB.name}</p>
+        <ul class="space-y-2">
+          {toolB.strengths.map(s => (
+            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
+              <span class="text-emerald-500 shrink-0 mt-0.5">✓</span>{s}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>

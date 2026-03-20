@@ -1,0 +1,203 @@
+---
+import { TOOLS } from '../../data/tools';
+import { compareTools } from '../../lib/comparator';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+
+export function getStaticPaths() {
+  const paths = [];
+
+  for (let i = 0; i < TOOLS.length; i++) {
+    for (let j = i + 1; j < TOOLS.length; j++) {
+      const a = TOOLS[i];
+      const b = TOOLS[j];
+      const comparison = compareTools(a, b);
+
+      paths.push({
+        params: { comparison: comparison.slug },
+        props:  { comparison },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { comparison } = Astro.props;
+const { toolA, toolB, tldr, overallWinner } = comparison;
+
+// SEO: descrizione dinamica generata dai dati, non hardcoded
+const metaDesc = `${tldr.chooseA}. ${tldr.chooseB}. Confronto completo con funzionalità, prezzi, casi d'uso e verdetto finale — aggiornato ${new Date().getFullYear()}.`;
+
+const canonicalUrl = `https://aitoolsreview.it/confronta/${comparison.slug}`;
+
+// Structured data (FAQ schema) per Google rich snippets
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `${toolA.name} o ${toolB.name}: qual è il migliore?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: overallWinner
+          ? `${overallWinner.name} è il vincitore complessivo in base ai nostri test. ${tldr.chooseA}. ${tldr.chooseB}.`
+          : `Dipende dall'uso. ${tldr.chooseA}. ${tldr.chooseB}.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `${toolA.name} ha un piano gratuito?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: toolA.pricing.hasFreeOption
+          ? `Sì, ${toolA.name} offre un piano gratuito o freemium.`
+          : `No, ${toolA.name} è a pagamento, a partire da $${toolA.pricing.startingPriceUsd}/mese.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `${toolB.name} ha un piano gratuito?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: toolB.pricing.hasFreeOption
+          ? `Sì, ${toolB.name} offre un piano gratuito o freemium.`
+          : `No, ${toolB.name} è a pagamento, a partire da $${toolB.pricing.startingPriceUsd}/mese.`,
+      },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="it" class="dark">
+  <head>
+    <BaseHead
+      title={`${toolA.name} vs ${toolB.name}: Confronto ${new Date().getFullYear()} | AI Tools Review`}
+      description={metaDesc}
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </head>
+  <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
+    <Header />
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+
+      <!-- ── Breadcrumb ──────────────────────────────────────────────────────── -->
+      <nav class="text-sm text-light-muted dark:text-ai-muted mb-10 flex items-center gap-1.5">
+        <a href="/" class="hover:text-ai-purple transition-colors">Home</a>
+        <span>/</span>
+        <a href="/strumenti" class="hover:text-ai-purple transition-colors">Strumenti</a>
+        <span>/</span>
+        <span class="text-light-text dark:text-ai-text font-medium">{toolA.name} vs {toolB.name}</span>
+      </nav>
+
+      <!-- ── Page header ────────────────────────────────────────────────────── -->
+      <div class="mb-12">
+
+        <!-- Tool names hero -->
+        <div class="flex items-center gap-4 sm:gap-6 mb-6 flex-wrap">
+          <div class="flex-1 min-w-0">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-light-text dark:text-ai-text leading-tight">
+              {toolA.name}
+              <span class="text-light-muted dark:text-ai-muted font-light mx-2 text-2xl sm:text-3xl">vs</span>
+              {toolB.name}
+            </h1>
+          </div>
+        </div>
+
+        <!-- Taglines -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          <div class="flex items-start gap-3 p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+            <div class="w-8 h-8 rounded-lg bg-ai-purple/15 flex items-center justify-center shrink-0 text-sm">A</div>
+            <div>
+              <p class="font-bold text-light-text dark:text-ai-text text-sm">{toolA.name}</p>
+              <p class="text-light-muted dark:text-ai-muted text-xs leading-relaxed mt-0.5">{toolA.tagline}</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center shrink-0 text-sm">B</div>
+            <div>
+              <p class="font-bold text-light-text dark:text-ai-text text-sm">{toolB.name}</p>
+              <p class="text-light-muted dark:text-ai-muted text-xs leading-relaxed mt-0.5">{toolB.tagline}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta info row -->
+        <div class="flex flex-wrap gap-3 text-xs text-light-muted dark:text-ai-muted">
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-ai-green animate-pulse"></span>
+            Dati aggiornati {new Date().getFullYear()}
+          </span>
+          <span>·</span>
+          <span>Score calcolato su qualità, prezzo e facilità d'uso</span>
+          <span>·</span>
+          <span>Nessun affiliato influenza il risultato</span>
+        </div>
+      </div>
+
+      <!-- ── Main comparison ────────────────────────────────────────────────── -->
+      <ComparisonTable comparison={comparison} />
+
+      <!-- ── CTA finale ─────────────────────────────────────────────────────── -->
+      <div class="mt-16 p-8 rounded-2xl border text-center
+        bg-gradient-to-br from-ai-purple/10 to-transparent border-ai-purple/20">
+        <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-3">
+          Hai ancora dubbi su quale scegliere?
+        </h2>
+        <p class="text-light-muted dark:text-ai-muted mb-6 max-w-md mx-auto text-sm leading-relaxed">
+          L'AI Tool Advisor ti fa 3 domande e ti trova il tool più adatto al tuo profilo specifico.
+        </p>
+        <a
+          href="/#ai-advisor"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-ai-purple hover:bg-ai-purple-dark text-white font-bold rounded-xl transition-all duration-200 text-sm"
+        >
+          Usa l'AI Tool Advisor →
+        </a>
+      </div>
+
+      <!-- ── Related comparisons ────────────────────────────────────────────── -->
+      {(() => {
+        // Mostra fino a 3 confronti correlati (stesso tool A o B, diverso partner)
+        const related = TOOLS
+          .filter(t => t.id !== toolA.id && t.id !== toolB.id && t.category === toolA.category)
+          .slice(0, 3);
+        return related.length > 0 ? (
+          <div class="mt-14">
+            <h2 class="text-lg font-bold text-light-text dark:text-ai-text mb-4">Confronti correlati</h2>
+            <div class="flex flex-wrap gap-2">
+              {related.map(rel => (
+                <a
+                  href={`/confronta/${toolA.id}-vs-${rel.id}`}
+                  class="px-4 py-2 rounded-full border text-sm font-medium transition-all duration-150 no-underline
+                    text-light-muted border-light-border hover:text-light-text hover:bg-light-bg2
+                    dark:text-ai-muted dark:border-ai-border dark:hover:text-ai-text dark:hover:bg-ai-card"
+                >
+                  {toolA.name} vs {rel.name}
+                </a>
+              ))}
+              {related.map(rel => (
+                <a
+                  href={`/confronta/${toolB.id}-vs-${rel.id}`}
+                  class="px-4 py-2 rounded-full border text-sm font-medium transition-all duration-150 no-underline
+                    text-light-muted border-light-border hover:text-light-text hover:bg-light-bg2
+                    dark:text-ai-muted dark:border-ai-border dark:hover:text-ai-text dark:hover:bg-ai-card"
+                >
+                  {toolB.name} vs {rel.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : null;
+      })()}
+
+    </main>
+
+    <Footer />
+  </body>
+</html>
