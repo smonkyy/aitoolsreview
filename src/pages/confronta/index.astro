@@ -1,0 +1,260 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { TOOLS } from '../../data/tools';
+import { getTopComparisons, canonicalSlug } from '../../lib/comparison-priority';
+
+const topComparisons = getTopComparisons(12);
+
+// Tool list serialized for the client-side picker script
+const toolsForPicker = TOOLS.map(t => ({ id: t.id, name: t.name, category: t.category }));
+const toolOrder = TOOLS.map(t => t.id); // for canonicalSlug in JS
+
+// Group top comparisons by category for the filtered view
+const categories = ['scrittura', 'immagini', 'video', 'audio', 'produttivita', 'coding'] as const;
+const categoryLabels: Record<string, string> = {
+  scrittura:    '✍️ Scrittura',
+  immagini:     '🎨 Immagini',
+  video:        '🎬 Video',
+  audio:        '🎙️ Audio',
+  produttivita: '⚡ Produttività',
+  coding:       '💻 Coding',
+};
+---
+
+<!doctype html>
+<html lang="it" class="dark">
+  <head>
+    <BaseHead
+      title="Confronta Strumenti AI | AI Tools Review"
+      description="Confronta fianco a fianco i migliori strumenti AI. Scoring imparziale su use case, prezzi, qualità e facilità d'uso. Trova quale fa per te."
+    />
+  </head>
+  <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
+    <Header />
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+
+      <!-- ── Page header ───────────────────────────────────────────────────── -->
+      <div class="mb-14">
+        <p class="text-sm font-semibold text-ai-purple mb-3 tracking-wide uppercase">Comparatore</p>
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-light-text dark:text-ai-text mb-4 leading-tight">
+          Confronta strumenti AI
+        </h1>
+        <p class="text-light-muted dark:text-ai-muted text-xl max-w-2xl leading-relaxed">
+          Scegli due tool e ottieni un confronto dettagliato: scoring reale, verdetti per use case
+          e consigli su quando non usare ciascuno.
+        </p>
+      </div>
+
+      <!-- ── Picker ────────────────────────────────────────────────────────── -->
+      <div
+        id="picker"
+        class="mb-16 p-6 sm:p-8 rounded-2xl border
+          bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border"
+      >
+        <p class="text-sm font-semibold text-light-muted dark:text-ai-muted mb-5 uppercase tracking-wide">
+          Scegli i due tool da confrontare
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <!-- Tool A -->
+          <select
+            id="pickerA"
+            class="flex-1 px-4 py-3 rounded-xl border text-sm font-medium cursor-pointer
+              bg-light-bg dark:bg-ai-bg border-light-border dark:border-ai-border
+              text-light-text dark:text-ai-text
+              focus:outline-none focus:ring-2 focus:ring-ai-purple/50"
+          >
+            <option value="">— Primo strumento —</option>
+            {TOOLS.map(t => (
+              <option value={t.id}>{t.name}</option>
+            ))}
+          </select>
+
+          <span class="text-center text-light-muted dark:text-ai-muted font-bold text-lg shrink-0">vs</span>
+
+          <!-- Tool B -->
+          <select
+            id="pickerB"
+            class="flex-1 px-4 py-3 rounded-xl border text-sm font-medium cursor-pointer
+              bg-light-bg dark:bg-ai-bg border-light-border dark:border-ai-border
+              text-light-text dark:text-ai-text
+              focus:outline-none focus:ring-2 focus:ring-ai-purple/50"
+          >
+            <option value="">— Secondo strumento —</option>
+            {TOOLS.map(t => (
+              <option value={t.id}>{t.name}</option>
+            ))}
+          </select>
+
+          <!-- Go button -->
+          <button
+            id="pickerBtn"
+            disabled
+            class="px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200
+              bg-ai-purple text-white hover:bg-ai-purple-dark
+              disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+          >
+            Confronta →
+          </button>
+        </div>
+
+        <!-- Inline error -->
+        <p id="pickerError" class="mt-3 text-sm text-red-400 hidden">
+          Seleziona due strumenti diversi per procedere.
+        </p>
+      </div>
+
+      <!-- ── Top comparisons grid ──────────────────────────────────────────── -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-2xl font-extrabold text-light-text dark:text-ai-text">
+            Confronti più cercati
+          </h2>
+          <!-- Category filter tabs -->
+          <div class="hidden sm:flex flex-wrap gap-1.5" id="catFilters">
+            <button
+              data-cat="all"
+              class="cat-btn active px-3 py-1 rounded-full text-xs font-semibold border transition-all
+                border-ai-purple bg-ai-purple/10 text-ai-purple"
+            >
+              Tutti
+            </button>
+            {categories.map(cat => (
+              <button
+                data-cat={cat}
+                class="cat-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all
+                  border-light-border dark:border-ai-border
+                  text-light-muted dark:text-ai-muted
+                  hover:border-ai-purple/50 hover:text-ai-purple"
+              >
+                {categoryLabels[cat]}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p class="text-sm text-light-muted dark:text-ai-muted mb-8">
+          Selezionati in base alla rilevanza SEO e alla frequenza di ricerca stimata.
+        </p>
+
+        <div id="comparisonsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {topComparisons.map(({ toolA, toolB, slug, priorityScore }) => (
+            <a
+              href={`/confronta/${slug}`}
+              data-cat={toolA.category}
+              class="comparison-card group block p-5 rounded-xl border transition-all duration-150 no-underline
+                bg-light-card dark:bg-ai-card
+                border-light-border dark:border-ai-border
+                hover:border-ai-purple/40 hover:shadow-lg hover:shadow-ai-purple/5"
+            >
+              <!-- Tool names -->
+              <div class="flex items-center gap-2 mb-3">
+                <span class="font-bold text-light-text dark:text-ai-text text-sm group-hover:text-ai-purple transition-colors">
+                  {toolA.name}
+                </span>
+                <span class="text-light-muted dark:text-ai-muted text-xs shrink-0">vs</span>
+                <span class="font-bold text-light-text dark:text-ai-text text-sm group-hover:text-ai-purple transition-colors">
+                  {toolB.name}
+                </span>
+              </div>
+
+              <!-- Category + pricing chips -->
+              <div class="flex flex-wrap gap-1.5 mb-4">
+                <span class="px-2 py-0.5 text-xs rounded-full border font-medium
+                  border-light-border dark:border-ai-border text-light-muted dark:text-ai-muted">
+                  {categoryLabels[toolA.category]}
+                </span>
+                {toolA.pricing.hasFreeOption !== toolB.pricing.hasFreeOption && (
+                  <span class="px-2 py-0.5 text-xs rounded-full border font-medium
+                    border-amber-500/30 text-amber-500/80">
+                    Free vs Paid
+                  </span>
+                )}
+              </div>
+
+              <!-- Ratings row -->
+              <div class="flex items-center justify-between text-xs text-light-muted dark:text-ai-muted">
+                <span>★ {toolA.ratings.overall} · ★ {toolB.ratings.overall}</span>
+                <span class="text-ai-purple font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                  Confronta →
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- ── "Can't find it?" nudge ─────────────────────────────────────────── -->
+      <div class="mt-12 p-6 rounded-2xl border text-center
+        border-light-border dark:border-ai-border bg-light-card dark:bg-ai-card">
+        <p class="text-sm text-light-muted dark:text-ai-muted mb-2">
+          Non trovi il confronto che cerchi?
+        </p>
+        <p class="text-sm text-light-text dark:text-ai-text font-medium">
+          Usa il picker in cima alla pagina — puoi confrontare qualsiasi coppia tra i {TOOLS.length} tool nel database.
+        </p>
+      </div>
+
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<!-- ── Picker client logic ─────────────────────────────────────────────────── -->
+<script define:vars={{ toolOrder }}>
+  const selA = document.getElementById('pickerA');
+  const selB = document.getElementById('pickerB');
+  const btn  = document.getElementById('pickerBtn');
+  const err  = document.getElementById('pickerError');
+
+  function updateBtn() {
+    const ok = selA.value && selB.value && selA.value !== selB.value;
+    btn.disabled = !ok;
+    err.classList.toggle('hidden', selA.value === '' || selB.value === '' || selA.value !== selB.value);
+    if (selA.value && selB.value && selA.value === selB.value) {
+      err.classList.remove('hidden');
+    }
+  }
+
+  selA.addEventListener('change', updateBtn);
+  selB.addEventListener('change', updateBtn);
+
+  btn.addEventListener('click', () => {
+    const idA = selA.value;
+    const idB = selB.value;
+    if (!idA || !idB || idA === idB) return;
+    const iA = toolOrder.indexOf(idA);
+    const iB = toolOrder.indexOf(idB);
+    const [first, second] = iA <= iB ? [idA, idB] : [idB, idA];
+    window.location.href = `/confronta/${first}-vs-${second}`;
+  });
+</script>
+
+<!-- ── Category filter client logic ─────────────────────────────────────────── -->
+<script>
+  const filterBtns = document.querySelectorAll('.cat-btn');
+  const cards = document.querySelectorAll('.comparison-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+
+      // Update active state
+      filterBtns.forEach(b => {
+        b.classList.remove('active', 'border-ai-purple', 'bg-ai-purple/10', 'text-ai-purple');
+        b.classList.add('border-light-border', 'dark:border-ai-border', 'text-light-muted', 'dark:text-ai-muted');
+      });
+      btn.classList.add('active', 'border-ai-purple', 'bg-ai-purple/10', 'text-ai-purple');
+      btn.classList.remove('border-light-border', 'dark:border-ai-border', 'text-light-muted', 'dark:text-ai-muted');
+
+      // Filter cards
+      cards.forEach(card => {
+        const match = cat === 'all' || card.dataset.cat === cat;
+        card.style.display = match ? '' : 'none';
+      });
+    });
+  });
+</script>

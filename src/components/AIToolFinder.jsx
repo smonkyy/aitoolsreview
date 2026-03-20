@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { Bot, Sparkles, CheckCircle, RotateCcw, Zap, ChevronRight, Trophy, Medal } from 'lucide-react';
+import { Bot, Sparkles, CheckCircle, RotateCcw, Zap, ChevronRight, Trophy, Medal, GitCompare } from 'lucide-react';
 import { TOOLS } from '../data/tools';
 import { rankTools } from '../lib/recommender';
+
+/** Returns the canonical /confronta slug — same ordering as getStaticPaths */
+function comparisonUrl(idA, idB) {
+  const order = TOOLS.map(t => t.id);
+  const iA = order.indexOf(idA);
+  const iB = order.indexOf(idB);
+  const [first, second] = iA <= iB ? [idA, idB] : [idB, idA];
+  return `/confronta/${first}-vs-${second}`;
+}
 
 const FLOW = [
   {
@@ -269,6 +278,10 @@ function RankedToolCard({ rankedTool, rank, onReset }) {
 
 /* Results container */
 function ResultsCard({ results, onReset }) {
+  const top2Url = results.length >= 2
+    ? comparisonUrl(results[0].tool.id, results[1].tool.id)
+    : null;
+
   return (
     <div style={{ animation: 'chatFadeIn 0.3s ease both' }}>
       {/* Intro bubble */}
@@ -305,6 +318,25 @@ function ResultsCard({ results, onReset }) {
         {results.map((r, i) => (
           <RankedToolCard key={r.tool.id} rankedTool={r} rank={i} onReset={onReset} />
         ))}
+
+        {/* Compare top 2 CTA */}
+        {top2Url && (
+          <a
+            href={top2Url}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+              marginTop: 4, padding: '10px 14px',
+              background: 'rgba(99,102,241,0.15)',
+              border: '1px solid rgba(99,102,241,0.3)',
+              borderRadius: 12, textDecoration: 'none',
+              color: '#a5b4fc', fontWeight: 600, fontSize: 12,
+              transition: 'background 0.15s',
+            }}
+          >
+            <GitCompare size={13} />
+            Indeciso tra #1 e #2? Confronta {results[0].tool.name} vs {results[1].tool.name} →
+          </a>
+        )}
 
         {/* Footer note */}
         <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', textAlign: 'center', margin: '4px 0 0' }}>
