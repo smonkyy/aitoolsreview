@@ -98,48 +98,16 @@ const faqSchema = {
       </nav>
 
       <!-- ── Page header ────────────────────────────────────────────────────── -->
-      <div class="mb-12">
-
-        <!-- Tool names hero -->
-        <div class="flex items-center gap-4 sm:gap-6 mb-6 flex-wrap">
-          <div class="flex-1 min-w-0">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-light-text dark:text-ai-text leading-tight">
-              {toolA.name}
-              <span class="text-light-muted dark:text-ai-muted font-light mx-2 text-2xl sm:text-3xl">vs</span>
-              {toolB.name}
-            </h1>
-          </div>
-        </div>
-
-        <!-- Taglines -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-          <div class="flex items-start gap-3 p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-            <div class="w-8 h-8 rounded-lg bg-ai-purple/15 flex items-center justify-center shrink-0 text-sm">A</div>
-            <div>
-              <p class="font-bold text-light-text dark:text-ai-text text-sm">{toolA.name}</p>
-              <p class="text-light-muted dark:text-ai-muted text-xs leading-relaxed mt-0.5">{toolA.tagline}</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-            <div class="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center shrink-0 text-sm">B</div>
-            <div>
-              <p class="font-bold text-light-text dark:text-ai-text text-sm">{toolB.name}</p>
-              <p class="text-light-muted dark:text-ai-muted text-xs leading-relaxed mt-0.5">{toolB.tagline}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Meta info row -->
-        <div class="flex flex-wrap gap-3 text-xs text-light-muted dark:text-ai-muted">
-          <span class="flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-ai-green animate-pulse"></span>
-            Dati aggiornati {new Date().getFullYear()}
-          </span>
-          <span>·</span>
-          <span>Score calcolato su qualità, prezzo e facilità d'uso</span>
-          <span>·</span>
-          <span>Nessun affiliato influenza il risultato</span>
-        </div>
+      <div class="mb-8">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-light-text dark:text-ai-text leading-tight mb-2">
+          {toolA.name}
+          <span class="text-light-muted dark:text-ai-muted font-light mx-2 text-2xl sm:text-3xl">vs</span>
+          {toolB.name}
+        </h1>
+        <p class="text-xs text-light-muted dark:text-ai-muted flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-ai-green animate-pulse"></span>
+          Dati aggiornati {new Date().getFullYear()} · Score su qualità, prezzo e facilità d'uso · Nessun affiliato
+        </p>
       </div>
 
       <!-- ── Verdict box ────────────────────────────────────────────────────── -->
@@ -207,11 +175,11 @@ const faqSchema = {
 
       </div>
 
-      <!-- ── Feedback ──────────────────────────────────────────────────────── -->
-      <FeedbackWidget slug={comparison.slug} />
-
       <!-- ── Main comparison ────────────────────────────────────────────────── -->
       <ComparisonTable comparison={comparison} />
+
+      <!-- ── Feedback ──────────────────────────────────────────────────────── -->
+      <FeedbackWidget slug={comparison.slug} />
 
       <!-- ── CTA finale ─────────────────────────────────────────────────────── -->
       <div class="mt-16 p-8 rounded-2xl border text-center
@@ -268,8 +236,88 @@ const faqSchema = {
     </main>
 
     <Footer />
+
+    <!-- ── Sticky CTA bar (appears when verdict scrolls out of view) ──────── -->
+    <div
+      id="sticky-bar"
+      class="fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300
+             border-t border-light-border dark:border-ai-border
+             bg-light-bg/95 dark:bg-ai-bg/95 backdrop-blur-sm"
+      aria-hidden="true"
+    >
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
+        {overallWinner ? (
+          <>
+            <p class="text-sm font-semibold text-light-text dark:text-ai-text hidden sm:block">
+              Vincitore consigliato: <span class="text-ai-purple">{overallWinner.name}</span>
+            </p>
+            <div class="flex gap-2 ml-auto">
+              {(() => {
+                const other = overallWinner.id === toolA.id ? toolB : toolA;
+                return (
+                  <>
+                    <a
+                      href={other.link}
+                      class="px-4 py-2 rounded-xl border border-light-border dark:border-ai-border
+                             text-light-muted dark:text-ai-muted text-sm font-medium
+                             hover:border-ai-purple hover:text-ai-purple transition-all duration-150"
+                    >
+                      {other.name} →
+                    </a>
+                    <a
+                      href={overallWinner.link}
+                      class="px-4 py-2 rounded-xl bg-ai-purple hover:bg-ai-purple-dark text-white text-sm font-bold transition-all duration-150"
+                    >
+                      {overallWinner.pricing.hasFreeOption ? `Prova ${overallWinner.name} gratis →` : `Scopri ${overallWinner.name} →`}
+                    </a>
+                  </>
+                );
+              })()}
+            </div>
+          </>
+        ) : (
+          <div class="flex gap-2 ml-auto">
+            <a
+              href={toolA.link}
+              class="px-4 py-2 rounded-xl border border-ai-purple text-ai-purple text-sm font-bold
+                     hover:bg-ai-purple hover:text-white transition-all duration-150"
+            >
+              {toolA.pricing.hasFreeOption ? `Prova ${toolA.name} gratis →` : `${toolA.name} →`}
+            </a>
+            <a
+              href={toolB.link}
+              class="px-4 py-2 rounded-xl border border-light-border dark:border-ai-border
+                     text-light-muted dark:text-ai-muted text-sm font-medium
+                     hover:border-ai-purple hover:text-ai-purple transition-all duration-150"
+            >
+              {toolB.pricing.hasFreeOption ? `Prova ${toolB.name} gratis →` : `${toolB.name} →`}
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+
   </body>
 </html>
+
+<!-- Sticky bar: show after verdict scrolls out of view -->
+<script>
+  const bar     = document.getElementById('sticky-bar')!;
+  const verdict = document.querySelector<HTMLElement>('.mb-10.rounded-2xl');
+
+  if (verdict) {
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        const gone = !entry.isIntersecting;
+        bar.classList.toggle('translate-y-full', !gone);
+        bar.classList.toggle('translate-y-0', gone);
+        bar.setAttribute('aria-hidden', String(!gone));
+      },
+      { threshold: 0 },
+    );
+    obs.observe(verdict);
+  }
+</script>
 
 <!-- Analytics: comparison_view (fires once on load) -->
 <div id="_atr-data" data-slug={comparison.slug} data-a={toolA.id} data-b={toolB.id} style="display:none" aria-hidden="true" />
