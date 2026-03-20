@@ -20,7 +20,9 @@ export type EventType =
   | 'cta_click'        // "Usa l'AI Tool Advisor" or main CTAs clicked
   | 'tool_click'       // link to an external tool clicked
   | 'advisor_complete' // AIToolFinder finished (results shown)
-  | 'comparison_pick'; // user selects a comparison from the picker/grid
+  | 'comparison_pick'  // user selects a comparison from the picker/grid
+  | 'feedback_up'      // user rated comparison helpful (👍)
+  | 'feedback_down';   // user rated comparison not helpful (👎)
 
 export interface TrackPayload {
   event_type: EventType;

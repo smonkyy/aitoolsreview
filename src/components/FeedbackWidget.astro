@@ -1,0 +1,63 @@
+---
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<div class="flex flex-wrap items-center gap-3 py-4 border-y border-light-border dark:border-ai-border my-6">
+  <p class="text-sm text-light-muted dark:text-ai-muted">Questo confronto ti ha aiutato?</p>
+
+  <div id="feedback-buttons" class="flex gap-2">
+    <button
+      data-vote="up"
+      class="feedback-btn px-3 py-1.5 rounded-lg border text-sm font-medium transition-all duration-150
+             border-light-border dark:border-ai-border text-light-muted dark:text-ai-muted
+             hover:border-emerald-500 hover:text-emerald-500"
+      aria-label="Confronto utile"
+    >
+      👍 Sì
+    </button>
+    <button
+      data-vote="down"
+      class="feedback-btn px-3 py-1.5 rounded-lg border text-sm font-medium transition-all duration-150
+             border-light-border dark:border-ai-border text-light-muted dark:text-ai-muted
+             hover:border-red-400 hover:text-red-400"
+      aria-label="Confronto non utile"
+    >
+      👎 No
+    </button>
+  </div>
+
+  <p id="feedback-thanks" class="hidden text-sm text-light-muted dark:text-ai-muted italic">
+    Grazie per il feedback
+  </p>
+</div>
+
+<div id="_fw-slug" data-slug={slug} style="display:none" aria-hidden="true" />
+
+<script>
+  import { track } from '../lib/analytics';
+
+  const slugEl  = document.getElementById('_fw-slug') as HTMLElement;
+  const buttons = document.getElementById('feedback-buttons')!;
+  const thanks  = document.getElementById('feedback-thanks')!;
+  const slug    = slugEl.dataset.slug!;
+  const key     = `feedback:${slug}`;
+
+  // Already voted — hide buttons immediately
+  if (localStorage.getItem(key)) {
+    buttons.classList.add('hidden');
+    thanks.classList.remove('hidden');
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.feedback-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const vote = btn.dataset.vote as 'up' | 'down';
+      track({ event_type: `feedback_${vote}`, slug });
+      localStorage.setItem(key, vote);
+      buttons.classList.add('hidden');
+      thanks.classList.remove('hidden');
+    });
+  });
+</script>
