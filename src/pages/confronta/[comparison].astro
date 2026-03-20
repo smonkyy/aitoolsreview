@@ -1,13 +1,26 @@
 ---
 import { TOOLS } from '../../data/tools';
 import { compareTools } from '../../lib/comparator';
+import { getRelatedComparisons } from '../../lib/comparison-priority';
+import { fetchTrending, buildTrendingMap } from '../../lib/trending';
+import { fetchFeedback, buildFeedbackMap, fetchComparisonViews, buildViewsMap } from '../../lib/feedback';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ComparisonTable from '../../components/ComparisonTable.astro';
 import FeedbackWidget from '../../components/FeedbackWidget.astro';
 
-export function getStaticPaths() {
+// Fetch Supabase signals ONCE for all pages (not per-page) — 3 requests total at build time.
+export async function getStaticPaths() {
+  const [trending, feedback, views] = await Promise.all([
+    fetchTrending(),
+    fetchFeedback(),
+    fetchComparisonViews(),
+  ]);
+  const trendingMap = buildTrendingMap(trending);
+  const feedbackMap = buildFeedbackMap(feedback);
+  const viewsMap    = buildViewsMap(views);
+
   const paths = [];
 
   for (let i = 0; i < TOOLS.length; i++) {
@@ -18,7 +31,7 @@ export function getStaticPaths() {
 
       paths.push({
         params: { comparison: comparison.slug },
-        props:  { comparison },
+        props:  { comparison, trendingMap, viewsMap, feedbackMap },
       });
     }
   }
@@ -26,8 +39,19 @@ export function getStaticPaths() {
   return paths;
 }
 
-const { comparison } = Astro.props;
+const { comparison, trendingMap, viewsMap, feedbackMap } = Astro.props;
 const { toolA, toolB, tldr, overallWinner } = comparison;
+
+// Top related comparisons: best-ranked pairs involving toolA or toolB,
+// excluding the current slug. Uses the same dynamic scoring as the index page.
+const related = getRelatedComparisons(
+  [toolA.id, toolB.id],
+  comparison.slug,
+  6,
+  trendingMap,
+  viewsMap,
+  feedbackMap,
+);
 
 // SEO: descrizione dinamica generata dai dati, non hardcoded
 const metaDesc = `${tldr.chooseA}. ${tldr.chooseB}. Confronto completo con funzionalità, prezzi, casi d'uso e verdetto finale — aggiornato ${new Date().getFullYear()}.`;
@@ -199,39 +223,36 @@ const faqSchema = {
       </div>
 
       <!-- ── Related comparisons ────────────────────────────────────────────── -->
-      {(() => {
-        // Mostra fino a 3 confronti correlati (stesso tool A o B, diverso partner)
-        const related = TOOLS
-          .filter(t => t.id !== toolA.id && t.id !== toolB.id && t.category === toolA.category)
-          .slice(0, 3);
-        return related.length > 0 ? (
-          <div class="mt-14">
-            <h2 class="text-lg font-bold text-light-text dark:text-ai-text mb-4">Confronti correlati</h2>
-            <div class="flex flex-wrap gap-2">
-              {related.map(rel => (
-                <a
-                  href={`/confronta/${toolA.id}-vs-${rel.id}`}
-                  class="px-4 py-2 rounded-full border text-sm font-medium transition-all duration-150 no-underline
-                    text-light-muted border-light-border hover:text-light-text hover:bg-light-bg2
-                    dark:text-ai-muted dark:border-ai-border dark:hover:text-ai-text dark:hover:bg-ai-card"
-                >
-                  {toolA.name} vs {rel.name}
-                </a>
-              ))}
-              {related.map(rel => (
-                <a
-                  href={`/confronta/${toolB.id}-vs-${rel.id}`}
-                  class="px-4 py-2 rounded-full border text-sm font-medium transition-all duration-150 no-underline
-                    text-light-muted border-light-border hover:text-light-text hover:bg-light-bg2
-                    dark:text-ai-muted dark:border-ai-border dark:hover:text-ai-text dark:hover:bg-ai-card"
-                >
-                  {toolB.name} vs {rel.name}
-                </a>
-              ))}
-            </div>
+      {related.length > 0 && (
+        <div class="mt-14">
+          <h2 class="text-lg font-bold text-light-text dark:text-ai-text mb-4">
+            Confronti correlati
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {related.map(({ toolA: rA, toolB: rB, slug: rSlug }) => (
+              <a
+                href={`/confronta/${rSlug}`}
+                class="group flex items-center gap-2 px-4 py-3 rounded-xl border no-underline
+                  transition-all duration-150
+                  bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+                  hover:border-ai-purple/40 hover:shadow-md hover:shadow-ai-purple/5"
+              >
+                <span class="text-sm font-semibold text-light-text dark:text-ai-text
+                  group-hover:text-ai-purple transition-colors truncate">
+                  {rA.name}
+                </span>
+                <span class="text-xs text-light-muted dark:text-ai-muted shrink-0">vs</span>
+                <span class="text-sm font-semibold text-light-text dark:text-ai-text
+                  group-hover:text-ai-purple transition-colors truncate">
+                  {rB.name}
+                </span>
+                <span class="ml-auto text-ai-purple opacity-0 group-hover:opacity-100
+                  transition-opacity text-xs shrink-0">→</span>
+              </a>
+            ))}
           </div>
-        ) : null;
-      })()}
+        </div>
+      )}
 
     </main>
 
