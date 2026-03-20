@@ -28,7 +28,7 @@ function readingTime(body: string | undefined): number {
 
 		<main class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
 			<!-- Page header -->
-			<div class="mb-14">
+			<div class="mb-14 animate-fade-in">
 				<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Tutto testato</p>
 				<h1 class="text-4xl sm:text-5xl font-extrabold text-light-text dark:text-ai-text mb-4">
 					Blog & Recensioni
@@ -40,7 +40,7 @@ function readingTime(body: string | undefined): number {
 
 			<!-- Grid -->
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{posts.map((post) => (
+				{posts.map((post, i) => (
 					<ReviewCard
 						id={post.id}
 						title={post.data.title}
@@ -48,6 +48,7 @@ function readingTime(body: string | undefined): number {
 						pubDate={post.data.pubDate}
 						readTime={readingTime(post.body)}
 						gradient=""
+						index={i % 3}
 					/>
 				))}
 			</div>

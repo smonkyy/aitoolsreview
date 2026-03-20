@@ -304,4 +304,69 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+
+  /* ── Stagger delays (extended) ───────────────────────────── */
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
+
+  /* ── Scroll Reveal ────────────────────────────────────────── */
+  /*
+   * Elements with [data-reveal] start invisible and slide up.
+   * IntersectionObserver (in BaseHead.astro) adds .visible when in viewport.
+   * Optional [data-reveal-delay="N"] (ms) staggers the transition.
+   */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+  }
+
+  [data-reveal].visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger delays for scroll reveal */
+  [data-reveal][data-reveal-delay="100"] { transition-delay: 0.10s; }
+  [data-reveal][data-reveal-delay="150"] { transition-delay: 0.15s; }
+  [data-reveal][data-reveal-delay="200"] { transition-delay: 0.20s; }
+  [data-reveal][data-reveal-delay="250"] { transition-delay: 0.25s; }
+  [data-reveal][data-reveal-delay="300"] { transition-delay: 0.30s; }
+  [data-reveal][data-reveal-delay="400"] { transition-delay: 0.40s; }
+  [data-reveal][data-reveal-delay="500"] { transition-delay: 0.50s; }
+
+  /* ── Header scroll shadow ─────────────────────────────────── */
+  .header-scrolled {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .dark .header-scrolled {
+    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.50), 0 1px 0 rgba(168, 85, 247, 0.08);
+  }
+
+  /* ── Mobile menu slide animation ────────────────────────────  */
+  #mobile-menu {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.28s ease-out;
+    overflow: hidden;
+  }
+
+  #mobile-menu.menu-open {
+    grid-template-rows: 1fr;
+  }
+
+  #mobile-menu > .menu-inner {
+    overflow: hidden;
+  }
+
+  /* ── Card hover ring glow ─────────────────────────────────── */
+  .card-glow-hover {
+    transition: box-shadow 0.25s ease-out, transform 0.25s ease-out, border-color 0.25s ease-out;
+  }
+
+  .card-glow-hover:hover {
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.35), 0 16px 40px rgba(168, 85, 247, 0.12);
+    transform: translateY(-3px) scale(1.005);
+  }
 }

@@ -6,9 +6,15 @@ interface Props {
 	pubDate: Date;
 	readTime: number;
 	gradient: string;
+	/** Optional category label shown on the image badge (default: "Recensione") */
+	category?: string;
+	/** 0-based index for stagger reveal delay (optional) */
+	index?: number;
 }
 
-const { id, title, description, pubDate, readTime, gradient } = Astro.props;
+const { id, title, description, pubDate, readTime, category = 'Recensione', index = 0 } = Astro.props;
+
+const revealDelay = index * 100;
 
 const dateStr = pubDate.toLocaleDateString('it-IT', {
 	day: 'numeric',
@@ -19,28 +25,29 @@ const dateStr = pubDate.toLocaleDateString('it-IT', {
 
 <a
 	href={`/blog/${id}/`}
-	class="group block rounded-2xl border overflow-hidden transition-all duration-300 no-underline
+	class="group block rounded-2xl border overflow-hidden no-underline card-glow-hover
 		bg-light-card border-light-border
-		hover:border-purple-300/60 hover:shadow-xl hover:-translate-y-1
-		dark:bg-ai-card dark:border-ai-border
-		dark:hover:border-ai-purple/40 dark:hover:shadow-[0_16px_48px_rgba(168,85,247,0.15)]"
+		dark:bg-ai-card dark:border-ai-border"
+	data-reveal
+	data-reveal-delay={revealDelay > 0 ? String(revealDelay) : undefined}
 >
-	<!-- Thumbnail: OG image (generated at build time) -->
+	<!-- Thumbnail: OG image generated at build time -->
 	<div class="relative h-44 overflow-hidden bg-ai-bg2">
 		<img
 			src={`/og/${id}.png`}
 			alt={title}
 			width="600"
 			height="315"
-			class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+			class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
 			loading="lazy"
 			decoding="async"
 		/>
-		<!-- Bottom gradient for badge legibility -->
-		<div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+		<!-- Gradient overlay for badge legibility -->
+		<div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
+		<!-- Category badge -->
 		<div class="absolute bottom-3 left-3">
 			<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-ai-purple/90 text-white backdrop-blur-sm border border-ai-purple/30">
-				Recensione
+				{category}
 			</span>
 		</div>
 	</div>
@@ -48,8 +55,8 @@ const dateStr = pubDate.toLocaleDateString('it-IT', {
 	<!-- Content -->
 	<div class="p-5">
 		<div class="flex items-center gap-2 text-xs text-light-faint dark:text-ai-faint mb-2.5">
-			<span>{dateStr}</span>
-			<span class="w-1 h-1 rounded-full bg-current opacity-50 shrink-0"></span>
+			<time datetime={pubDate.toISOString()}>{dateStr}</time>
+			<span class="w-1 h-1 rounded-full bg-current opacity-40 shrink-0" aria-hidden="true"></span>
 			<span>{readTime} min di lettura</span>
 		</div>
 

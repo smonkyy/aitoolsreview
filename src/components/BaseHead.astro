@@ -28,6 +28,36 @@ const ogImageUrl = ogImage ? new URL(ogImage, Astro.site) : new URL(image.src, A
 	})();
 </script>
 
+<!-- Scroll reveal — IntersectionObserver for [data-reveal] elements -->
+<script is:inline>
+	(function () {
+		function initReveal() {
+			const els = document.querySelectorAll('[data-reveal]');
+			if (!els.length) return;
+
+			const observer = new IntersectionObserver(
+				function (entries) {
+					entries.forEach(function (entry) {
+						if (entry.isIntersecting) {
+							entry.target.classList.add('visible');
+							observer.unobserve(entry.target);
+						}
+					});
+				},
+				{ threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+			);
+
+			els.forEach(function (el) { observer.observe(el); });
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initReveal);
+		} else {
+			initReveal();
+		}
+	})();
+</script>
+
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
