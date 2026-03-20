@@ -1,14 +1,19 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import type { AITool } from '../data/tools';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { slug?: string };
+type Props = CollectionEntry<'blog'>['data'] & {
+  slug?: string;
+  comparisonPair?: [AITool, AITool] | null;
+  comparisonSlug?: string | null;
+};
 
-const { title, description, pubDate, updatedDate, heroImage, slug } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, slug, comparisonPair, comparisonSlug } = Astro.props;
 const ogImage = slug ? `/og/${slug}.png` : undefined;
 ---
 
@@ -84,6 +89,32 @@ const ogImage = slug ? `/og/${slug}.png` : undefined;
 				<div class="prose-ai">
 					<slot />
 				</div>
+
+				<!-- Inline comparison CTA — rendered only when 2+ tools are mentioned -->
+				{comparisonPair && comparisonSlug && (
+					<div class="mt-12 p-6 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center gap-5
+						bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border">
+						<div class="flex-1 min-w-0">
+							<p class="text-xs font-semibold text-ai-purple uppercase tracking-wide mb-1">
+								Confronto diretto
+							</p>
+							<p class="font-bold text-light-text dark:text-ai-text text-base leading-snug">
+								{comparisonPair[0].name} vs {comparisonPair[1].name}
+							</p>
+							<p class="text-sm text-light-muted dark:text-ai-muted mt-1 leading-relaxed">
+								Scoring completo su use case, prezzi e funzionalità. Verdetto finale senza affiliazioni.
+							</p>
+						</div>
+						<a
+							href={`/confronta/${comparisonSlug}`}
+							class="shrink-0 inline-flex items-center gap-2 px-5 py-2.5
+								bg-ai-purple hover:bg-ai-purple-dark text-white font-bold rounded-xl
+								transition-all duration-200 text-sm no-underline whitespace-nowrap"
+						>
+							Confronta ora →
+						</a>
+					</div>
+				)}
 
 				<!-- Footer CTA -->
 				<div class="mt-16 p-6 rounded-2xl border text-center
