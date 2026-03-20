@@ -299,16 +299,27 @@ function buildQuickVerdict(
   overallWinner: AITool | null,
   verdicts: UseCaseVerdict[],
 ): QuickVerdict {
-  // Pick top 2 use-case verdicts (already sorted by margin descending)
-  const bestForUseCases = verdicts
-    .slice(0, 2)
+  // Prefer verdicts with distinct winners — two badges for the same tool are redundant
+  const withDistinctWinners: UseCaseVerdict[] = [];
+  const seenWinners = new Set<string>();
+  for (const v of verdicts) {
+    if (withDistinctWinners.length >= 2) break;
+    if (!seenWinners.has(v.winner.id)) {
+      withDistinctWinners.push(v);
+      seenWinners.add(v.winner.id);
+    }
+  }
+  // Fall back to top 2 if all verdicts have the same winner (one tool dominates)
+  const bestForUseCases = (withDistinctWinners.length >= 1 ? withDistinctWinners : verdicts.slice(0, 2))
     .map(v => ({ label: v.useCase, tool: v.winner }));
 
-  return {
-    bestOverall: overallWinner,
-    bestForUseCases,
-    bestValue: toolA.ratings.valueForMoney >= toolB.ratings.valueForMoney ? toolA : toolB,
-  };
+  // bestValue only meaningful if the gap is real (>= 0.3); otherwise show overallWinner
+  const valueDiff = toolA.ratings.valueForMoney - toolB.ratings.valueForMoney;
+  const bestValue = Math.abs(valueDiff) >= 0.3
+    ? (valueDiff > 0 ? toolA : toolB)
+    : (overallWinner ?? toolA);
+
+  return { bestOverall: overallWinner, bestForUseCases, bestValue };
 }
 
 // ─── Who should use ────────────────────────────────────────────────────────────
@@ -324,69 +335,135 @@ const CATEGORY_LABEL: Record<string, string> = {
 
 function buildWhoShouldUse(tool: AITool, other: AITool): string[] {
   const lines: string[] = [];
+  const qualDiff  = tool.ratings.outputQuality - other.ratings.outputQuality;
+  const easeDiff  = tool.ratings.easeOfUse     - other.ratings.easeOfUse;
+  const isOpenSrc = tool.pricing.priceRange === 'free';
+  const hasFreeAdvantage = tool.pricing.hasFreeOption && !other.pricing.hasFreeOption;
 
-  // Line 1: primary user profile — specific, not generic
-  if (tool.targetUsers.includes('beginner') && tool.ratings.easeOfUse >= 4.5)
-    lines.push(`Chi inizia con l'AI e vuole risultati subito, senza curva di apprendimento`);
+  // Line 1: role + what THIS tool does better than the competitor in that role
+  if (isOpenSrc && tool.targetUsers.includes('developer'))
+    lines.push(`Developer che vogliono girare il modello in locale: zero rate limit, zero costi, controllo totale`);
+  else if (tool.targetUsers.includes('developer') && qualDiff >= 0.3)
+    lines.push(`Developer che integrano AI nel codice e non accettano output di qualità inferiore (${tool.ratings.outputQuality}/5 vs ${other.ratings.outputQuality}/5)`);
   else if (tool.targetUsers.includes('developer'))
-    lines.push(`Developer e team tecnici che integrano AI nel proprio workflow`);
-  else if (tool.targetUsers.includes('business') && !tool.targetUsers.includes('beginner'))
-    lines.push(`Team aziendali che lavorano con ${CATEGORY_LABEL[tool.category]} su scala`);
+    lines.push(`Developer e team tecnici — ${tool.name} copre ${CATEGORY_LABEL[tool.category]} meglio di ${other.name} per casi d'uso tecnici avanzati`);
+  else if (tool.targetUsers.includes('beginner') && easeDiff >= 0.5)
+    lines.push(`Chi usa un AI tool per la prima volta: ${tool.name} è significativamente più semplice (${tool.ratings.easeOfUse}/5 vs ${other.ratings.easeOfUse}/5 su facilità d'uso)`);
+  else if (tool.targetUsers.includes('beginner'))
+    lines.push(`Principianti e utenti non tecnici che vogliono risultati senza configurazione`);
+  else if (tool.targetUsers.includes('business') && tool.targetUsers.includes('creator'))
+    lines.push(`Team di marketing e creator che producono ${CATEGORY_LABEL[tool.category]} su volumi elevati`);
+  else if (tool.targetUsers.includes('business'))
+    lines.push(`Aziende che integrano ${CATEGORY_LABEL[tool.category]} in processi ripetibili e scalabili`);
   else if (tool.targetUsers.includes('creator'))
-    lines.push(`Creator e freelance che producono contenuti in ${CATEGORY_LABEL[tool.category]}`);
+    lines.push(`Creator indipendenti che vivono di ${CATEGORY_LABEL[tool.category]} e non possono permettersi output mediocri`);
   else if (tool.targetUsers.includes('advanced'))
-    lines.push(`Utenti avanzati che vogliono il massimo controllo e flessibilità`);
+    lines.push(`Utenti esperti che vogliono accesso a parametri avanzati che ${other.name} non espone`);
   else
-    lines.push(`Chi lavora regolarmente con ${CATEGORY_LABEL[tool.category]}`);
+    lines.push(`Chi lavora su ${CATEGORY_LABEL[tool.category]} con continuità e ha bisogno di uno strumento affidabile`);
 
-  // Line 2: pricing or quality advantage over the other tool
-  if (tool.pricing.hasFreeOption && !other.pricing.hasFreeOption)
-    lines.push(`Chi vuole testare prima di pagare — il piano gratuito è realmente funzionale`);
-  else if (tool.pricing.priceRange === 'free')
-    lines.push(`Chi vuole zero costi permanenti (open source, auto-ospitabile)`);
+  // Line 2: the single strongest quantified advantage over the competitor
+  if (hasFreeAdvantage)
+    lines.push(`Chi vuole testare prima di pagare: ${tool.name} ha un piano gratuito, ${other.name} parte da $${other.pricing.startingPriceUsd}/mese`);
+  else if (isOpenSrc)
+    lines.push(`Chi ha zero budget: completamente gratuito, open source, auto-ospitabile su GPU propria`);
+  else if (qualDiff >= 0.4)
+    lines.push(`Chi prioritizza la qualità dell'output: ${tool.ratings.outputQuality}/5 vs ${other.ratings.outputQuality}/5 — differenza netta, non marginale`);
+  else if (easeDiff >= 0.6)
+    lines.push(`Chi ha poco tempo: ${tool.ratings.easeOfUse}/5 vs ${other.ratings.easeOfUse}/5 su facilità d'uso — curva di apprendimento incomparabile`);
   else if (tool.ratings.valueForMoney - other.ratings.valueForMoney >= 0.4)
-    lines.push(`Chi ha un budget limitato e cerca il miglior rapporto qualità/prezzo`);
-  else if (tool.ratings.outputQuality - other.ratings.outputQuality >= 0.4)
-    lines.push(`Chi non accetta compromessi sulla qualità dell'output`);
+    lines.push(`Chi ottimizza il budget: ${tool.ratings.valueForMoney}/5 vs ${other.ratings.valueForMoney}/5 su valore/prezzo`);
 
-  // Line 3: taken directly from the tool's first concrete strength
-  if (tool.strengths[0])
-    lines.push(tool.strengths[0]);
+  // Line 3: concrete scenario — derived from category + user profile combination,
+  // NOT a raw strengths bullet (which describes the tool, not the user's situation)
+  if (tool.category === 'coding' || tool.secondaryCategories?.includes('coding'))
+    lines.push(`Completamento di codice, code review e debug quotidiano in un editor reale`);
+  else if (tool.category === 'immagini' && !tool.targetUsers.includes('beginner'))
+    lines.push(`Campagne visive, copertine, concept art dove il rework su Photoshop deve essere zero`);
+  else if (tool.category === 'immagini' && tool.targetUsers.includes('beginner'))
+    lines.push(`Post social e materiali marketing che servono in pochi minuti, non in pochi giorni`);
+  else if (tool.category === 'scrittura' && tool.targetUsers.includes('business'))
+    lines.push(`Copy per landing page, email e campagne: output direttamente pubblicabile, senza riscrittura`);
+  else if (tool.category === 'scrittura')
+    lines.push(`Blog, newsletter, post: bozza pubblicabile al primo tentativo con revisione minima`);
+  else if (tool.category === 'produttivita')
+    lines.push(`Automatizzare task ripetitivi — ricerca, report, sintesi — senza scrivere una riga di codice`);
+  else if (tool.category === 'video')
+    lines.push(`Produzione video senza budget per riprese: dall'idea al clip pronto in meno di 10 minuti`);
+  else if (tool.category === 'audio')
+    lines.push(`Voiceover, doppiaggio e podcast senza studio: qualità broadcast, costo quasi zero`);
+  else
+    lines.push(`Scenari dove ${other.name} non è sufficiente e serve uno strumento con più potenza o flessibilità`);
 
   return lines.slice(0, 3);
 }
 
 // ─── Final recommendation ──────────────────────────────────────────────────────
 
+/**
+ * Returns a specific CTA clause for a tool vs its competitor.
+ * Computed from actual rating diffs — no string parsing of other generated text.
+ */
+function buildCtaClause(tool: AITool, other: AITool): string {
+  const qualDiff  = tool.ratings.outputQuality - other.ratings.outputQuality;
+  const easeDiff  = tool.ratings.easeOfUse     - other.ratings.easeOfUse;
+  const valDiff   = tool.ratings.valueForMoney - other.ratings.valueForMoney;
+
+  if (qualDiff >= 0.3)
+    return `la qualità dell'output è prioritaria (${tool.ratings.outputQuality}/5 vs ${other.ratings.outputQuality}/5)`;
+  if (easeDiff >= 0.5)
+    return `vuoi lo strumento più immediato da usare (${tool.ratings.easeOfUse}/5 su facilità d'uso)`;
+  if (tool.pricing.hasFreeOption && !other.pricing.hasFreeOption)
+    return `vuoi testare gratis prima di spendere — ${other.name} non ha piano gratuito`;
+  if (tool.pricing.priceRange === 'free')
+    return `hai una GPU e vuoi zero costi permanenti`;
+  if (valDiff >= 0.4)
+    return `stai ottimizzando il budget (${tool.ratings.valueForMoney}/5 vs ${other.ratings.valueForMoney}/5 su valore/prezzo)`;
+  // Fallback: the tool's specific primary strength as a concrete condition
+  return `hai bisogno di ${tool.strengths[0].toLowerCase().replace(/^[a-z]/, c => c)}`;
+}
+
 function buildFinalRecommendation(
   toolA: AITool,
   toolB: AITool,
   overallWinner: AITool | null,
-  tldr: { chooseA: string; chooseB: string },
+  verdicts: UseCaseVerdict[],
 ): FinalRecommendation {
-  // Strip the imperative opener to get a subordinate clause for CTA lines
-  const clauseA = tldr.chooseA.replace(`Scegli ${toolA.name} se `, '').replace(`Scegli ${toolA.name} `, '');
-  const clauseB = tldr.chooseB.replace(`Scegli ${toolB.name} se `, '').replace(`Scegli ${toolB.name} `, '');
-
-  const ctaA = `Usa ${toolA.name} se ${clauseA}`;
-  const ctaB = `Prova ${toolB.name} se ${clauseB}`;
+  const ctaA = `Usa ${toolA.name} se ${buildCtaClause(toolA, toolB)}`;
+  const ctaB = `Prova ${toolB.name} se ${buildCtaClause(toolB, toolA)}`;
 
   if (overallWinner) {
-    const loser  = overallWinner.id === toolA.id ? toolB : toolA;
-    const clause = loser.id === toolA.id ? clauseA : clauseB;
-    return {
-      summary: `${overallWinner.name} vince su più scenari concreti — è la scelta sicura per la maggior parte degli utenti. ${loser.name} rimane però la risposta giusta se ${clause}.`,
-      ctaA,
-      ctaB,
-    };
+    const loser     = overallWinner.id === toolA.id ? toolB : toolA;
+    const winnerUCs = verdicts.filter(v => v.winner.id === overallWinner.id).map(v => v.useCase);
+    const loserUCs  = verdicts.filter(v => v.winner.id === loser.id).map(v => v.useCase);
+
+    const winnerStr = winnerUCs.length > 0
+      ? `${overallWinner.name} vince su: ${winnerUCs.join(', ')}.`
+      : `${overallWinner.name} ottiene punteggi superiori su più dimensioni.`;
+
+    const exceptionStr = loserUCs.length > 0
+      ? `${loser.name} è la scelta corretta se: ${loserUCs.join(' oppure ')}.`
+      : `${loser.name} rimane valido se ${buildCtaClause(loser, overallWinner)}.`;
+
+    return { summary: `${winnerStr} ${exceptionStr}`, ctaA, ctaB };
   }
 
-  // Tie: no clear winner
+  // Tie: name what each tool specifically wins — not "they're different"
+  const aWins = verdicts.filter(v => v.winner.id === toolA.id).map(v => v.useCase);
+  const bWins = verdicts.filter(v => v.winner.id === toolB.id).map(v => v.useCase);
+
+  const aSummary = aWins.length
+    ? `${toolA.name} vince su: ${aWins.join(', ')}`
+    : `${toolA.name} non ha un vantaggio netto in questo confronto`;
+  const bSummary = bWins.length
+    ? `${toolB.name} vince su: ${bWins.join(', ')}`
+    : `${toolB.name} non ha un vantaggio netto in questo confronto`;
+
   return {
-    summary: `Nessun vincitore assoluto: i due tool eccellono in contesti diversi. Identifica il profilo che ti rappresenta tra i verdetti sopra e scegli di conseguenza.`,
+    summary: `${aSummary}. ${bSummary}. Nessun vincitore assoluto: il dato discriminante è il tuo caso d'uso specifico.`,
     ctaA,
     ctaB,
-    ctaC: `Non sei sicuro? Usa l'AI Tool Advisor: 3 domande, 1 risposta precisa →`,
+    ctaC: `Non riesci a decidere? Usa l'AI Tool Advisor: 3 domande, 1 risposta precisa →`,
   };
 }
 
@@ -420,7 +497,7 @@ export function compareTools(toolA: AITool, toolB: AITool): ToolComparison {
     quickVerdict: buildQuickVerdict(toolA, toolB, overallWinner, verdicts),
     overallWinner,
     tldr,
-    finalRecommendation: buildFinalRecommendation(toolA, toolB, overallWinner, tldr),
+    finalRecommendation: buildFinalRecommendation(toolA, toolB, overallWinner, verdicts),
     ratingDiff: {
       overall:       toolA.ratings.overall       - toolB.ratings.overall,
       easeOfUse:     toolA.ratings.easeOfUse     - toolB.ratings.easeOfUse,
