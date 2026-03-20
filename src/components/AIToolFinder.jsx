@@ -360,6 +360,7 @@ export default function AIToolFinder() {
   const [isTyping, setIsTyping] = useState(false);
   const [done, setDone] = useState(false);
   const bottomRef = useRef(null);
+  const chatScrollRef = useRef(null);
 
   const addAIMessage = (text, options = null) => {
     setMessages((prev) => [...prev, { id: Date.now() + Math.random(), type: 'ai', text, options }]);
@@ -371,9 +372,13 @@ export default function AIToolFinder() {
     return () => clearTimeout(t);
   }, []);
 
-  // Auto-scroll
+  // Auto-scroll inside chat container only
   useEffect(() => {
-    const t = setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+    const t = setTimeout(() => {
+      if (chatScrollRef.current) {
+        chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+      }
+    }, 50);
     return () => clearTimeout(t);
   }, [messages, isTyping]);
 
@@ -564,6 +569,7 @@ export default function AIToolFinder() {
 
         {/* ── Chat area ── */}
         <div
+          ref={chatScrollRef}
           className="chat-scroll bg-slate-50 dark:bg-slate-950"
           style={{
             display: 'flex',
