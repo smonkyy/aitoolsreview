@@ -68,29 +68,35 @@ const categories = [
 				style="background-image: linear-gradient(var(--color-ai-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-ai-border) 1px, transparent 1px); background-size: 40px 40px;"
 			></div>
 
-			<!-- Glow orbs -->
+			<!-- Central glow orb -->
 			<div
 				class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full pointer-events-none"
-				style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.10) 0%, transparent 65%);"
+				style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.12) 0%, transparent 65%);"
 			></div>
+			<!-- Top-right accent orb -->
 			<div
 				class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
-				style="background: radial-gradient(ellipse at top right, rgba(99,102,241,0.08) 0%, transparent 70%);"
+				style="background: radial-gradient(ellipse at top right, rgba(99,102,241,0.09) 0%, transparent 70%);"
+			></div>
+			<!-- Bottom-left accent -->
+			<div
+				class="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full pointer-events-none"
+				style="background: radial-gradient(ellipse at bottom left, rgba(16,185,129,0.06) 0%, transparent 70%);"
 			></div>
 
 			<div class="relative z-10 text-center max-w-4xl mx-auto">
-				<!-- Badge — fade in first -->
+				<!-- Badge -->
 				<div
 					class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-8
 						bg-purple-50 border-purple-200 text-purple-700
 						dark:bg-ai-purple/10 dark:border-ai-purple/30 dark:text-ai-purple
 						text-sm font-medium animate-fade-in"
 				>
-					<span class="w-2 h-2 rounded-full bg-ai-green animate-pulse shrink-0"></span>
+					<span class="w-2 h-2 rounded-full bg-ai-green animate-pulse shrink-0" aria-hidden="true"></span>
 					Recensioni aggiornate ogni settimana
 				</div>
 
-				<!-- H1 — slight delay -->
+				<!-- H1 -->
 				<h1
 					class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6
 						text-light-text dark:text-ai-text
@@ -151,7 +157,7 @@ const categories = [
 		<!-- ── CATEGORIES ────────────────────────────────────────── -->
 		<section id="categorie" class="py-24 px-4">
 			<div class="max-w-6xl mx-auto">
-				<div class="text-center mb-14">
+				<div class="text-center mb-14" data-reveal>
 					<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Esplora per categoria</p>
 					<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-3">
 						Le categorie principali
@@ -162,7 +168,7 @@ const categories = [
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-					{categories.map((cat) => (
+					{categories.map((cat, i) => (
 						<CategoryCard
 							icon={cat.icon}
 							title={cat.title}
@@ -170,6 +176,7 @@ const categories = [
 							tools={cat.tools}
 							href={cat.href}
 							accent={cat.accent}
+							index={i}
 						/>
 					))}
 				</div>
@@ -179,7 +186,7 @@ const categories = [
 		<!-- ── LATEST REVIEWS ────────────────────────────────────── -->
 		<section class="py-24 px-4 bg-light-bg2 dark:bg-ai-bg2">
 			<div class="max-w-6xl mx-auto">
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-14">
+				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-14" data-reveal>
 					<div>
 						<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Sempre freschi</p>
 						<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-2">
@@ -201,7 +208,7 @@ const categories = [
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-					{recentPosts.map((post) => (
+					{recentPosts.map((post, i) => (
 						<ReviewCard
 							id={post.id}
 							title={post.data.title}
@@ -209,6 +216,7 @@ const categories = [
 							pubDate={post.data.pubDate}
 							readTime={readingTime(post.body)}
 							gradient=""
+							index={i}
 						/>
 					))}
 				</div>
@@ -218,7 +226,7 @@ const categories = [
 		<!-- ── TRUST / PERSONAL STORY ────────────────────────────── -->
 		<section class="py-24 px-4">
 			<div class="max-w-3xl mx-auto">
-				<div class="text-center mb-10">
+				<div class="text-center mb-10" data-reveal>
 					<div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6
 						bg-light-bg2 dark:bg-ai-card border border-light-border dark:border-ai-border">
 						🤝
@@ -228,7 +236,7 @@ const categories = [
 					</h2>
 				</div>
 
-				<div class="text-left space-y-4 text-light-muted dark:text-ai-muted text-lg leading-relaxed mb-12">
+				<div class="text-left space-y-4 text-light-muted dark:text-ai-muted text-lg leading-relaxed mb-12" data-reveal data-reveal-delay="100">
 					<p>
 						Ci sono passato anch'io. Ore su YouTube a guardare review in inglese di tool che poi non funzionavano
 						come promesso, o peggio — erano già superati. Ho provato Jasper quando costava un occhio, ho
@@ -243,14 +251,17 @@ const categories = [
 				<!-- Promise badges -->
 				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 					{[
-						{ icon: '🔍', label: 'Testato davvero', desc: 'Ogni tool usato per almeno 2 settimane' },
-						{ icon: '🇮🇹', label: 'In italiano', desc: 'Nessuna traduzione automatica' },
-						{ icon: '💬', label: 'Senza filtri', desc: 'Se fa schifo, lo diciamo' },
+						{ icon: '🔍', label: 'Testato davvero', desc: 'Ogni tool usato per almeno 2 settimane', delay: '0' },
+						{ icon: '🇮🇹', label: 'In italiano', desc: 'Nessuna traduzione automatica', delay: '150' },
+						{ icon: '💬', label: 'Senza filtri', desc: 'Se fa schifo, lo diciamo', delay: '300' },
 					].map((badge) => (
 						<div
 							class="p-5 rounded-xl border text-center
 								bg-light-card border-light-border
-								dark:bg-ai-card dark:border-ai-border"
+								dark:bg-ai-card dark:border-ai-border
+								hover:border-ai-purple/30 transition-colors duration-200"
+							data-reveal
+							data-reveal-delay={badge.delay}
 						>
 							<div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mx-auto mb-3
 								bg-light-bg2 dark:bg-ai-bg border border-light-border dark:border-ai-border">
@@ -270,11 +281,12 @@ const categories = [
 				class="max-w-3xl mx-auto text-center rounded-2xl border p-10 relative overflow-hidden
 					bg-gradient-to-br from-ai-purple/10 via-transparent to-indigo-500/5
 					border-ai-purple/20"
+				data-reveal
 			>
 				<!-- Decorative glow -->
 				<div
 					class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 pointer-events-none"
-					style="background: radial-gradient(ellipse at top, rgba(168,85,247,0.15) 0%, transparent 70%);"
+					style="background: radial-gradient(ellipse at top, rgba(168,85,247,0.18) 0%, transparent 70%);"
 				></div>
 
 				<div class="relative z-10">

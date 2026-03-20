@@ -6,18 +6,23 @@ interface Props {
 	tools: string[];
 	href: string;
 	accent: string;
+	/** 0-based index for stagger reveal delay (optional) */
+	index?: number;
 }
 
-const { icon, title, description, tools, href, accent } = Astro.props;
+const { icon, title, description, tools, href, accent, index = 0 } = Astro.props;
+
+// Stagger delay in ms: 0 → 0ms, 1 → 100ms, 2 → 200ms, 3 → 300ms
+const revealDelay = index * 100;
 ---
 
 <a
 	href={href}
-	class="group relative p-6 rounded-2xl border overflow-hidden transition-all duration-300 no-underline block
+	class="group relative p-6 rounded-2xl border overflow-hidden transition-all duration-300 no-underline block card-glow-hover
 		bg-light-card border-light-border
-		hover:border-purple-300/60 hover:shadow-lg hover:-translate-y-1
-		dark:bg-ai-card dark:border-ai-border
-		dark:hover:border-ai-purple/40 dark:hover:shadow-[0_16px_48px_rgba(168,85,247,0.15)]"
+		dark:bg-ai-card dark:border-ai-border"
+	data-reveal
+	data-reveal-delay={revealDelay > 0 ? String(revealDelay) : undefined}
 >
 	<!-- Gradient wash on hover -->
 	<div
@@ -26,21 +31,32 @@ const { icon, title, description, tools, href, accent } = Astro.props;
 
 	<!-- Shimmer top line -->
 	<div
-		class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+		class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ai-purple/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
 	></div>
+
+	<!-- Index badge (top-right, subtle) -->
+	<span
+		class="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+			bg-light-bg2 border border-light-border text-light-faint
+			dark:bg-ai-bg dark:border-ai-border dark:text-ai-faint
+			group-hover:border-ai-purple/40 group-hover:text-ai-purple transition-colors duration-200"
+		aria-hidden="true"
+	>
+		{index + 1}
+	</span>
 
 	<div class="relative z-10 flex flex-col h-full">
 		<!-- Icon container -->
 		<div
 			class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 text-3xl
 				bg-light-bg2 dark:bg-ai-bg border border-light-border dark:border-ai-border
-				group-hover:scale-110 group-hover:border-ai-purple/30 transition-all duration-300"
+				group-hover:scale-110 group-hover:border-ai-purple/40 group-hover:shadow-[0_0_16px_rgba(168,85,247,0.20)] transition-all duration-300"
 		>
 			{icon}
 		</div>
 
 		<h3
-			class="text-lg font-bold mb-2
+			class="text-lg font-bold mb-2 pr-6
 				text-light-text dark:text-ai-text
 				group-hover:text-ai-purple transition-colors duration-200"
 		>
@@ -57,7 +73,8 @@ const { icon, title, description, tools, href, accent } = Astro.props;
 				<span
 					class="px-2.5 py-0.5 text-xs rounded-full font-medium
 						bg-light-bg border border-light-border text-light-faint
-						dark:bg-ai-bg dark:border-ai-border dark:text-ai-faint"
+						dark:bg-ai-bg dark:border-ai-border dark:text-ai-faint
+						group-hover:border-ai-purple/25 transition-colors duration-200"
 				>
 					{tool}
 				</span>
