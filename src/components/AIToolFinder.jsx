@@ -194,7 +194,7 @@ function AIBubble({ text, options, stepIndex, onSelect, disabled }) {
 
 function UserBubble({ text }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'flex-end' }} style={{ animation: 'chatFadeIn 0.3s ease both' }}>
+    <div style={{ display: 'flex', justifyContent: 'flex-end', animation: 'chatFadeIn 0.3s ease both' }}>
       <div
         style={{
           background: 'linear-gradient(135deg, #2563eb, #4f46e5)',
