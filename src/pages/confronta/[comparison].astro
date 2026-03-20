@@ -141,6 +141,71 @@ const faqSchema = {
         </div>
       </div>
 
+      <!-- ── Verdict box ────────────────────────────────────────────────────── -->
+      <div class="mb-10 rounded-2xl border overflow-hidden
+        bg-gradient-to-br from-ai-purple/10 to-transparent border-ai-purple/25">
+
+        {overallWinner ? (
+          <div class="p-6 sm:p-8">
+            <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-2">Vincitore consigliato</p>
+            <p class="text-2xl font-extrabold text-light-text dark:text-ai-text mb-1">{overallWinner.name}</p>
+            <p class="text-light-muted dark:text-ai-muted text-sm mb-5">{overallWinner.tagline}</p>
+            <div class="flex flex-wrap gap-3">
+              <a
+                href={overallWinner.link}
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-ai-purple hover:bg-ai-purple-dark text-white font-bold rounded-xl transition-all duration-200 text-sm"
+              >
+                {overallWinner.pricing.hasFreeOption ? `Prova ${overallWinner.name} gratis →` : `Scopri ${overallWinner.name} →`}
+              </a>
+              {(() => {
+                const other = overallWinner.id === toolA.id ? toolB : toolA;
+                return (
+                  <a
+                    href={other.link}
+                    class="inline-flex items-center gap-2 px-5 py-2.5 border border-light-border dark:border-ai-border text-light-muted dark:text-ai-muted hover:text-light-text dark:hover:text-ai-text hover:border-ai-purple font-medium rounded-xl transition-all duration-200 text-sm"
+                  >
+                    Esplora {other.name}
+                  </a>
+                );
+              })()}
+            </div>
+          </div>
+        ) : (
+          <div class="p-6 sm:p-8">
+            <p class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">Pari merito</p>
+            <p class="text-lg font-bold text-light-text dark:text-ai-text mb-1">Entrambi ottimi — dipende dal tuo caso d'uso</p>
+            <p class="text-light-muted dark:text-ai-muted text-sm mb-5">Scorri i verdetti qui sotto per trovare quello giusto per te</p>
+            <div class="flex flex-wrap gap-3">
+              <a
+                href={toolA.link}
+                class="inline-flex items-center gap-2 px-5 py-2.5 border border-ai-purple text-ai-purple hover:bg-ai-purple hover:text-white font-bold rounded-xl transition-all duration-200 text-sm"
+              >
+                {toolA.pricing.hasFreeOption ? `Prova ${toolA.name} gratis →` : `Scopri ${toolA.name} →`}
+              </a>
+              <a
+                href={toolB.link}
+                class="inline-flex items-center gap-2 px-5 py-2.5 border border-light-border dark:border-ai-border text-light-muted dark:text-ai-muted hover:text-light-text dark:hover:text-ai-text hover:border-ai-purple font-medium rounded-xl transition-all duration-200 text-sm"
+              >
+                {toolB.pricing.hasFreeOption ? `Prova ${toolB.name} gratis` : `Scopri ${toolB.name}`}
+              </a>
+            </div>
+          </div>
+        )}
+
+        <!-- TL;DR strip -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 border-t border-ai-purple/20">
+          <div class="p-4 sm:border-r border-ai-purple/20">
+            <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-1">Scegli {toolA.name} se...</p>
+            <p class="text-sm text-light-text dark:text-ai-text leading-relaxed">{tldr.chooseA.replace(`Scegli ${toolA.name} se `, '')}</p>
+          </div>
+          <div class="p-4 border-t sm:border-t-0 border-ai-purple/20">
+            <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-1">Scegli {toolB.name} se...</p>
+            <p class="text-sm text-light-text dark:text-ai-text leading-relaxed">{tldr.chooseB.replace(`Scegli ${toolB.name} se `, '')}</p>
+          </div>
+        </div>
+
+      </div>
+
       <!-- ── Main comparison ────────────────────────────────────────────────── -->
       <ComparisonTable comparison={comparison} />
 
@@ -148,7 +213,7 @@ const faqSchema = {
       <div class="mt-16 p-8 rounded-2xl border text-center
         bg-gradient-to-br from-ai-purple/10 to-transparent border-ai-purple/20">
         <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-3">
-          Hai ancora dubbi su quale scegliere?
+          Non riesci a scegliere? Descrivimi il tuo caso d'uso
         </h2>
         <p class="text-light-muted dark:text-ai-muted mb-6 max-w-md mx-auto text-sm leading-relaxed">
           L'AI Tool Advisor ti fa 3 domande e ti trova il tool più adatto al tuo profilo specifico.
