@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import AIToolFinder from '../components/AIToolFinder.jsx';
 
 const allPosts = await getCollection('blog');
 const recentPosts = allPosts
@@ -154,7 +155,23 @@ const categories = [
 			</div>
 		</section>
 
-		<!-- ── CATEGORIES ────────────────────────────────────────── -->
+		<!-- ── AI TOOL FINDER ───────────────────────────────────── -->
+	<section class="py-24 px-4 bg-light-bg2 dark:bg-ai-bg2">
+		<div class="max-w-6xl mx-auto">
+			<div class="text-center mb-12" data-reveal>
+				<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Trova il tuo tool in 30 secondi</p>
+				<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-3">
+					AI Tool Advisor
+				</h2>
+				<p class="text-light-muted dark:text-ai-muted text-lg max-w-md mx-auto">
+					Rispondi a 3 domande. Ti suggerisco lo strumento giusto per te, senza perdite di tempo.
+				</p>
+			</div>
+			<AIToolFinder client:visible />
+		</div>
+	</section>
+
+	<!-- ── CATEGORIES ────────────────────────────────────────── -->
 		<section id="categorie" class="py-24 px-4">
 			<div class="max-w-6xl mx-auto">
 				<div class="text-center mb-14" data-reveal>
