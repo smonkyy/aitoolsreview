@@ -1,6 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import { TOOLS } from '../../data/tools';
+import { topMentionedPair } from '../../lib/mention-detector';
+import { canonicalSlug } from '../../lib/comparison-priority';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -12,8 +15,12 @@ export async function getStaticPaths() {
 
 const post = Astro.props;
 const { Content } = await render(post);
+
+// Detect which tools are mentioned in the post body, pick top 2
+const pair = topMentionedPair(post.body ?? '', TOOLS);
+const comparisonSlug = pair ? canonicalSlug(pair[0].id, pair[1].id) : null;
 ---
 
-<BlogPost {...post.data} slug={post.id}>
+<BlogPost {...post.data} slug={post.id} comparisonPair={pair} comparisonSlug={comparisonSlug}>
   <Content />
 </BlogPost>
