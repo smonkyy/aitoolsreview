@@ -50,7 +50,37 @@ const RATING_LABELS = [
 
 <div class="space-y-12">
 
+  <!-- ── Use case verdicts ──────────────────────────────────────────────────── -->
+  <!-- First: most actionable — direct answers to "which tool for my task?" -->
+  {useCaseVerdicts.length > 0 && (
+    <section>
+      <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Chi vince per caso d'uso</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {useCaseVerdicts.map((v) => {
+          const isA = v.winner.id === toolA.id;
+          return (
+            <div class="p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+              <div class="flex items-start justify-between gap-3 mb-1.5">
+                <p class="text-sm font-semibold text-light-text dark:text-ai-text leading-snug">{v.useCase}</p>
+                <span class={`shrink-0 px-2 py-0.5 rounded-full text-xs font-bold ${
+                  v.margin === 'netto'
+                    ? 'bg-emerald-500/15 text-emerald-500'
+                    : 'bg-amber-400/15 text-amber-400'
+                }`}>
+                  {v.margin}
+                </span>
+              </div>
+              <p class="text-xs font-bold text-ai-purple mb-1">→ {v.winner.name}</p>
+              <p class="text-xs text-light-muted dark:text-ai-muted leading-relaxed">{v.reason}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
   <!-- ── Rating comparison ──────────────────────────────────────────────────── -->
+  <!-- Second: quantified scores for validation ("does the data back it up?") -->
   <section>
     <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Confronto rating</h2>
     <div class="space-y-5">
@@ -90,35 +120,8 @@ const RATING_LABELS = [
     </div>
   </section>
 
-  <!-- ── Use case verdicts ──────────────────────────────────────────────────── -->
-  {useCaseVerdicts.length > 0 && (
-    <section>
-      <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Chi vince per caso d'uso</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {useCaseVerdicts.map((v) => {
-          const isA = v.winner.id === toolA.id;
-          return (
-            <div class="p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-              <div class="flex items-start justify-between gap-3 mb-1.5">
-                <p class="text-sm font-semibold text-light-text dark:text-ai-text leading-snug">{v.useCase}</p>
-                <span class={`shrink-0 px-2 py-0.5 rounded-full text-xs font-bold ${
-                  v.margin === 'netto'
-                    ? 'bg-emerald-500/15 text-emerald-500'
-                    : 'bg-amber-400/15 text-amber-400'
-                }`}>
-                  {v.margin}
-                </span>
-              </div>
-              <p class="text-xs font-bold text-ai-purple mb-1">→ {v.winner.name}</p>
-              <p class="text-xs text-light-muted dark:text-ai-muted leading-relaxed">{v.reason}</p>
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  )}
-
   <!-- ── Feature matrix ────────────────────────────────────────────────────── -->
+  <!-- Third: feature detail for users who want to dig deeper -->
   <section>
     <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Confronto funzionalità</h2>
     <div class="rounded-xl border border-light-border dark:border-ai-border overflow-hidden">
@@ -196,7 +199,36 @@ const RATING_LABELS = [
     });
   </script>
 
+  <!-- ── Strengths side by side ─────────────────────────────────────────────── -->
+  <!-- Fourth: positive framing — confirms the right pick before showing warnings -->
+  <section>
+    <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Punti di forza</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">{toolA.name}</p>
+        <ul class="space-y-2">
+          {toolA.strengths.map(s => (
+            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
+              <span class="text-emerald-500 shrink-0 mt-0.5">✓</span>{s}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">{toolB.name}</p>
+        <ul class="space-y-2">
+          {toolB.strengths.map(s => (
+            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
+              <span class="text-emerald-500 shrink-0 mt-0.5">✓</span>{s}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- ── When NOT to use ───────────────────────────────────────────────────── -->
+  <!-- Last: deterrent signal — only relevant after the user has made a choice -->
   <section>
     <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Quando NON usarli</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -220,33 +252,6 @@ const RATING_LABELS = [
             <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
               <span class="text-red-400 shrink-0 mt-0.5">✕</span>
               {bullet}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Strengths side by side ─────────────────────────────────────────────── -->
-  <section>
-    <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text mb-6">Punti di forza</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">{toolA.name}</p>
-        <ul class="space-y-2">
-          {toolA.strengths.map(s => (
-            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
-              <span class="text-emerald-500 shrink-0 mt-0.5">✓</span>{s}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-        <p class="text-sm font-bold text-light-text dark:text-ai-text mb-3">{toolB.name}</p>
-        <ul class="space-y-2">
-          {toolB.strengths.map(s => (
-            <li class="flex items-start gap-2 text-sm text-light-muted dark:text-ai-muted">
-              <span class="text-emerald-500 shrink-0 mt-0.5">✓</span>{s}
             </li>
           ))}
         </ul>
