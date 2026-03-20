@@ -13,6 +13,8 @@ export interface FeatureRow {
 
 export interface UseCaseVerdict {
   useCase: string;
+  /** Concrete real-world task — makes the verdict actionable, not theoretical */
+  example: string;
   category: ToolCategory;
   winner: AITool;
   reason: string;
@@ -71,31 +73,93 @@ export interface ToolComparison {
 
 const USE_CASES: Array<{
   label: string;
+  /** Concrete task a real user would actually do — 1 sentence, no fluff */
+  example: string;
   category: ToolCategory;
   budget: 'free' | 'paid';
   skill: 'beginner' | 'pro';
 }> = [
   // Scrittura
-  { label: 'Uso quotidiano senza spendere',   category: 'scrittura',    budget: 'free',  skill: 'beginner' },
-  { label: 'Copywriting e marketing',         category: 'scrittura',    budget: 'paid',  skill: 'pro' },
-  { label: 'Articoli SEO a lungo termine',    category: 'scrittura',    budget: 'paid',  skill: 'pro' },
-  { label: 'Iniziare con l\'AI per scrivere', category: 'scrittura',    budget: 'free',  skill: 'beginner' },
+  {
+    label:    'Uso quotidiano senza spendere',
+    example:  'Riassumere un PDF di 20 pagine, rispondere a un\'email difficile, generare 10 idee per un post',
+    category: 'scrittura', budget: 'free', skill: 'beginner',
+  },
+  {
+    label:    'Copywriting e marketing',
+    example:  'Scrivere 5 varianti di headline per una landing page SaaS e una sequenza di 3 email di onboarding',
+    category: 'scrittura', budget: 'paid', skill: 'pro',
+  },
+  {
+    label:    'Articoli SEO a lungo termine',
+    example:  'Un articolo da 2.000 parole su "migliori CRM per PMI" ottimizzato per una keyword specifica',
+    category: 'scrittura', budget: 'paid', skill: 'pro',
+  },
+  {
+    label:    'Iniziare con l\'AI per scrivere',
+    example:  'Scrivere il primo post su LinkedIn professionale e una bio per il sito personale',
+    category: 'scrittura', budget: 'free', skill: 'beginner',
+  },
   // Immagini
-  { label: 'Generare immagini gratis',        category: 'immagini',     budget: 'free',  skill: 'beginner' },
-  { label: 'Produzione visiva professionale', category: 'immagini',     budget: 'paid',  skill: 'pro' },
-  { label: 'Design per social e marketing',   category: 'immagini',     budget: 'paid',  skill: 'beginner' },
+  {
+    label:    'Generare immagini gratis',
+    example:  'Thumbnail per un video YouTube e un banner promozionale per Instagram Stories',
+    category: 'immagini', budget: 'free', skill: 'beginner',
+  },
+  {
+    label:    'Produzione visiva professionale',
+    example:  'Hero image per una campagna Meta Ads e pack shot di prodotto su sfondo neutro',
+    category: 'immagini', budget: 'paid', skill: 'pro',
+  },
+  {
+    label:    'Design per social e marketing',
+    example:  'Carousel di 6 slide per Instagram e 3 varianti di creative per A/B test su Facebook Ads',
+    category: 'immagini', budget: 'paid', skill: 'beginner',
+  },
   // Video
-  { label: 'Video brevi gratis',              category: 'video',        budget: 'free',  skill: 'beginner' },
-  { label: 'Video professionali a pagamento', category: 'video',        budget: 'paid',  skill: 'pro' },
+  {
+    label:    'Video brevi gratis',
+    example:  'Reel di 15 secondi da uno script di testo e clip breve per TikTok con transizioni',
+    category: 'video', budget: 'free', skill: 'beginner',
+  },
+  {
+    label:    'Video professionali a pagamento',
+    example:  'Video esplicativo di 60 secondi per homepage SaaS e trailer per un evento aziendale',
+    category: 'video', budget: 'paid', skill: 'pro',
+  },
   // Audio
-  { label: 'Text-to-speech gratuito',         category: 'audio',        budget: 'free',  skill: 'beginner' },
-  { label: 'Produzione audio professionale',  category: 'audio',        budget: 'paid',  skill: 'pro' },
+  {
+    label:    'Text-to-speech gratuito',
+    example:  'Narrazione di un tutorial su YouTube e voce per le slide di una presentazione',
+    category: 'audio', budget: 'free', skill: 'beginner',
+  },
+  {
+    label:    'Produzione audio professionale',
+    example:  'Voiceover per uno spot radio di 30 secondi e clonazione della propria voce per audiolibro',
+    category: 'audio', budget: 'paid', skill: 'pro',
+  },
   // Produttività
-  { label: 'Automazioni senza tecnica',       category: 'produttivita', budget: 'free',  skill: 'beginner' },
-  { label: 'Workflow aziendali complessi',    category: 'produttivita', budget: 'paid',  skill: 'pro' },
+  {
+    label:    'Automazioni senza tecnica',
+    example:  'Salvare automaticamente gli allegati Gmail in Drive e inviare notifica Slack quando arriva un lead',
+    category: 'produttivita', budget: 'free', skill: 'beginner',
+  },
+  {
+    label:    'Workflow aziendali complessi',
+    example:  'Pipeline completa: form → CRM → email di benvenuto → assegnazione commerciale → notifica team',
+    category: 'produttivita', budget: 'paid', skill: 'pro',
+  },
   // Coding
-  { label: 'Imparare a programmare con AI',   category: 'coding',       budget: 'free',  skill: 'beginner' },
-  { label: 'Sviluppo professionale avanzato', category: 'coding',       budget: 'paid',  skill: 'pro' },
+  {
+    label:    'Imparare a programmare con AI',
+    example:  'Capire un errore TypeScript, scrivere il primo componente React e farsi spiegare la differenza tra async/await e Promise',
+    category: 'coding', budget: 'free', skill: 'beginner',
+  },
+  {
+    label:    'Sviluppo professionale avanzato',
+    example:  'Refactoring di una codebase legacy in Python, ottimizzazione di query SQL lente e code review automatizzata',
+    category: 'coding', budget: 'paid', skill: 'pro',
+  },
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
@@ -200,7 +264,8 @@ function buildUseCaseVerdicts(toolA: AITool, toolB: AITool): UseCaseVerdict[] {
     const diff   = Math.abs(sA - sB);
 
     return {
-      useCase: uc.label,
+      useCase:  uc.label,
+      example:  uc.example,
       category: uc.category,
       winner,
       reason: buildUseCaseReason(winner, loser, uc.budget, uc.skill),
