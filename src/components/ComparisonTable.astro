@@ -7,7 +7,17 @@ interface Props {
 }
 
 const { comparison } = Astro.props;
-const { toolA, toolB, featureMatrix, useCaseVerdicts, whyNotUse, overallWinner, tldr, ratingDiff } = comparison;
+const { toolA, toolB, featureMatrix, useCaseVerdicts, whyNotUse, tldr, ratingDiff } = comparison;
+
+// Feature matrix: righe con vincitore chiaro prima, poi le pareggio
+const INITIAL_ROWS = 5;
+const sortedMatrix = [...featureMatrix].sort((a, b) => {
+  const aScore = (a.winner === 'a' || a.winner === 'b') ? 1 : 0;
+  const bScore = (b.winner === 'a' || b.winner === 'b') ? 1 : 0;
+  return bScore - aScore;
+});
+const visibleRows = sortedMatrix.slice(0, INITIAL_ROWS);
+const hiddenRows = sortedMatrix.slice(INITIAL_ROWS);
 
 // Helper: render a FeatureValue as a readable label
 function featureLabel(v: FeatureValue): string {
@@ -39,28 +49,6 @@ const RATING_LABELS = [
 ---
 
 <div class="space-y-12">
-
-  <!-- ── TL;DR banner ───────────────────────────────────────────────────────── -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-      <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-2">Scegli {toolA.name} se...</p>
-      <p class="text-light-text dark:text-ai-text font-medium leading-relaxed">{tldr.chooseA.replace(`Scegli ${toolA.name} se `, '')}</p>
-    </div>
-    <div class="p-5 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-      <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-2">Scegli {toolB.name} se...</p>
-      <p class="text-light-text dark:text-ai-text font-medium leading-relaxed">{tldr.chooseB.replace(`Scegli ${toolB.name} se `, '')}</p>
-    </div>
-  </div>
-
-  <!-- ── Overall winner banner (solo se c'è un vincitore netto) ─────────────── -->
-  {overallWinner && (
-    <div class="p-6 rounded-2xl border text-center
-      bg-gradient-to-br from-ai-purple/10 to-transparent border-ai-purple/25">
-      <p class="text-ai-muted text-sm mb-1">Vincitore complessivo</p>
-      <p class="text-2xl font-extrabold text-light-text dark:text-ai-text">{overallWinner.name}</p>
-      <p class="text-ai-muted text-sm mt-1">{overallWinner.tagline}</p>
-    </div>
-  )}
 
   <!-- ── Rating comparison ──────────────────────────────────────────────────── -->
   <section>
@@ -140,27 +128,54 @@ const RATING_LABELS = [
         <span class="text-xs font-bold text-light-text dark:text-ai-text text-center">{toolA.name}</span>
         <span class="text-xs font-bold text-light-text dark:text-ai-text text-center">{toolB.name}</span>
       </div>
-      <!-- Rows -->
-      {featureMatrix.map((row, i) => (
+      <!-- Righe sempre visibili (prime 5, con vincitore chiaro prima) -->
+      {visibleRows.map((row, i) => (
         <div class={`grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_1fr_1fr] px-4 py-3 items-center gap-3
           ${i % 2 === 0 ? 'bg-light-card dark:bg-ai-card' : 'bg-light-bg dark:bg-ai-bg'}`}>
-          <!-- Feature label + description -->
           <div>
             <p class="text-sm text-light-text dark:text-ai-text font-medium">{row.feature.label}</p>
             {row.feature.description && (
               <p class="text-xs text-light-muted dark:text-ai-muted mt-0.5 hidden sm:block">{row.feature.description}</p>
             )}
           </div>
-          <!-- Value A -->
           <div class={`text-center ${featureClass(row.valueA)} ${row.winner === 'a' ? 'ring-1 ring-emerald-500/30 rounded-md px-2' : ''}`}>
             {featureLabel(row.valueA)}
           </div>
-          <!-- Value B -->
           <div class={`text-center ${featureClass(row.valueB)} ${row.winner === 'b' ? 'ring-1 ring-emerald-500/30 rounded-md px-2' : ''}`}>
             {featureLabel(row.valueB)}
           </div>
         </div>
       ))}
+      <!-- Righe nascoste (espandibili) -->
+      {hiddenRows.length > 0 && (
+        <div id="feature-extra" class="hidden">
+          {hiddenRows.map((row, i) => (
+            <div class={`grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_1fr_1fr] px-4 py-3 items-center gap-3
+              ${(i + INITIAL_ROWS) % 2 === 0 ? 'bg-light-card dark:bg-ai-card' : 'bg-light-bg dark:bg-ai-bg'}`}>
+              <div>
+                <p class="text-sm text-light-text dark:text-ai-text font-medium">{row.feature.label}</p>
+                {row.feature.description && (
+                  <p class="text-xs text-light-muted dark:text-ai-muted mt-0.5 hidden sm:block">{row.feature.description}</p>
+                )}
+              </div>
+              <div class={`text-center ${featureClass(row.valueA)} ${row.winner === 'a' ? 'ring-1 ring-emerald-500/30 rounded-md px-2' : ''}`}>
+                {featureLabel(row.valueA)}
+              </div>
+              <div class={`text-center ${featureClass(row.valueB)} ${row.winner === 'b' ? 'ring-1 ring-emerald-500/30 rounded-md px-2' : ''}`}>
+                {featureLabel(row.valueB)}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <!-- Toggle button -->
+      {hiddenRows.length > 0 && (
+        <div id="feature-toggle-row" class="px-4 py-3 bg-light-bg2 dark:bg-ai-bg2 border-t border-light-border dark:border-ai-border text-center">
+          <button id="feature-toggle" class="text-sm text-ai-purple font-semibold hover:underline cursor-pointer">
+            Mostra tutte le {hiddenRows.length} funzionalità rimanenti ↓
+          </button>
+        </div>
+      )}
       <!-- Legend -->
       <div class="px-4 py-3 bg-light-bg2 dark:bg-ai-bg2 border-t border-light-border dark:border-ai-border flex gap-4 flex-wrap">
         <span class="text-xs text-light-muted dark:text-ai-muted"><span class="text-emerald-500 font-bold">✓</span> Presente</span>
@@ -170,6 +185,16 @@ const RATING_LABELS = [
       </div>
     </div>
   </section>
+
+  <script>
+    const btn = document.getElementById('feature-toggle');
+    const extra = document.getElementById('feature-extra');
+    const toggleRow = document.getElementById('feature-toggle-row');
+    btn?.addEventListener('click', () => {
+      extra?.classList.remove('hidden');
+      toggleRow?.classList.add('hidden');
+    });
+  </script>
 
   <!-- ── When NOT to use ───────────────────────────────────────────────────── -->
   <section>
