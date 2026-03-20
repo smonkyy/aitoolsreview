@@ -19,6 +19,32 @@ export interface UseCaseVerdict {
   margin: 'netto' | 'lieve'; // netto = diff >= 10 punti
 }
 
+export interface QuickVerdict {
+  /** Vincitore su più scenari con margine netto, o null se pari merito */
+  bestOverall: AITool | null;
+  /** Top 2 verdetti use-case: "{label}" → tool vincitore */
+  bestForUseCases: Array<{ label: string; tool: AITool }>;
+  /** Tool con il punteggio valueForMoney più alto */
+  bestValue: AITool;
+}
+
+export interface WhoShouldUse {
+  /** 2–3 profili specifici per ogni tool */
+  a: string[];
+  b: string[];
+}
+
+export interface FinalRecommendation {
+  /** 1–2 frasi di verdetto diretto, senza fluff */
+  summary: string;
+  /** CTA naturale per toolA */
+  ctaA: string;
+  /** CTA naturale per toolB */
+  ctaB: string;
+  /** CTA di fallback per il caso pari merito */
+  ctaC?: string;
+}
+
 export interface ToolComparison {
   toolA: AITool;
   toolB: AITool;
@@ -27,8 +53,11 @@ export interface ToolComparison {
   featureMatrix: FeatureRow[];
   useCaseVerdicts: UseCaseVerdict[];
   whyNotUse: { a: string[]; b: string[] };
+  whoShouldUse: WhoShouldUse;
+  quickVerdict: QuickVerdict;
   overallWinner: AITool | null;
   tldr: { chooseA: string; chooseB: string };
+  finalRecommendation: FinalRecommendation;
   ratingDiff: {
     overall: number;      // toolA - toolB
     easeOfUse: number;
@@ -262,6 +291,105 @@ function buildTldr(toolA: AITool, toolB: AITool): ToolComparison['tldr'] {
   return { chooseA, chooseB };
 }
 
+// ─── Quick verdict ─────────────────────────────────────────────────────────────
+
+function buildQuickVerdict(
+  toolA: AITool,
+  toolB: AITool,
+  overallWinner: AITool | null,
+  verdicts: UseCaseVerdict[],
+): QuickVerdict {
+  // Pick top 2 use-case verdicts (already sorted by margin descending)
+  const bestForUseCases = verdicts
+    .slice(0, 2)
+    .map(v => ({ label: v.useCase, tool: v.winner }));
+
+  return {
+    bestOverall: overallWinner,
+    bestForUseCases,
+    bestValue: toolA.ratings.valueForMoney >= toolB.ratings.valueForMoney ? toolA : toolB,
+  };
+}
+
+// ─── Who should use ────────────────────────────────────────────────────────────
+
+const CATEGORY_LABEL: Record<string, string> = {
+  scrittura:    'scrittura e testi',
+  immagini:     'immagini e grafica',
+  video:        'creazione video',
+  audio:        'audio e voce',
+  produttivita: 'produttività e automazioni',
+  coding:       'sviluppo software',
+};
+
+function buildWhoShouldUse(tool: AITool, other: AITool): string[] {
+  const lines: string[] = [];
+
+  // Line 1: primary user profile — specific, not generic
+  if (tool.targetUsers.includes('beginner') && tool.ratings.easeOfUse >= 4.5)
+    lines.push(`Chi inizia con l'AI e vuole risultati subito, senza curva di apprendimento`);
+  else if (tool.targetUsers.includes('developer'))
+    lines.push(`Developer e team tecnici che integrano AI nel proprio workflow`);
+  else if (tool.targetUsers.includes('business') && !tool.targetUsers.includes('beginner'))
+    lines.push(`Team aziendali che lavorano con ${CATEGORY_LABEL[tool.category]} su scala`);
+  else if (tool.targetUsers.includes('creator'))
+    lines.push(`Creator e freelance che producono contenuti in ${CATEGORY_LABEL[tool.category]}`);
+  else if (tool.targetUsers.includes('advanced'))
+    lines.push(`Utenti avanzati che vogliono il massimo controllo e flessibilità`);
+  else
+    lines.push(`Chi lavora regolarmente con ${CATEGORY_LABEL[tool.category]}`);
+
+  // Line 2: pricing or quality advantage over the other tool
+  if (tool.pricing.hasFreeOption && !other.pricing.hasFreeOption)
+    lines.push(`Chi vuole testare prima di pagare — il piano gratuito è realmente funzionale`);
+  else if (tool.pricing.priceRange === 'free')
+    lines.push(`Chi vuole zero costi permanenti (open source, auto-ospitabile)`);
+  else if (tool.ratings.valueForMoney - other.ratings.valueForMoney >= 0.4)
+    lines.push(`Chi ha un budget limitato e cerca il miglior rapporto qualità/prezzo`);
+  else if (tool.ratings.outputQuality - other.ratings.outputQuality >= 0.4)
+    lines.push(`Chi non accetta compromessi sulla qualità dell'output`);
+
+  // Line 3: taken directly from the tool's first concrete strength
+  if (tool.strengths[0])
+    lines.push(tool.strengths[0]);
+
+  return lines.slice(0, 3);
+}
+
+// ─── Final recommendation ──────────────────────────────────────────────────────
+
+function buildFinalRecommendation(
+  toolA: AITool,
+  toolB: AITool,
+  overallWinner: AITool | null,
+  tldr: { chooseA: string; chooseB: string },
+): FinalRecommendation {
+  // Strip the imperative opener to get a subordinate clause for CTA lines
+  const clauseA = tldr.chooseA.replace(`Scegli ${toolA.name} se `, '').replace(`Scegli ${toolA.name} `, '');
+  const clauseB = tldr.chooseB.replace(`Scegli ${toolB.name} se `, '').replace(`Scegli ${toolB.name} `, '');
+
+  const ctaA = `Usa ${toolA.name} se ${clauseA}`;
+  const ctaB = `Prova ${toolB.name} se ${clauseB}`;
+
+  if (overallWinner) {
+    const loser  = overallWinner.id === toolA.id ? toolB : toolA;
+    const clause = loser.id === toolA.id ? clauseA : clauseB;
+    return {
+      summary: `${overallWinner.name} vince su più scenari concreti — è la scelta sicura per la maggior parte degli utenti. ${loser.name} rimane però la risposta giusta se ${clause}.`,
+      ctaA,
+      ctaB,
+    };
+  }
+
+  // Tie: no clear winner
+  return {
+    summary: `Nessun vincitore assoluto: i due tool eccellono in contesti diversi. Identifica il profilo che ti rappresenta tra i verdetti sopra e scegli di conseguenza.`,
+    ctaA,
+    ctaB,
+    ctaC: `Non sei sicuro? Usa l'AI Tool Advisor: 3 domande, 1 risposta precisa →`,
+  };
+}
+
 // ─── Entry point ───────────────────────────────────────────────────────────────
 
 export function compareTools(toolA: AITool, toolB: AITool): ToolComparison {
@@ -273,6 +401,8 @@ export function compareTools(toolA: AITool, toolB: AITool): ToolComparison {
     : bNetWins > aNetWins + 1 ? toolB
     : null;
 
+  const tldr = buildTldr(toolA, toolB);
+
   return {
     toolA, toolB,
     slug: `${toolA.id}-vs-${toolB.id}`,
@@ -283,8 +413,14 @@ export function compareTools(toolA: AITool, toolB: AITool): ToolComparison {
       a: buildWhyNotUse(toolA, toolB),
       b: buildWhyNotUse(toolB, toolA),
     },
+    whoShouldUse: {
+      a: buildWhoShouldUse(toolA, toolB),
+      b: buildWhoShouldUse(toolB, toolA),
+    },
+    quickVerdict: buildQuickVerdict(toolA, toolB, overallWinner, verdicts),
     overallWinner,
-    tldr: buildTldr(toolA, toolB),
+    tldr,
+    finalRecommendation: buildFinalRecommendation(toolA, toolB, overallWinner, tldr),
     ratingDiff: {
       overall:       toolA.ratings.overall       - toolB.ratings.overall,
       easeOfUse:     toolA.ratings.easeOfUse     - toolB.ratings.easeOfUse,
