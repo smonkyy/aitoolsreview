@@ -1,4 +1,5 @@
 import { TOOLS, type AITool } from '../data/tools';
+import type { ComparisonFeedback } from './feedback';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -44,6 +45,34 @@ function priorityScore(a: AITool, b: AITool): number {
   );
 }
 
+// ─── Dynamic scoring ───────────────────────────────────────────────────────────
+
+/**
+ * Adjusts a base priority score using real user signals:
+ *
+ * - Click boost  (+0 → +10): logarithmic — rewards popular pages without
+ *   letting high-traffic outliers dominate.
+ *   10 views → +3.5 | 100 views → +7 | 500 views → +9.5
+ *
+ * - Feedback boost (−10 → +10): positive if upvote rate > 50%, negative
+ *   otherwise. Requires at least 5 votes to avoid noise from single votes.
+ *
+ * Final score is capped at 100.
+ */
+function dynamicScore(
+  base: number,
+  views: number,
+  feedback: ComparisonFeedback | undefined,
+): number {
+  const clickBoost = Math.min(Math.log1p(views) * 1.5, 10);
+
+  const total = (feedback?.upvotes ?? 0) + (feedback?.downvotes ?? 0);
+  const rate  = total >= 5 ? feedback!.positive_rate : 0.5;
+  const feedbackBoost = (rate - 0.5) * 20;
+
+  return Math.min(Math.round(base + clickBoost + feedbackBoost), 100);
+}
+
 // ─── Entry points ──────────────────────────────────────────────────────────────
 
 /**
@@ -54,10 +83,16 @@ function priorityScore(a: AITool, b: AITool): number {
  * @param trendingMap slug → normalized views (0–1) from the last 7 days.
  *                    Built by `buildTrendingMap()` in trending.ts.
  *                    Adds up to +15 points to observed comparisons.
+ * @param viewsMap    slug → all-time view count. Built by `buildViewsMap()` in feedback.ts.
+ *                    Feeds the click boost in `dynamicScore()`.
+ * @param feedbackMap slug → feedback aggregates. Built by `buildFeedbackMap()` in feedback.ts.
+ *                    Feeds the feedback boost in `dynamicScore()`.
  */
 export function getTopComparisons(
   limit = 12,
-  trendingMap: Map<string, number> = new Map(),
+  trendingMap:  Map<string, number>              = new Map(),
+  viewsMap:     Map<string, number>              = new Map(),
+  feedbackMap:  Map<string, ComparisonFeedback>  = new Map(),
 ): PrioritizedComparison[] {
   const pairs: PrioritizedComparison[] = [];
 
@@ -75,12 +110,13 @@ export function getTopComparisons(
 
       const slug = `${a.id}-vs-${b.id}`;
       const trendBoost = Math.round((trendingMap.get(slug) ?? 0) * 15);
+      const base       = Math.min(100, priorityScore(a, b) + trendBoost);
 
       pairs.push({
         toolA:         a,
         toolB:         b,
         slug,
-        priorityScore: Math.min(100, priorityScore(a, b) + trendBoost),
+        priorityScore: dynamicScore(base, viewsMap.get(slug) ?? 0, feedbackMap.get(slug)),
       });
     }
   }

@@ -100,6 +100,24 @@ group by tool_a
 order by comparison_views desc;
 
 
+-- Feedback per comparison (thumbs up / down)
+create or replace view comparison_feedback as
+select
+  slug,
+  count(*) filter (where event_type = 'feedback_up')   as upvotes,
+  count(*) filter (where event_type = 'feedback_down') as downvotes,
+  coalesce(
+    count(*) filter (where event_type = 'feedback_up')::float
+    / nullif(count(*) filter (where event_type in ('feedback_up', 'feedback_down')), 0),
+    0.5  -- default neutro se nessun voto
+  )                                                     as positive_rate
+from events
+where event_type in ('feedback_up', 'feedback_down')
+  and slug is not null
+group by slug
+order by (upvotes + downvotes) desc;
+
+
 -- Advisor funnel — popular category + budget + skill combos
 create or replace view advisor_funnels as
 select

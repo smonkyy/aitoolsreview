@@ -5,10 +5,17 @@ import Footer from '../../components/Footer.astro';
 import { TOOLS } from '../../data/tools';
 import { getTopComparisons, canonicalSlug } from '../../lib/comparison-priority';
 import { fetchTrending, buildTrendingMap } from '../../lib/trending';
+import { fetchFeedback, buildFeedbackMap, fetchComparisonViews, buildViewsMap } from '../../lib/feedback';
 
-const trending = await fetchTrending();
-const trendingMap = buildTrendingMap(trending);
-const topComparisons = getTopComparisons(12, trendingMap);
+const [trending, feedback, views] = await Promise.all([
+  fetchTrending(),
+  fetchFeedback(),
+  fetchComparisonViews(),
+]);
+const trendingMap  = buildTrendingMap(trending);
+const feedbackMap  = buildFeedbackMap(feedback);
+const viewsMap     = buildViewsMap(views);
+const topComparisons = getTopComparisons(12, trendingMap, viewsMap, feedbackMap);
 const hasTrending = trending.length > 0;
 
 // Tool list serialized for the client-side picker script

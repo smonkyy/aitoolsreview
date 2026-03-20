@@ -5,6 +5,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ComparisonTable from '../../components/ComparisonTable.astro';
+import FeedbackWidget from '../../components/FeedbackWidget.astro';
 
 export function getStaticPaths() {
   const paths = [];
@@ -205,6 +206,9 @@ const faqSchema = {
         </div>
 
       </div>
+
+      <!-- ── Feedback ──────────────────────────────────────────────────────── -->
+      <FeedbackWidget slug={comparison.slug} />
 
       <!-- ── Main comparison ────────────────────────────────────────────────── -->
       <ComparisonTable comparison={comparison} />

@@ -1,0 +1,29 @@
+name: Nightly rebuild
+
+# Triggers a fresh Vercel deployment every night so that:
+#   - feedback scores (thumbs up/down) are incorporated into rankings
+#   - trending data is refreshed
+#   - all-time view counts update the click boost
+#
+# Setup:
+#   1. In Vercel → Project Settings → Git → Deploy Hooks, create a hook
+#      named "nightly-rebuild" (no branch filter needed).
+#   2. Copy the generated URL.
+#   3. In GitHub → Settings → Secrets → Actions, add:
+#        VERCEL_DEPLOY_HOOK_URL = <the URL from step 2>
+
+on:
+  schedule:
+    - cron: '0 3 * * *'   # 03:00 UTC every night
+  workflow_dispatch:        # allow manual trigger from GitHub UI
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        run: |
+          curl -s -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" \
+            --fail \
+            --retry 3 \
+            --retry-delay 5
