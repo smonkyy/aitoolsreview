@@ -40,7 +40,7 @@ export async function getStaticPaths() {
 }
 
 const { comparison, trendingMap, viewsMap, feedbackMap } = Astro.props;
-const { toolA, toolB, tldr, overallWinner } = comparison;
+const { toolA, toolB, tldr, overallWinner, quickVerdict, whoShouldUse, finalRecommendation } = comparison;
 
 // Top related comparisons: best-ranked pairs involving toolA or toolB,
 // excluding the current slug. Uses the same dynamic scoring as the index page.
@@ -128,10 +128,43 @@ const faqSchema = {
           <span class="text-light-muted dark:text-ai-muted font-light mx-2 text-2xl sm:text-3xl">vs</span>
           {toolB.name}
         </h1>
-        <p class="text-xs text-light-muted dark:text-ai-muted flex items-center gap-1.5">
+        <p class="text-xs text-light-muted dark:text-ai-muted flex items-center gap-1.5 mb-4">
           <span class="w-1.5 h-1.5 rounded-full bg-ai-green animate-pulse"></span>
           Dati aggiornati {new Date().getFullYear()} · Score su qualità, prezzo e facilità d'uso · Nessun affiliato
         </p>
+
+        <!-- ── Quick Verdict pills ──────────────────────────────────────────── -->
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
+            border border-light-border dark:border-ai-border
+            text-light-muted dark:text-ai-muted">
+            <span class="w-1.5 h-1.5 rounded-full
+              {quickVerdict.bestOverall ? 'bg-ai-purple' : 'bg-amber-400'}">
+            </span>
+            Migliore in assoluto:&nbsp;
+            <span class="text-light-text dark:text-ai-text">
+              {quickVerdict.bestOverall?.name ?? 'Pari merito'}
+            </span>
+          </span>
+
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
+            border border-light-border dark:border-ai-border
+            text-light-muted dark:text-ai-muted">
+            <span class="w-1.5 h-1.5 rounded-full bg-ai-green"></span>
+            Miglior valore:&nbsp;
+            <span class="text-light-text dark:text-ai-text">{quickVerdict.bestValue.name}</span>
+          </span>
+
+          {quickVerdict.bestForUseCases.map(({ label, tool }) => (
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
+              border border-light-border dark:border-ai-border
+              text-light-muted dark:text-ai-muted">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+              {label}:&nbsp;
+              <span class="text-light-text dark:text-ai-text">{tool.name}</span>
+            </span>
+          ))}
+        </div>
       </div>
 
       <!-- ── Verdict box ────────────────────────────────────────────────────── -->
@@ -199,8 +232,68 @@ const faqSchema = {
 
       </div>
 
+      <!-- ── Who should use each tool ──────────────────────────────────────── -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+        {[
+          { tool: toolA, lines: whoShouldUse.a },
+          { tool: toolB, lines: whoShouldUse.b },
+        ].map(({ tool, lines }) => (
+          <div class="rounded-2xl border p-5
+            bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border">
+            <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-3">
+              Usa {tool.name} se sei…
+            </p>
+            <ul class="space-y-2">
+              {lines.map(line => (
+                <li class="flex gap-2 text-sm text-light-text dark:text-ai-text leading-snug">
+                  <span class="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-ai-purple/60"></span>
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
       <!-- ── Main comparison ────────────────────────────────────────────────── -->
       <ComparisonTable comparison={comparison} />
+
+      <!-- ── Final recommendation ───────────────────────────────────────────── -->
+      <div class="mt-14 rounded-2xl border overflow-hidden
+        bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border">
+
+        <div class="p-6 sm:p-7 border-b border-light-border dark:border-ai-border">
+          <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-3">
+            Raccomandazione finale
+          </p>
+          <p class="text-base text-light-text dark:text-ai-text leading-relaxed">
+            {finalRecommendation.summary}
+          </p>
+        </div>
+
+        <!-- CTA lines -->
+        <div class="divide-y divide-light-border dark:divide-ai-border">
+          <div class="px-6 py-4 flex items-start gap-3">
+            <span class="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-ai-purple/10 text-ai-purple
+              text-xs font-bold flex items-center justify-center">A</span>
+            <p class="text-sm text-light-text dark:text-ai-text">{finalRecommendation.ctaA}</p>
+          </div>
+          <div class="px-6 py-4 flex items-start gap-3">
+            <span class="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-indigo-500/10 text-indigo-400
+              text-xs font-bold flex items-center justify-center">B</span>
+            <p class="text-sm text-light-text dark:text-ai-text">{finalRecommendation.ctaB}</p>
+          </div>
+          {finalRecommendation.ctaC && (
+            <div class="px-6 py-4 flex items-start gap-3">
+              <span class="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-400/10 text-amber-400
+                text-xs font-bold flex items-center justify-center">?</span>
+              <a href="/#ai-advisor" class="text-sm text-ai-purple hover:underline">
+                {finalRecommendation.ctaC}
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
 
       <!-- ── Feedback ──────────────────────────────────────────────────────── -->
       <FeedbackWidget slug={comparison.slug} />

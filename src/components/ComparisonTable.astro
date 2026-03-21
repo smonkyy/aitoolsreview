@@ -60,7 +60,7 @@ const RATING_LABELS = [
           const isA = v.winner.id === toolA.id;
           return (
             <div class="p-4 rounded-xl border bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
-              <div class="flex items-start justify-between gap-3 mb-1.5">
+              <div class="flex items-start justify-between gap-3 mb-1">
                 <p class="text-sm font-semibold text-light-text dark:text-ai-text leading-snug">{v.useCase}</p>
                 <span class={`shrink-0 px-2 py-0.5 rounded-full text-xs font-bold ${
                   v.margin === 'netto'
@@ -70,6 +70,9 @@ const RATING_LABELS = [
                   {v.margin}
                 </span>
               </div>
+              <p class="text-xs italic text-light-muted dark:text-ai-muted mb-2.5 leading-relaxed">
+                es. {v.example}
+              </p>
               <p class="text-xs font-bold text-ai-purple mb-1">→ {v.winner.name}</p>
               <p class="text-xs text-light-muted dark:text-ai-muted leading-relaxed">{v.reason}</p>
             </div>
