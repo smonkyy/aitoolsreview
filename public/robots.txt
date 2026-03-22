@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Evita di indicizzare pagine con parametri di query
+Disallow: /*?*
+
+Sitemap: https://www.aitoolsreview.it/sitemap-index.xml
