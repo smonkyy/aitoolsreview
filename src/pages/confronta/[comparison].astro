@@ -56,8 +56,6 @@ const related = getRelatedComparisons(
 // SEO: descrizione dinamica generata dai dati, non hardcoded
 const metaDesc = `${tldr.chooseA}. ${tldr.chooseB}. Confronto completo con funzionalità, prezzi, casi d'uso e verdetto finale — aggiornato ${new Date().getFullYear()}.`;
 
-const canonicalUrl = `https://aitoolsreview.it/confronta/${comparison.slug}`;
-
 // Structured data (FAQ schema) per Google rich snippets
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -104,7 +102,6 @@ const faqSchema = {
       title={`${toolA.name} vs ${toolB.name}: Confronto ${new Date().getFullYear()} | AI Tools Review`}
       description={metaDesc}
     />
-    <link rel="canonical" href={canonicalUrl} />
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   </head>
   <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">

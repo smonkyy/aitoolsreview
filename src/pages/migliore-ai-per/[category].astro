@@ -56,8 +56,6 @@ const profilesResolved = pageData.userProfiles.map(p => ({
   tool: TOOLS.find(t => t.id === p.toolId),
 }));
 
-const canonicalUrl = `https://aitoolsreview.it/migliore-ai-per/${pageData.slug}`;
-
 // FAQ schema
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -78,7 +76,6 @@ const medalLabel = ['#1', '#2', '#3'];
 <html lang="it" class="dark">
   <head>
     <BaseHead title={`${pageData.h1} | AI Tools Review`} description={pageData.metaDescription} />
-    <link rel="canonical" href={canonicalUrl} />
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   </head>
   <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">

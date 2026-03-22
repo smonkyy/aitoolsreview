@@ -3,331 +3,520 @@ import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import CategoryCard from '../components/CategoryCard.astro';
 import ReviewCard from '../components/ReviewCard.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import AIToolFinder from '../components/AIToolFinder.jsx';
+import { TOOLS } from '../data/tools';
+import { CATEGORY_PAGES } from '../data/category-pages';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 const allPosts = await getCollection('blog');
 const recentPosts = allPosts
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 4);
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
 
 function readingTime(body: string | undefined): number {
-	return Math.max(1, Math.round((body?.split(/\s+/).length ?? 200) / 200));
+  return Math.max(1, Math.round((body?.split(/\s+/).length ?? 200) / 200));
 }
 
-const categories = [
-	{
-		icon: '✍️',
-		title: 'Scrittura',
-		description: 'Blog, copy, script, email. Dall\'AI che scrive come un umano a quella che aiuta con la strategia.',
-		tools: ['Claude 4', 'ChatGPT-4o', 'Jasper AI'],
-		href: '/strumenti#scrittura',
-		accent: 'from-purple-500/20 to-blue-500/10',
-	},
-	{
-		icon: '🎨',
-		title: 'Immagini',
-		description: 'Generatori visivi per creativi e marketer. Confronti onesti su qualità e prezzi reali.',
-		tools: ['Midjourney', 'Adobe Firefly', 'DALL-E 3'],
-		href: '/strumenti#immagini',
-		accent: 'from-pink-500/20 to-orange-500/10',
-	},
-	{
-		icon: '🎬',
-		title: 'Video',
-		description: 'Il settore più in fermento del 2026. Nuovi tool ogni mese, enormi differenze di qualità.',
-		tools: ['Runway Gen-3', 'Kling AI', 'Sora'],
-		href: '/strumenti#video',
-		accent: 'from-red-500/20 to-yellow-500/10',
-	},
-	{
-		icon: '⚡',
-		title: 'Produttività',
-		description: 'Automazioni, riassunti, gestione task. L\'AI che lavora in background per te.',
-		tools: ['Notion AI', 'Make', 'Zapier AI'],
-		href: '/strumenti#produttivita',
-		accent: 'from-green-500/20 to-teal-500/10',
-	},
+// Tool IDs in TOOLS order — used by client JS to build correct comparison slugs
+const toolOrder = TOOLS.map(t => t.id);
+
+// Grouped for the <select> dropdowns
+const CATEGORY_LABELS: Record<string, string> = {
+  scrittura:    'Scrittura',
+  immagini:     'Immagini',
+  video:        'Video',
+  audio:        'Audio',
+  produttivita: 'Produttività',
+  coding:       'Coding',
+};
+const toolsByCategory = Object.entries(CATEGORY_LABELS).map(([key, label]) => ({
+  key,
+  label,
+  tools: TOOLS.filter(t => t.category === key),
+}));
+
+// Popular comparisons — 6 high-intent pairs, hardcoded for performance
+const POPULAR = [
+  {
+    aId: 'claude-4',        aName: 'Claude 4',
+    bId: 'chatgpt-4o',      bName: 'ChatGPT-4o',
+    slug: 'claude-4-vs-chatgpt-4o',
+    label: 'Il confronto più cercato',
+    category: 'Scrittura',
+  },
+  {
+    aId: 'midjourney',      aName: 'Midjourney',
+    bId: 'leonardo-ai',     bName: 'Leonardo.ai',
+    slug: 'midjourney-vs-leonardo-ai',
+    label: 'Qualità pro vs gratuito',
+    category: 'Immagini',
+  },
+  {
+    aId: 'github-copilot',  aName: 'GitHub Copilot',
+    bId: 'cursor',          bName: 'Cursor',
+    slug: 'github-copilot-vs-cursor',
+    label: 'Quale editor AI nel 2026?',
+    category: 'Coding',
+  },
+  {
+    aId: 'make',            aName: 'Make',
+    bId: 'zapier',          bName: 'Zapier',
+    slug: 'make-vs-zapier',
+    label: 'Potente vs semplice',
+    category: 'Produttività',
+  },
+  {
+    aId: 'runway-gen3',     aName: 'Runway Gen-3',
+    bId: 'kling-ai',        bName: 'Kling AI',
+    slug: 'runway-gen3-vs-kling-ai',
+    label: 'Pro vs economico',
+    category: 'Video',
+  },
+  {
+    aId: 'elevenlabs',      aName: 'ElevenLabs',
+    bId: 'whisper',         bName: 'Whisper',
+    slug: 'elevenlabs-vs-whisper',
+    label: 'Voce vs trascrizione',
+    category: 'Audio',
+  },
+];
+
+// Use case entry points — one per category
+const USE_CASES = [
+  { icon: '✍️', label: 'Scrivere',       sub: 'Claude, ChatGPT, Jasper',       slug: 'scrittura'    },
+  { icon: '🎨', label: 'Immagini',       sub: 'Midjourney, Leonardo, Firefly', slug: 'immagini'     },
+  { icon: '🎬', label: 'Video',          sub: 'Runway, Kling, HeyGen',         slug: 'video'        },
+  { icon: '🎙️', label: 'Audio',          sub: 'ElevenLabs, Whisper',           slug: 'audio'        },
+  { icon: '⚡', label: 'Produttività',   sub: 'Make, Zapier, Notion AI',       slug: 'produttivita' },
+  { icon: '💻', label: 'Programmare',    sub: 'Cursor, Copilot, Replit',       slug: 'coding'       },
 ];
 ---
 
 <!doctype html>
 <html lang="it" class="dark">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
-		<Header />
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
+    <Header />
 
-		<!-- ── HERO ─────────────────────────────────────────────── -->
-		<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden px-4">
-			<!-- Grid background -->
-			<div
-				class="absolute inset-0 opacity-[0.04] dark:opacity-[0.07] pointer-events-none"
-				style="background-image: linear-gradient(var(--color-ai-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-ai-border) 1px, transparent 1px); background-size: 40px 40px;"
-			></div>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         1. HERO — above the fold, one job: get the user to compare
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section class="relative min-h-[82vh] flex items-center justify-center overflow-hidden px-4">
 
-			<!-- Central glow orb -->
-			<div
-				class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full pointer-events-none"
-				style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.12) 0%, transparent 65%);"
-			></div>
-			<!-- Top-right accent orb -->
-			<div
-				class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
-				style="background: radial-gradient(ellipse at top right, rgba(99,102,241,0.09) 0%, transparent 70%);"
-			></div>
-			<!-- Bottom-left accent -->
-			<div
-				class="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full pointer-events-none"
-				style="background: radial-gradient(ellipse at bottom left, rgba(16,185,129,0.06) 0%, transparent 70%);"
-			></div>
+      <!-- Background grid -->
+      <div class="absolute inset-0 opacity-[0.04] dark:opacity-[0.07] pointer-events-none"
+        style="background-image: linear-gradient(var(--color-ai-border) 1px, transparent 1px),
+               linear-gradient(90deg, var(--color-ai-border) 1px, transparent 1px);
+               background-size: 40px 40px;"></div>
+      <!-- Glow -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none"
+        style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.13) 0%, transparent 65%);"></div>
 
-			<div class="relative z-10 text-center max-w-4xl mx-auto">
-				<!-- Badge -->
-				<div
-					class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-8
-						bg-purple-50 border-purple-200 text-purple-700
-						dark:bg-ai-purple/10 dark:border-ai-purple/30 dark:text-ai-purple
-						text-sm font-medium animate-fade-in"
-				>
-					<span class="w-2 h-2 rounded-full bg-ai-green animate-pulse shrink-0" aria-hidden="true"></span>
-					Recensioni aggiornate ogni settimana
-				</div>
+      <div class="relative z-10 text-center max-w-3xl mx-auto">
 
-				<!-- H1 -->
-				<h1
-					class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6
-						text-light-text dark:text-ai-text
-						animate-fade-in delay-100"
-				>
-					Smetti di perdere ore<br />
-					<span class="text-ai-purple">sul tool AI sbagliato</span>
-				</h1>
+        <!-- Eyebrow -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-7
+            bg-purple-50 border-purple-200 text-purple-700
+            dark:bg-ai-purple/10 dark:border-ai-purple/30 dark:text-ai-purple
+            text-sm font-medium">
+          <span class="w-2 h-2 rounded-full bg-ai-green animate-pulse shrink-0"></span>
+          Confronti aggiornati ogni settimana
+        </div>
 
-				<!-- Subhead -->
-				<p
-					class="text-lg sm:text-xl text-light-muted dark:text-ai-muted max-w-2xl mx-auto mb-10 leading-relaxed
-						animate-fade-in delay-200"
-				>
-					Recensioni oneste da chi li usa ogni giorno — in italiano, senza filtri.<br class="hidden sm:inline" />
-					Trova il tool giusto in 5 minuti.
-				</p>
+        <!-- H1 — what it does, not what it is -->
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-5
+            text-light-text dark:text-ai-text">
+          Confronta i tool AI.<br />
+          <span class="text-ai-purple">Scegli quello giusto.</span>
+        </h1>
 
-				<!-- CTAs -->
-				<div class="flex flex-wrap gap-4 justify-center animate-fade-in delay-300">
-					<a
-						href="#categorie"
-						class="inline-flex items-center gap-2 px-7 py-3.5 bg-ai-purple hover:bg-ai-purple-dark text-white font-semibold rounded-xl
-							transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(168,85,247,0.40)]"
-					>
-						Scopri i migliori tool
-						<svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-						</svg>
-					</a>
-					<a
-						href="/blog"
-						class="inline-flex items-center gap-2 px-7 py-3.5 font-semibold rounded-xl border transition-all duration-200
-							text-light-text border-light-border hover:bg-light-bg2 hover:border-light-border
-							dark:text-ai-text dark:border-ai-border dark:hover:bg-ai-card"
-					>
-						Leggi le recensioni
-					</a>
-				</div>
+        <!-- Subhead — concrete, not vague -->
+        <p class="text-lg sm:text-xl text-light-muted dark:text-ai-muted max-w-xl mx-auto mb-9 leading-relaxed">
+          Confronti onesti, testati sul campo e in italiano.<br class="hidden sm:inline" />
+          Scopri quale AI vale i tuoi soldi — prima di pagare.
+        </p>
 
-				<!-- Stats row -->
-				<div class="flex flex-wrap gap-0 justify-center mt-16 animate-fade-in delay-300">
-					{[
-						{ value: '30+', label: 'Tool testati' },
-						{ value: '100%', label: 'In italiano' },
-						{ value: '2026', label: 'Sempre aggiornato' },
-						{ value: '4', label: 'Categorie' },
-					].map((stat, i) => (
-						<div class={`text-center px-8 py-4 ${i < 3 ? 'border-r border-light-border dark:border-ai-border' : ''}`}>
-							<div class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">{stat.value}</div>
-							<div class="text-xs sm:text-sm text-light-muted dark:text-ai-muted mt-1">{stat.label}</div>
-						</div>
-					))}
-				</div>
-			</div>
-		</section>
+        <!-- Primary CTA -->
+        <a href="#compara"
+          class="inline-flex items-center gap-2 px-7 py-3.5
+            bg-ai-purple hover:bg-ai-purple-dark text-white font-bold rounded-xl
+            transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(168,85,247,0.40)]
+            text-base mb-8">
+          Inizia un confronto
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
 
-		<!-- ── AI TOOL FINDER ───────────────────────────────────── -->
-	<section class="py-24 px-4 bg-light-bg2 dark:bg-ai-bg2">
-		<div class="max-w-6xl mx-auto">
-			<div class="text-center mb-12" data-reveal>
-				<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Trova il tuo tool in 30 secondi</p>
-				<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-3">
-					AI Tool Advisor
-				</h2>
-				<p class="text-light-muted dark:text-ai-muted text-lg max-w-md mx-auto">
-					Rispondi a 3 domande. Ti suggerisco lo strumento giusto per te, senza perdite di tempo.
-				</p>
-			</div>
-			<AIToolFinder client:visible />
-		</div>
-	</section>
+        <!-- Quick-start pills — reduce friction, suggest popular pairs -->
+        <div class="flex flex-wrap gap-2 justify-center">
+          <span class="text-xs text-light-muted dark:text-ai-muted self-center mr-1">Oppure vai diretto:</span>
+          {POPULAR.slice(0, 3).map(p => (
+            <a href={`/confronta/${p.slug}`}
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium
+                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+                text-light-text dark:text-ai-text
+                hover:border-ai-purple/50 hover:text-ai-purple transition-colors">
+              {p.aName} <span class="text-light-muted dark:text-ai-muted text-xs">vs</span> {p.bName}
+            </a>
+          ))}
+        </div>
 
-	<!-- ── CATEGORIES ────────────────────────────────────────── -->
-		<section id="categorie" class="py-24 px-4">
-			<div class="max-w-6xl mx-auto">
-				<div class="text-center mb-14" data-reveal>
-					<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Esplora per categoria</p>
-					<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-3">
-						Le categorie principali
-					</h2>
-					<p class="text-light-muted dark:text-ai-muted text-lg max-w-xl mx-auto">
-						Ogni categoria, un confronto diverso. Trova il tool che ti serve davvero.
-					</p>
-				</div>
+      </div>
+    </section>
 
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-					{categories.map((cat, i) => (
-						<CategoryCard
-							icon={cat.icon}
-							title={cat.title}
-							description={cat.description}
-							tools={cat.tools}
-							href={cat.href}
-							accent={cat.accent}
-							index={i}
-						/>
-					))}
-				</div>
-			</div>
-		</section>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         2. ACTION BLOCK — compare two tools right now
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section id="compara" class="py-16 px-4 bg-light-bg2 dark:bg-ai-bg2">
+      <div class="max-w-2xl mx-auto">
 
-		<!-- ── LATEST REVIEWS ────────────────────────────────────── -->
-		<section class="py-24 px-4 bg-light-bg2 dark:bg-ai-bg2">
-			<div class="max-w-6xl mx-auto">
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-14" data-reveal>
-					<div>
-						<p class="text-ai-purple text-sm font-semibold uppercase tracking-widest mb-3">Sempre freschi</p>
-						<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-2">
-							Ultime recensioni
-						</h2>
-						<p class="text-light-muted dark:text-ai-muted">
-							Approfondite, aggiornate e senza filtri
-						</p>
-					</div>
-					<a
-						href="/blog"
-						class="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-ai-purple hover:text-ai-purple-dark transition-colors group"
-					>
-						Vedi tutte
-						<svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-						</svg>
-					</a>
-				</div>
+        <div class="text-center mb-8">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-2">
+            Confronta due tool adesso
+          </h2>
+          <p class="text-sm text-light-muted dark:text-ai-muted">
+            Seleziona due strumenti e vedi il confronto completo: funzionalità, prezzi, casi d'uso reali.
+          </p>
+        </div>
 
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-					{recentPosts.map((post, i) => (
-						<ReviewCard
-							id={post.id}
-							title={post.data.title}
-							description={post.data.description}
-							pubDate={post.data.pubDate}
-							readTime={readingTime(post.body)}
-							gradient=""
-							index={i}
-						/>
-					))}
-				</div>
-			</div>
-		</section>
+        <!-- Picker -->
+        <div class="flex flex-col sm:flex-row items-stretch gap-3">
 
-		<!-- ── TRUST / PERSONAL STORY ────────────────────────────── -->
-		<section class="py-24 px-4">
-			<div class="max-w-3xl mx-auto">
-				<div class="text-center mb-10" data-reveal>
-					<div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6
-						bg-light-bg2 dark:bg-ai-card border border-light-border dark:border-ai-border">
-						🤝
-					</div>
-					<h2 class="text-3xl sm:text-4xl font-extrabold text-light-text dark:text-ai-text mb-6">
-						Il sito che avrei voluto trovare io
-					</h2>
-				</div>
+          <!-- Select A -->
+          <div class="flex-1">
+            <label for="sel-a" class="block text-xs font-bold uppercase tracking-widest
+              text-light-muted dark:text-ai-muted mb-1.5">Primo tool</label>
+            <select id="sel-a"
+              class="w-full px-4 py-3 rounded-xl border cursor-pointer
+                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+                text-light-text dark:text-ai-text text-sm font-medium
+                focus:outline-none focus:ring-2 focus:ring-ai-purple/40 focus:border-ai-purple/40
+                transition-all duration-150">
+              <option value="">Scegli un tool…</option>
+              {toolsByCategory.map(cat => (
+                <optgroup label={cat.label}>
+                  {cat.tools.map(t => (
+                    <option value={t.id}>{t.name}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
 
-				<div class="text-left space-y-4 text-light-muted dark:text-ai-muted text-lg leading-relaxed mb-12" data-reveal data-reveal-delay="100">
-					<p>
-						Ci sono passato anch'io. Ore su YouTube a guardare review in inglese di tool che poi non funzionavano
-						come promesso, o peggio — erano già superati. Ho provato Jasper quando costava un occhio, ho
-						abbandonato Notion AI dopo una settimana, ho pagato abbonamenti che non ho mai usato davvero.
-					</p>
-					<p>
-						Così ho deciso di creare il sito che avrei voluto trovare io: <strong class="font-semibold text-light-text dark:text-ai-text">recensioni scritte da qualcuno che i tool li
-						apre ogni mattina</strong>, non da chi li guarda in un video di 20 minuti e mette il link in bio.
-					</p>
-				</div>
+          <!-- VS divider -->
+          <div class="flex items-end justify-center pb-3 sm:pb-0">
+            <span class="text-xs font-bold text-light-muted dark:text-ai-muted uppercase tracking-widest
+              sm:mt-6">vs</span>
+          </div>
 
-				<!-- Promise badges -->
-				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-					{[
-						{ icon: '🔍', label: 'Testato davvero', desc: 'Ogni tool usato per almeno 2 settimane', delay: '0' },
-						{ icon: '🇮🇹', label: 'In italiano', desc: 'Nessuna traduzione automatica', delay: '150' },
-						{ icon: '💬', label: 'Senza filtri', desc: 'Se fa schifo, lo diciamo', delay: '300' },
-					].map((badge) => (
-						<div
-							class="p-5 rounded-xl border text-center
-								bg-light-card border-light-border
-								dark:bg-ai-card dark:border-ai-border
-								hover:border-ai-purple/30 transition-colors duration-200"
-							data-reveal
-							data-reveal-delay={badge.delay}
-						>
-							<div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mx-auto mb-3
-								bg-light-bg2 dark:bg-ai-bg border border-light-border dark:border-ai-border">
-								{badge.icon}
-							</div>
-							<div class="font-semibold text-light-text dark:text-ai-text text-sm mb-1">{badge.label}</div>
-							<div class="text-xs text-light-muted dark:text-ai-muted">{badge.desc}</div>
-						</div>
-					))}
-				</div>
-			</div>
-		</section>
+          <!-- Select B -->
+          <div class="flex-1">
+            <label for="sel-b" class="block text-xs font-bold uppercase tracking-widest
+              text-light-muted dark:text-ai-muted mb-1.5">Secondo tool</label>
+            <select id="sel-b"
+              class="w-full px-4 py-3 rounded-xl border cursor-pointer
+                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+                text-light-text dark:text-ai-text text-sm font-medium
+                focus:outline-none focus:ring-2 focus:ring-ai-purple/40 focus:border-ai-purple/40
+                transition-all duration-150">
+              <option value="">Scegli un tool…</option>
+              {toolsByCategory.map(cat => (
+                <optgroup label={cat.label}>
+                  {cat.tools.map(t => (
+                    <option value={t.id}>{t.name}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
 
-		<!-- ── CTA BANNER ───────────────────────────────────────── -->
-		<section class="py-16 px-4">
-			<div
-				class="max-w-3xl mx-auto text-center rounded-2xl border p-10 relative overflow-hidden
-					bg-gradient-to-br from-ai-purple/10 via-transparent to-indigo-500/5
-					border-ai-purple/20"
-				data-reveal
-			>
-				<!-- Decorative glow -->
-				<div
-					class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 pointer-events-none"
-					style="background: radial-gradient(ellipse at top, rgba(168,85,247,0.18) 0%, transparent 70%);"
-				></div>
+        </div>
 
-				<div class="relative z-10">
-					<h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-4">
-						Ogni recensione risponde a tre domande
-					</h2>
-					<p class="text-light-muted dark:text-ai-muted text-lg mb-8 max-w-xl mx-auto">
-						<strong class="font-semibold text-light-text dark:text-ai-text">Vale i soldi? Funziona davvero? Per chi è adatto?</strong><br />
-						Niente stelline gonfiate. Niente hype.
-					</p>
-					<a
-						href="/blog"
-						class="inline-flex items-center gap-2 px-7 py-3.5 bg-ai-green hover:bg-emerald-600 text-white font-bold rounded-xl
-							transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] text-base"
-					>
-						Leggi le ultime recensioni
-						<svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-						</svg>
-					</a>
-				</div>
-			</div>
-		</section>
+        <!-- Error msg -->
+        <p id="compare-error" class="hidden text-xs text-red-400 mt-2 text-center">
+          Seleziona due tool diversi per continuare.
+        </p>
 
-		<Footer />
-	</body>
+        <!-- CTA -->
+        <button id="compare-btn"
+          class="mt-4 w-full py-3.5 rounded-xl font-bold text-base
+            bg-ai-purple hover:bg-ai-purple-dark text-white
+            transition-all duration-200 hover:shadow-[0_6px_24px_rgba(168,85,247,0.35)]
+            disabled:opacity-40 disabled:cursor-not-allowed">
+          Confronta →
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         3. POPULAR COMPARISONS — 6 high-intent pairs
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section class="py-20 px-4">
+      <div class="max-w-4xl mx-auto">
+
+        <div class="flex items-end justify-between gap-4 mb-8" data-reveal>
+          <div>
+            <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-2">
+              I più cercati
+            </p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">
+              Confronti popolari
+            </h2>
+          </div>
+          <a href="/confronta"
+            class="shrink-0 text-sm font-semibold text-ai-purple hover:underline">
+            Tutti i confronti →
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {POPULAR.map(p => (
+            <a href={`/confronta/${p.slug}`}
+              class="group flex flex-col p-4 rounded-xl border no-underline
+                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+                hover:border-ai-purple/40 hover:shadow-lg hover:shadow-ai-purple/5
+                transition-all duration-200">
+
+              <!-- Category badge -->
+              <span class="text-xs font-bold text-light-muted dark:text-ai-muted mb-3 uppercase tracking-widest">
+                {p.category}
+              </span>
+
+              <!-- Tool names -->
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-sm font-extrabold text-light-text dark:text-ai-text
+                  group-hover:text-ai-purple transition-colors">
+                  {p.aName}
+                </span>
+                <span class="text-xs text-light-muted dark:text-ai-muted">vs</span>
+                <span class="text-sm font-extrabold text-light-text dark:text-ai-text
+                  group-hover:text-ai-purple transition-colors">
+                  {p.bName}
+                </span>
+              </div>
+
+              <!-- Intent label -->
+              <p class="text-xs text-light-muted dark:text-ai-muted mt-auto pt-2
+                border-t border-light-border dark:border-ai-border">
+                {p.label}
+              </p>
+            </a>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         4. USE CASE ENTRY POINTS — "Miglior AI per X"
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section class="py-20 px-4 bg-light-bg2 dark:bg-ai-bg2">
+      <div class="max-w-4xl mx-auto">
+
+        <div class="text-center mb-8" data-reveal>
+          <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-2">Guide per caso d'uso</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">
+            Miglior AI per…
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {USE_CASES.map(uc => (
+            <a href={`/migliore-ai-per/${uc.slug}`}
+              class="group flex flex-col items-start p-4 rounded-xl border no-underline
+                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+                hover:border-ai-purple/40 hover:shadow-lg hover:shadow-ai-purple/5
+                transition-all duration-200">
+              <span class="text-2xl mb-3" aria-hidden="true">{uc.icon}</span>
+              <span class="text-sm font-extrabold text-light-text dark:text-ai-text
+                group-hover:text-ai-purple transition-colors mb-1">
+                {uc.label}
+              </span>
+              <span class="text-xs text-light-muted dark:text-ai-muted leading-snug">
+                {uc.sub}
+              </span>
+            </a>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         5. TRUST — why believe us (no paragraphs)
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section class="py-20 px-4">
+      <div class="max-w-3xl mx-auto">
+
+        <div class="text-center mb-8" data-reveal>
+          <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text">
+            Perché fidarsi di questi confronti?
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            {
+              icon: '🔍',
+              label: 'Testati davvero',
+              desc: 'Ogni tool usato per almeno 2 settimane — non visto su YouTube',
+            },
+            {
+              icon: '💬',
+              label: 'Senza filtri',
+              desc: 'Se fa schifo, lo diciamo. Nessun link affiliato che gonfia il voto',
+            },
+            {
+              icon: '🇮🇹',
+              label: 'In italiano',
+              desc: 'Scritto da zero in italiano — nessuna traduzione automatica',
+            },
+          ].map(badge => (
+            <div class="flex items-start gap-4 p-5 rounded-xl border
+              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border">
+              <span class="text-2xl shrink-0" aria-hidden="true">{badge.icon}</span>
+              <div>
+                <p class="text-sm font-bold text-light-text dark:text-ai-text mb-1">{badge.label}</p>
+                <p class="text-xs text-light-muted dark:text-ai-muted leading-relaxed">{badge.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         6. RECENT BLOG — freshness signal
+    ══════════════════════════════════════════════════════════════════════ -->
+    {recentPosts.length > 0 && (
+      <section class="py-20 px-4 bg-light-bg2 dark:bg-ai-bg2">
+        <div class="max-w-4xl mx-auto">
+
+          <div class="flex items-end justify-between gap-4 mb-8" data-reveal>
+            <div>
+              <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-2">Sempre freschi</p>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">
+                Ultime recensioni
+              </h2>
+            </div>
+            <a href="/blog" class="shrink-0 text-sm font-semibold text-ai-purple hover:underline">
+              Vedi tutte →
+            </a>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {recentPosts.map((post, i) => (
+              <ReviewCard
+                id={post.id}
+                title={post.data.title}
+                description={post.data.description}
+                pubDate={post.data.pubDate}
+                readTime={readingTime(post.body)}
+                gradient=""
+                index={i}
+              />
+            ))}
+          </div>
+
+        </div>
+      </section>
+    )}
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         7. AI TOOL ADVISOR — fallback for undecided users
+         id="ai-advisor" required — other pages deep-link here
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section id="ai-advisor" class="py-24 px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-10" data-reveal>
+          <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-3">
+            Non sai da dove partire?
+          </p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-3">
+            AI Tool Advisor
+          </h2>
+          <p class="text-light-muted dark:text-ai-muted max-w-md mx-auto text-sm leading-relaxed">
+            Rispondi a 3 domande. Ti suggerisco lo strumento più adatto a te — senza perdite di tempo.
+          </p>
+        </div>
+        <AIToolFinder client:visible />
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         8. FINAL CTA — reinforce the primary action
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section class="py-16 px-4 bg-light-bg2 dark:bg-ai-bg2">
+      <div class="max-w-xl mx-auto text-center rounded-2xl border p-10 relative overflow-hidden
+          bg-gradient-to-br from-ai-purple/10 via-transparent to-indigo-500/5
+          border-ai-purple/20" data-reveal>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-24 pointer-events-none"
+          style="background: radial-gradient(ellipse at top, rgba(168,85,247,0.2) 0%, transparent 70%);"></div>
+        <div class="relative z-10">
+          <h2 class="text-2xl font-extrabold text-light-text dark:text-ai-text mb-3">
+            Hai ancora dubbi su quale tool scegliere?
+          </h2>
+          <p class="text-sm text-light-muted dark:text-ai-muted mb-7">
+            Scegli la coppia che ti interessa e ottieni il confronto completo in 30 secondi.
+          </p>
+          <a href="#compara"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-ai-purple hover:bg-ai-purple-dark
+              text-white font-bold rounded-xl transition-all duration-200
+              hover:shadow-[0_8px_30px_rgba(168,85,247,0.40)] text-sm">
+            Confronta adesso →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+
+    <!-- Tool order data for client-side slug generation -->
+    <script id="tool-order-data" type="application/json" set:html={JSON.stringify(toolOrder)} />
+
+    <!-- Comparison picker logic -->
+    <script>
+      const orderEl  = document.getElementById('tool-order-data');
+      const toolOrder = orderEl ? JSON.parse(orderEl.textContent ?? '[]') as string[] : [];
+
+      const selA   = document.getElementById('sel-a')    as HTMLSelectElement | null;
+      const selB   = document.getElementById('sel-b')    as HTMLSelectElement | null;
+      const btn    = document.getElementById('compare-btn') as HTMLButtonElement | null;
+      const errMsg = document.getElementById('compare-error') as HTMLElement | null;
+
+      function navigate() {
+        const a = selA?.value ?? '';
+        const b = selB?.value ?? '';
+
+        if (!a || !b) {
+          if (errMsg) { errMsg.textContent = 'Seleziona entrambi i tool per continuare.'; errMsg.classList.remove('hidden'); }
+          return;
+        }
+        if (a === b) {
+          if (errMsg) { errMsg.textContent = 'Scegli due tool diversi.'; errMsg.classList.remove('hidden'); }
+          return;
+        }
+
+        if (errMsg) errMsg.classList.add('hidden');
+
+        const ia = toolOrder.indexOf(a);
+        const ib = toolOrder.indexOf(b);
+        const slug = ia < ib ? `${a}-vs-${b}` : `${b}-vs-${a}`;
+        window.location.href = `/confronta/${slug}`;
+      }
+
+      btn?.addEventListener('click', navigate);
+
+      // Clear error on change
+      selA?.addEventListener('change', () => errMsg?.classList.add('hidden'));
+      selB?.addEventListener('change', () => errMsg?.classList.add('hidden'));
+    </script>
+
+  </body>
 </html>
