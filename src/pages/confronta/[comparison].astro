@@ -1,5 +1,6 @@
 ---
 import { TOOLS } from '../../data/tools';
+import type { AITool } from '../../data/tools';
 import { compareTools } from '../../lib/comparator';
 import { getRelatedComparisons } from '../../lib/comparison-priority';
 import { fetchTrending, buildTrendingMap } from '../../lib/trending';
@@ -52,6 +53,11 @@ const related = getRelatedComparisons(
   viewsMap,
   feedbackMap,
 );
+
+// Affiliate link helpers — usa affiliateUrl quando presente, altrimenti link interno
+const aHref  = (t: AITool) => t.affiliateUrl ?? t.link;
+const aTarget = (t: AITool) => t.affiliateUrl ? '_blank' : undefined;
+const aRel   = (t: AITool) => t.affiliateUrl ? 'sponsored noopener noreferrer' : undefined;
 
 // SEO: descrizione dinamica generata dai dati, non hardcoded
 const metaDesc = `${tldr.chooseA}. ${tldr.chooseB}. Confronto completo con funzionalità, prezzi, casi d'uso e verdetto finale — aggiornato ${new Date().getFullYear()}.`;
@@ -139,7 +145,7 @@ const faqSchema = {
         </h1>
         <p class="text-xs text-light-muted dark:text-ai-muted flex items-center gap-1.5 mb-4">
           <span class="w-1.5 h-1.5 rounded-full bg-ai-green animate-pulse"></span>
-          Dati aggiornati {new Date().getFullYear()} · Score su qualità, prezzo e facilità d'uso · Nessun affiliato
+          Dati aggiornati {new Date().getFullYear()} · Score su qualità, prezzo e facilità d'uso · Recensioni indipendenti
         </p>
 
         <!-- ── Quick Verdict pills ──────────────────────────────────────────── -->
@@ -187,7 +193,9 @@ const faqSchema = {
             <p class="text-light-muted dark:text-ai-muted text-sm mb-5">{overallWinner.tagline}</p>
             <div class="flex flex-wrap gap-3">
               <a
-                href={overallWinner.link}
+                href={aHref(overallWinner)}
+                target={aTarget(overallWinner)}
+                rel={aRel(overallWinner)}
                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-ai-purple hover:bg-ai-purple-dark text-white font-bold rounded-xl transition-all duration-200 text-sm"
               >
                 {overallWinner.pricing.hasFreeOption ? `Prova ${overallWinner.name} gratis →` : `Scopri ${overallWinner.name} →`}
@@ -196,7 +204,9 @@ const faqSchema = {
                 const other = overallWinner.id === toolA.id ? toolB : toolA;
                 return (
                   <a
-                    href={other.link}
+                    href={aHref(other)}
+                    target={aTarget(other)}
+                    rel={aRel(other)}
                     class="inline-flex items-center gap-2 px-5 py-2.5 border border-light-border dark:border-ai-border text-light-muted dark:text-ai-muted hover:text-light-text dark:hover:text-ai-text hover:border-ai-purple font-medium rounded-xl transition-all duration-200 text-sm"
                   >
                     Esplora {other.name}
@@ -212,13 +222,17 @@ const faqSchema = {
             <p class="text-light-muted dark:text-ai-muted text-sm mb-5">Scorri i verdetti qui sotto per trovare quello giusto per te</p>
             <div class="flex flex-wrap gap-3">
               <a
-                href={toolA.link}
+                href={aHref(toolA)}
+                target={aTarget(toolA)}
+                rel={aRel(toolA)}
                 class="inline-flex items-center gap-2 px-5 py-2.5 border border-ai-purple text-ai-purple hover:bg-ai-purple hover:text-white font-bold rounded-xl transition-all duration-200 text-sm"
               >
                 {toolA.pricing.hasFreeOption ? `Prova ${toolA.name} gratis →` : `Scopri ${toolA.name} →`}
               </a>
               <a
-                href={toolB.link}
+                href={aHref(toolB)}
+                target={aTarget(toolB)}
+                rel={aRel(toolB)}
                 class="inline-flex items-center gap-2 px-5 py-2.5 border border-light-border dark:border-ai-border text-light-muted dark:text-ai-muted hover:text-light-text dark:hover:text-ai-text hover:border-ai-purple font-medium rounded-xl transition-all duration-200 text-sm"
               >
                 {toolB.pricing.hasFreeOption ? `Prova ${toolB.name} gratis` : `Scopri ${toolB.name}`}
@@ -380,7 +394,9 @@ const faqSchema = {
                 return (
                   <>
                     <a
-                      href={other.link}
+                      href={aHref(other)}
+                      target={aTarget(other)}
+                      rel={aRel(other)}
                       class="px-4 py-2 rounded-xl border border-light-border dark:border-ai-border
                              text-light-muted dark:text-ai-muted text-sm font-medium
                              hover:border-ai-purple hover:text-ai-purple transition-all duration-150"
@@ -388,7 +404,9 @@ const faqSchema = {
                       {other.name} →
                     </a>
                     <a
-                      href={overallWinner.link}
+                      href={aHref(overallWinner)}
+                      target={aTarget(overallWinner)}
+                      rel={aRel(overallWinner)}
                       class="px-4 py-2 rounded-xl bg-ai-purple hover:bg-ai-purple-dark text-white text-sm font-bold transition-all duration-150"
                     >
                       {overallWinner.pricing.hasFreeOption ? `Prova ${overallWinner.name} gratis →` : `Scopri ${overallWinner.name} →`}
@@ -401,14 +419,18 @@ const faqSchema = {
         ) : (
           <div class="flex gap-2 ml-auto">
             <a
-              href={toolA.link}
+              href={aHref(toolA)}
+              target={aTarget(toolA)}
+              rel={aRel(toolA)}
               class="px-4 py-2 rounded-xl border border-ai-purple text-ai-purple text-sm font-bold
                      hover:bg-ai-purple hover:text-white transition-all duration-150"
             >
               {toolA.pricing.hasFreeOption ? `Prova ${toolA.name} gratis →` : `${toolA.name} →`}
             </a>
             <a
-              href={toolB.link}
+              href={aHref(toolB)}
+              target={aTarget(toolB)}
+              rel={aRel(toolB)}
               class="px-4 py-2 rounded-xl border border-light-border dark:border-ai-border
                      text-light-muted dark:text-ai-muted text-sm font-medium
                      hover:border-ai-purple hover:text-ai-purple transition-all duration-150"

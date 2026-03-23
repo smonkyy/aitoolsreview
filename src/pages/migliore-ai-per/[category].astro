@@ -1,5 +1,6 @@
 ---
 import { TOOLS } from '../../data/tools';
+import type { AITool } from '../../data/tools';
 import { CATEGORY_PAGES, getCategoryPage } from '../../data/category-pages';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
@@ -78,6 +79,11 @@ const breadcrumbSchema = {
   ],
 };
 
+// Affiliate link helpers
+const aHref   = (t: AITool) => t.affiliateUrl ?? t.link;
+const aTarget = (t: AITool) => t.affiliateUrl ? '_blank' : undefined;
+const aRel    = (t: AITool) => t.affiliateUrl ? 'sponsored noopener noreferrer' : undefined;
+
 // Rating medal colours
 const medalClass = ['text-amber-400', 'text-slate-300', 'text-amber-600'];
 const medalLabel = ['#1', '#2', '#3'];
@@ -111,7 +117,7 @@ const medalLabel = ['#1', '#2', '#3'];
         </h1>
         <p class="text-xs text-light-muted dark:text-ai-muted flex items-center gap-1.5 mb-5">
           <span class="w-1.5 h-1.5 rounded-full bg-ai-green animate-pulse"></span>
-          Aggiornato {new Date().getFullYear()} · Testato sul campo · Nessun affiliato
+          Aggiornato {new Date().getFullYear()} · Testato sul campo · Recensioni indipendenti
         </p>
         <p class="text-base text-light-muted dark:text-ai-muted leading-relaxed max-w-2xl">
           {pageData.intro}
@@ -166,7 +172,9 @@ const medalLabel = ['#1', '#2', '#3'];
 
               <!-- CTA -->
               <a
-                href={tool.link}
+                href={aHref(tool)}
+                target={aTarget(tool)}
+                rel={aRel(tool)}
                 class="shrink-0 self-center px-4 py-2 rounded-xl text-sm font-bold
                   bg-ai-purple hover:bg-ai-purple-dark text-white transition-all duration-150"
               >
@@ -238,7 +246,9 @@ const medalLabel = ['#1', '#2', '#3'];
               </div>
               {uc.tool && (
                 <a
-                  href={uc.tool.link}
+                  href={aHref(uc.tool)}
+                  target={aTarget(uc.tool)}
+                  rel={aRel(uc.tool)}
                   class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold
                     bg-ai-purple/10 text-ai-purple hover:bg-ai-purple/20 transition-colors whitespace-nowrap"
                 >
@@ -274,7 +284,9 @@ const medalLabel = ['#1', '#2', '#3'];
                 <div class="flex items-center justify-between">
                   <span class="text-xs font-bold text-ai-purple">→ {p.tool.name}</span>
                   <a
-                    href={p.tool.link}
+                    href={aHref(p.tool)}
+                    target={aTarget(p.tool)}
+                    rel={aRel(p.tool)}
                     class="text-xs text-light-muted dark:text-ai-muted hover:text-ai-purple transition-colors"
                   >
                     Scopri →
