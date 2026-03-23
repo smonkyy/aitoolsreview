@@ -14,6 +14,10 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
+			/** ID del tool recensito (da data/tools.ts) — attiva VerdettTecnico + ProsConsBox */
+			reviewedToolId: z.string().optional(),
+			/** ID autore (da data/authors.ts) — default: 'redazione' */
+			author: z.string().optional().default('redazione'),
 		}),
 });
 

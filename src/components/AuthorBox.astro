@@ -1,0 +1,141 @@
+---
+import type { Author } from '../data/authors';
+
+interface Props {
+  author: Author;
+  /** ISO date string of the review — shown as "Aggiornato il…" */
+  updatedDate?: Date;
+}
+
+const { author, updatedDate } = Astro.props;
+
+const updatedLabel = updatedDate
+  ? new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(updatedDate)
+  : null;
+---
+
+<aside
+  class="mt-12 rounded-2xl border not-prose
+    bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border overflow-hidden"
+  aria-label="Informazioni sull'autore"
+>
+  <!-- Label bar -->
+  <div class="px-5 py-2.5 border-b border-light-border dark:border-ai-border
+    bg-light-bg2 dark:bg-ai-bg2">
+    <span class="text-xs font-bold uppercase tracking-wide text-light-muted dark:text-ai-muted">
+      Chi ha scritto questa recensione
+    </span>
+  </div>
+
+  <div class="p-5 sm:p-6 flex flex-col sm:flex-row gap-5">
+    <!-- Avatar -->
+    <div
+      class={`shrink-0 h-16 w-16 rounded-full flex items-center justify-center text-white font-extrabold text-lg
+        bg-gradient-to-br ${author.avatarGradient ?? 'from-ai-purple to-blue-500'}`}
+      aria-hidden="true"
+    >
+      {author.initial ?? author.name.charAt(0)}
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <!-- Name + role + verified badge -->
+      <div class="flex flex-wrap items-center gap-2 mb-1">
+        <strong class="text-base font-extrabold text-light-text dark:text-ai-text">
+          {author.name}
+        </strong>
+        <!-- Verified reviewer badge — E-E-A-T signal -->
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full
+          bg-ai-purple/10 text-ai-purple border border-ai-purple/25">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"/>
+          </svg>
+          Recensore verificato
+        </span>
+      </div>
+      <p class="text-sm font-medium text-ai-purple mb-3">{author.role}</p>
+
+      <!-- Bio -->
+      <p class="text-sm text-light-muted dark:text-ai-muted leading-relaxed mb-4">
+        {author.bio}
+      </p>
+
+      <!-- Expertise chips -->
+      <div class="flex flex-wrap gap-1.5 mb-4" aria-label="Aree di competenza">
+        {author.expertise.map((skill) => (
+          <span class="px-2.5 py-0.5 text-xs font-medium rounded-full
+            bg-light-bg2 dark:bg-ai-bg2 text-light-muted dark:text-ai-muted
+            border border-light-border dark:border-ai-border">
+            {skill}
+          </span>
+        ))}
+      </div>
+
+      <!-- Stats row — quantitative E-E-A-T signals -->
+      <div class="flex flex-wrap gap-4 text-sm">
+        <div class="flex items-center gap-1.5 text-light-muted dark:text-ai-muted">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/>
+            <path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+            <path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/>
+            <path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/>
+            <path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/>
+            <path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>
+            <path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/>
+            <path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/>
+          </svg>
+          <span>
+            <strong class="text-light-text dark:text-ai-text">{author.toolsReviewed}</strong> tool recensiti
+          </span>
+        </div>
+        <div class="flex items-center gap-1.5 text-light-muted dark:text-ai-muted">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>
+            <strong class="text-light-text dark:text-ai-text">{author.yearsExp} anni</strong> nel settore AI
+          </span>
+        </div>
+        {updatedLabel && (
+          <div class="flex items-center gap-1.5 text-light-muted dark:text-ai-muted">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            <span>Aggiornato il <strong class="text-light-text dark:text-ai-text">{updatedLabel}</strong></span>
+          </div>
+        )}
+      </div>
+
+      <!-- Social links -->
+      {author.social && (
+        <div class="flex gap-3 mt-4">
+          {author.social.twitter && (
+            <a
+              href={`https://x.com/${author.social.twitter}`}
+              target="_blank" rel="noopener noreferrer"
+              class="text-xs text-light-faint dark:text-ai-faint hover:text-ai-purple transition-colors no-underline"
+              aria-label={`Profilo X di ${author.name}`}
+            >
+              𝕏 @{author.social.twitter}
+            </a>
+          )}
+          {author.social.linkedin && (
+            <a
+              href={author.social.linkedin}
+              target="_blank" rel="noopener noreferrer"
+              class="text-xs text-light-faint dark:text-ai-faint hover:text-ai-purple transition-colors no-underline"
+              aria-label={`Profilo LinkedIn di ${author.name}`}
+            >
+              LinkedIn →
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</aside>
