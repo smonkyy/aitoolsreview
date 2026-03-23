@@ -16,22 +16,37 @@ const { title, description, image = FallbackImage, ogImage } = Astro.props;
 const ogImageUrl = ogImage ? new URL(ogImage, Astro.site) : new URL(image.src, Astro.url);
 ---
 
-<!-- Analytics: page_view event (non-blocking, fire-and-forget) -->
-<script>
-  import { trackPageView } from '../lib/analytics';
-  trackPageView(window.location.pathname);
-</script>
-
-<!-- Dark mode initialization (before render to avoid flash) -->
+<!-- Dark mode initialization + no-transition guard (before render to avoid flash) -->
 <script is:inline>
 	(function () {
-		const stored = localStorage.getItem('theme');
+		var html = document.documentElement;
+		/* Blocca le transizioni durante l'init — rimosse dopo il primo paint */
+		html.classList.add('no-transition');
+		var stored = localStorage.getItem('theme');
 		if (stored === 'light') {
-			document.documentElement.classList.remove('dark');
+			html.classList.remove('dark');
 		} else {
-			document.documentElement.classList.add('dark');
+			html.classList.add('dark');
 		}
+		/* Double-rAF: assicura che il browser abbia già paintato prima di
+		   ri-abilitare le transizioni, evitando il flash di 200ms */
+		requestAnimationFrame(function () {
+			requestAnimationFrame(function () {
+				html.classList.remove('no-transition');
+			});
+		});
 	})();
+</script>
+
+<!-- Analytics: page_view — eseguito a browser idle, non compete con risorse critiche -->
+<script>
+  import { trackPageView } from '../lib/analytics';
+  const path = window.location.pathname;
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => trackPageView(path));
+  } else {
+    setTimeout(() => trackPageView(path), 200);
+  }
 </script>
 
 <!-- Scroll reveal — IntersectionObserver for [data-reveal] elements -->
@@ -77,10 +92,7 @@ const ogImageUrl = ogImage ? new URL(ogImage, Astro.site) : new URL(image.src, A
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={new URL('rss.xml', Astro.site)} />
 
-<!-- Inter Font (Google Fonts CDN) -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<!-- Inter self-hosted via @fontsource (caricata da global.css, stessa origine) -->
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

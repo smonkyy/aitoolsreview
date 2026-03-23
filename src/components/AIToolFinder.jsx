@@ -1,8 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
-import { Bot, Sparkles, CheckCircle, RotateCcw, Zap, ChevronRight, Trophy, Medal, GitCompare } from 'lucide-react';
 import { TOOLS } from '../data/tools';
 import { rankTools } from '../lib/recommender';
 import { trackAdvisorComplete, trackToolClick } from '../lib/analytics';
+
+/* ─── Inline SVG icons — rimpiazza lucide-react (~100KB rimossi dal bundle) ── */
+function Svg({ size = 16, color = 'currentColor', style, children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      style={style} aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+const Bot         = (p) => <Svg {...p}><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><path d="M8 15h.01M16 15h.01"/></Svg>;
+const Sparkles    = (p) => <Svg {...p}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></Svg>;
+const CheckCircle = (p) => <Svg {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3 8-8"/></Svg>;
+const RotateCcw   = (p) => <Svg {...p}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></Svg>;
+const Zap         = (p) => <Svg {...p}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Svg>;
+const ChevronRight = (p) => <Svg {...p}><path d="m9 18 6-6-6-6"/></Svg>;
+const Trophy      = (p) => <Svg {...p}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Svg>;
+const Medal       = (p) => <Svg {...p}><circle cx="12" cy="17" r="5"/><path d="M8.21 3.06A7 7 0 0 1 19 9"/><path d="M5 9a7 7 0 0 0 4.5 6.5"/></Svg>;
+const GitCompare  = (p) => <Svg {...p}><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></Svg>;
 
 /** Returns the canonical /confronta slug — same ordering as getStaticPaths */
 function comparisonUrl(idA, idB) {
@@ -431,56 +450,6 @@ export default function AIToolFinder() {
 
   return (
     <>
-      <style>{`
-        @keyframes chatFadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes typingDot {
-          0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-          40%            { transform: translateY(-4px); opacity: 1; }
-        }
-        @keyframes resultReveal {
-          from { opacity: 0; transform: scale(0.94) translateY(10px); }
-          to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .ai-bubble {
-          background: var(--ai-bubble-bg, white);
-          border: 1px solid var(--ai-bubble-border, #e2e8f0);
-          border-radius: 18px 18px 18px 4px;
-          padding: 10px 14px;
-          box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-          color: var(--ai-bubble-text, #334155);
-        }
-        .dark .ai-bubble {
-          --ai-bubble-bg: #1e293b;
-          --ai-bubble-border: #334155;
-          --ai-bubble-text: #e2e8f0;
-        }
-        .chip-btn {
-          padding: 6px 12px;
-          font-size: 12px; font-weight: 600;
-          border-radius: 999px;
-          border: 1.5px solid #bfdbfe;
-          background: #eff6ff; color: #1d4ed8;
-          cursor: pointer; transition: all 0.15s;
-          white-space: nowrap;
-        }
-        .dark .chip-btn {
-          border-color: #1e3a5f; background: #0f172a; color: #93c5fd;
-        }
-        .chip-btn:hover:not(:disabled) {
-          background: #2563eb; border-color: #2563eb; color: white;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(37,99,235,0.25);
-        }
-        .chip-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-        .chat-scroll::-webkit-scrollbar { width: 4px; }
-        .chat-scroll::-webkit-scrollbar-track { background: transparent; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark .chat-scroll::-webkit-scrollbar-thumb { background: #334155; }
-      `}</style>
-
       <div
         style={{ maxWidth: 540, margin: '0 auto', borderRadius: 20, overflow: 'hidden', border: '1px solid', boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}
         className="border-slate-200 dark:border-slate-700"
