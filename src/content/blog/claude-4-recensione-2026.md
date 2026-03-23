@@ -2,6 +2,7 @@
 title: 'Claude 4 Recensione 2026: Il Migliore Assistente AI del Momento?'
 description: 'Recensione completa di Claude 4 di Anthropic aggiornata a marzo 2026. Test reali, confronto con ChatGPT e Gemini, prezzi e verdetto finale.'
 pubDate: '2026-03-19T00:00:00Z'
+updatedDate: '2026-03-22T00:00:00Z'
 ---
 
 La prima volta che ho aperto Claude 4 mi sono fermato dopo cinque minuti. Non perché fosse deludente — al contrario. Avevo chiesto di riscrivere un articolo che avevo scritto io stesso, e il risultato era così buono che mi sono sentito quasi sostituito. Da quel momento l'ho usato ogni giorno per tre settimane, e questa è la recensione che avrei voluto trovare prima di iniziare.
