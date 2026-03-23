@@ -17,6 +17,7 @@
     "@astrojs/rss": "^4.0.17",
     "@astrojs/sitemap": "^3.7.1",
     "@fontsource/inter": "^5.2.8",
+    "@orama/orama": "^3.1.18",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^6.0.4",
     "lucide-react": "^0.577.0",
