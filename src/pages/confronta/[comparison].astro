@@ -2,6 +2,7 @@
 import { TOOLS } from '../../data/tools';
 import type { AITool } from '../../data/tools';
 import { compareTools } from '../../lib/comparator';
+import { toolToSchema } from '../../lib/schema';
 import { getRelatedComparisons } from '../../lib/comparison-priority';
 import { fetchTrending, buildTrendingMap } from '../../lib/trending';
 import { fetchFeedback, buildFeedbackMap, fetchComparisonViews, buildViewsMap } from '../../lib/feedback';
@@ -63,6 +64,11 @@ const aRel   = (t: AITool) => t.affiliateUrl ? 'sponsored noopener noreferrer' :
 const metaDesc = `${tldr.chooseA}. ${tldr.chooseB}. Confronto completo con funzionalità, prezzi, casi d'uso e verdetto finale — aggiornato ${new Date().getFullYear()}.`;
 
 const siteUrl = String(Astro.site);
+
+// SoftwareApplication schema per entrambi i tool confrontati
+const softwareSchemaA = toolToSchema(toolA, siteUrl);
+const softwareSchemaB = toolToSchema(toolB, siteUrl);
+
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -121,6 +127,8 @@ const faqSchema = {
     />
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(softwareSchemaA)} />
+    <script type="application/ld+json" set:html={JSON.stringify(softwareSchemaB)} />
   </head>
   <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
     <Header />
