@@ -2,6 +2,7 @@
 import { TOOLS } from '../../data/tools';
 import type { AITool } from '../../data/tools';
 import { CATEGORY_PAGES, getCategoryPage } from '../../data/category-pages';
+import { toolToSchema } from '../../lib/schema';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -69,6 +70,10 @@ const faqSchema = {
 };
 
 const siteUrl = String(Astro.site);
+
+// SoftwareApplication schema per i top tool della categoria (max 3)
+const topToolSchemas = topTools.map(t => toolToSchema(t, siteUrl));
+
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -95,6 +100,9 @@ const medalLabel = ['#1', '#2', '#3'];
     <BaseHead title={`${pageData.h1} | AI Tools Review`} description={pageData.metaDescription} />
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    {topToolSchemas.map((schema, i) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
   </head>
   <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
     <Header />

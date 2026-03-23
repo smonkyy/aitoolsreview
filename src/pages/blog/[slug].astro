@@ -4,6 +4,7 @@ import BlogPost from '../../layouts/BlogPost.astro';
 import { TOOLS } from '../../data/tools';
 import { topMentionedPair } from '../../lib/mention-detector';
 import { canonicalSlug } from '../../lib/comparison-priority';
+import { toolToSchema } from '../../lib/schema';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -19,8 +20,21 @@ const { Content } = await render(post);
 // Detect which tools are mentioned in the post body, pick top 2
 const pair = topMentionedPair(post.body ?? '', TOOLS);
 const comparisonSlug = pair ? canonicalSlug(pair[0].id, pair[1].id) : null;
+
+// Genera SoftwareApplication schema per i tool menzionati nel post.
+// Se il post è una recensione diretta (slug contiene il tool id), include lo schema.
+const siteUrl = String(Astro.site);
+const mentionedToolSchemas = pair
+  ? pair.map(t => toolToSchema(t, siteUrl))
+  : [];
 ---
 
-<BlogPost {...post.data} slug={post.id} comparisonPair={pair} comparisonSlug={comparisonSlug}>
+<BlogPost
+  {...post.data}
+  slug={post.id}
+  comparisonPair={pair}
+  comparisonSlug={comparisonSlug}
+  toolSchemas={mentionedToolSchemas}
+>
   <Content />
 </BlogPost>

@@ -12,9 +12,11 @@ type Props = CollectionEntry<'blog'>['data'] & {
   slug?: string;
   comparisonPair?: [AITool, AITool] | null;
   comparisonSlug?: string | null;
+  /** JSON-LD SoftwareApplication schemas per i tool menzionati nel post */
+  toolSchemas?: object[];
 };
 
-const { title, description, pubDate, updatedDate, heroImage, slug, comparisonPair, comparisonSlug } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, slug, comparisonPair, comparisonSlug, toolSchemas = [] } = Astro.props;
 const ogImage = slug ? `/og/${slug}.png` : undefined;
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
@@ -50,6 +52,9 @@ const breadcrumbSchema = {
 		<BaseHead title={title} description={description} ogImage={ogImage} />
 		<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
 		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+		{toolSchemas.map((schema) => (
+			<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+		))}
 	</head>
 
 	<body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
