@@ -11,14 +11,18 @@ import { SITE_TITLE } from '../consts';
 		<!-- Logo -->
 		<a
 			href="/"
-			class="flex items-center gap-2 text-lg font-bold text-light-text dark:text-ai-text no-underline hover:opacity-90 transition-opacity"
+			class="flex items-center no-underline hover:opacity-85 transition-opacity duration-150"
 			aria-label={SITE_TITLE}
 		>
-			<span
-				class="flex items-center justify-center w-8 h-8 rounded-lg bg-ai-purple/15 border border-ai-purple/30 text-ai-purple text-base transition-all duration-200 hover:bg-ai-purple/25"
-				aria-hidden="true"
-			>⚡</span>
-			<span class="hidden sm:inline">{SITE_TITLE}</span>
+			<img
+				src="/assets/logo.png"
+				alt={SITE_TITLE}
+				width="180"
+				height="45"
+				class="h-9 w-auto object-contain"
+				loading="eager"
+				decoding="sync"
+			/>
 		</a>
 
 		<!-- Desktop Navigation -->
