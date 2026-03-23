@@ -103,3 +103,36 @@ const ogImageUrl = ogImage ? new URL(ogImage, Astro.site) : new URL(image.src, A
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={ogImageUrl} />
+
+<!-- Structured Data: Organization + WebSite -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${Astro.site}#organization`,
+      name: 'AI Tools Review',
+      url: String(Astro.site),
+      logo: {
+        '@type': 'ImageObject',
+        url: `${Astro.site}favicon.svg`,
+      },
+      sameAs: [],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${Astro.site}#website`,
+      url: String(Astro.site),
+      name: 'AI Tools Review',
+      publisher: { '@id': `${Astro.site}#organization` },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${Astro.site}strumenti?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
+})} />
