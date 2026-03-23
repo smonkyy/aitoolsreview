@@ -49,6 +49,7 @@ function readingTime(body: string | undefined): number {
 						readTime={readingTime(post.body)}
 						gradient=""
 						index={i % 3}
+						priority={i === 0}
 					/>
 				))}
 			</div>

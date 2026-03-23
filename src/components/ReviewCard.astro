@@ -10,9 +10,23 @@ interface Props {
 	category?: string;
 	/** 0-based index for stagger reveal delay (optional) */
 	index?: number;
+	/**
+	 * When true, the thumbnail loads eagerly with high fetchpriority.
+	 * Set on the first card in any grid — it is the likely LCP candidate.
+	 */
+	priority?: boolean;
 }
 
-const { id, title, description, pubDate, readTime, category = 'Recensione', index = 0 } = Astro.props;
+const {
+	id,
+	title,
+	description,
+	pubDate,
+	readTime,
+	category = 'Recensione',
+	index = 0,
+	priority = false,
+} = Astro.props;
 
 const revealDelay = index * 100;
 
@@ -31,17 +45,33 @@ const dateStr = pubDate.toLocaleDateString('it-IT', {
 	data-reveal
 	data-reveal-delay={revealDelay > 0 ? String(revealDelay) : undefined}
 >
-	<!-- Thumbnail: OG image generated at build time -->
+	<!--
+		Thumbnail — OG image pre-rendered at build time.
+		<picture> lets modern browsers pick the WebP variant (600×315, ~15-20 KB) over
+		the full-res PNG (1200×630, ~80 KB) which is kept only for social OG meta tags.
+		The first card in any visible grid gets priority loading (LCP signal to the browser).
+	-->
 	<div class="relative h-44 overflow-hidden bg-ai-bg2">
-		<img
-			src={`/og/${id}.png`}
-			alt={title}
-			width="600"
-			height="315"
-			class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
-			loading="lazy"
-			decoding="async"
-		/>
+		<picture>
+			<!-- WebP at thumbnail resolution: ~70% smaller than the 1200×630 PNG -->
+			<source
+				type="image/webp"
+				srcset={`/og/${id}.webp`}
+				width="600"
+				height="315"
+			/>
+			<!-- PNG fallback for legacy browsers / OG crawlers -->
+			<img
+				src={`/og/${id}.png`}
+				alt={title}
+				width="600"
+				height="315"
+				class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+				loading={priority ? 'eager' : 'lazy'}
+				fetchpriority={priority ? 'high' : undefined}
+				decoding={priority ? 'sync' : 'async'}
+			/>
+		</picture>
 		<!-- Gradient overlay for badge legibility -->
 		<div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
 		<!-- Category badge -->
