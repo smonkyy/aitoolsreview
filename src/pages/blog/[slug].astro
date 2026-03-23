@@ -5,6 +5,8 @@ import { TOOLS } from '../../data/tools';
 import { topMentionedPair } from '../../lib/mention-detector';
 import { canonicalSlug } from '../../lib/comparison-priority';
 import { toolToSchema } from '../../lib/schema';
+import { getAuthor } from '../../data/authors';
+import type { AITool } from '../../data/tools';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -17,16 +19,41 @@ export async function getStaticPaths() {
 const post = Astro.props;
 const { Content } = await render(post);
 
-// Detect which tools are mentioned in the post body, pick top 2
+// ── Detect reviewed tool ─────────────────────────────────────────────────────
+// Priority: explicit frontmatter field → slug-based heuristic
+function detectReviewedTool(postId: string, explicitId?: string): AITool | null {
+  // 1. Explicit frontmatter wins
+  if (explicitId) {
+    return TOOLS.find((t) => t.id === explicitId) ?? null;
+  }
+  // 2. Skip comparison / guide posts
+  const isComparison = postId.includes('-vs-');
+  const isGuide = /^(migliori|alternative|come|guida)/.test(postId);
+  if (isComparison || isGuide) return null;
+
+  // 3. Try exact tool ID match in slug (e.g. "cursor-recensione-2026" → "cursor")
+  const exact = TOOLS.find((t) => postId.includes(t.id));
+  if (exact) return exact;
+
+  // 4. Try base ID (strip trailing version numbers) for slugs like "claude-ai-recensione"
+  return TOOLS.find((t) => {
+    const base = t.id.replace(/-[\d.]+$/, ''); // "claude-4" → "claude"
+    return base.length > 3 && postId.includes(base);
+  }) ?? null;
+}
+
+const reviewedTool = detectReviewedTool(post.id, post.data.reviewedToolId);
+
+// ── Comparison pair (for inline CTA) ────────────────────────────────────────
 const pair = topMentionedPair(post.body ?? '', TOOLS);
 const comparisonSlug = pair ? canonicalSlug(pair[0].id, pair[1].id) : null;
 
-// Genera SoftwareApplication schema per i tool menzionati nel post.
-// Se il post è una recensione diretta (slug contiene il tool id), include lo schema.
+// ── Tool schemas (JSON-LD) ───────────────────────────────────────────────────
 const siteUrl = String(Astro.site);
-const mentionedToolSchemas = pair
-  ? pair.map(t => toolToSchema(t, siteUrl))
-  : [];
+const mentionedToolSchemas = pair ? pair.map((t) => toolToSchema(t, siteUrl)) : [];
+
+// ── Author ───────────────────────────────────────────────────────────────────
+const author = getAuthor(post.data.author);
 ---
 
 <BlogPost
@@ -35,6 +62,8 @@ const mentionedToolSchemas = pair
   comparisonPair={pair}
   comparisonSlug={comparisonSlug}
   toolSchemas={mentionedToolSchemas}
+  reviewedTool={reviewedTool}
+  author={author}
 >
   <Content />
 </BlogPost>

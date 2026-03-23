@@ -3,6 +3,8 @@ title: 'ElevenLabs Recensione 2026: La Migliore Voce AI Disponibile?'
 description: 'Recensione completa di ElevenLabs aggiornata al 2026. Test sulla qualità vocale, clonazione della voce, prezzi e confronto con le alternative. Vale i suoi soldi?'
 pubDate: '2026-03-23T00:00:00Z'
 updatedDate: '2026-03-23T00:00:00Z'
+reviewedToolId: 'elevenlabs'
+author: 'redazione'
 ---
 
 La prima volta che ho ascoltato un audio generato con ElevenLabs non ho capito subito che fosse artificiale. Ho dovuto riascoltarlo due volte. Poi ho riascoltato lo stesso testo con un altro tool e la differenza era così evidente che sembrava un confronto tra epoche diverse.

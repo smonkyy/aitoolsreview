@@ -3,6 +3,8 @@ title: 'Claude AI: Recensione Completa 2026'
 description: 'Recensione approfondita di Claude AI di Anthropic. Scopri funzionalità, prezzi, pro e contro del miglior assistente AI del momento.'
 pubDate: '2026-03-17T00:00:00Z'
 updatedDate: '2026-03-22T00:00:00Z'
+reviewedToolId: 'claude-4'
+author: 'sara'
 ---
 
 Claude AI è l'assistente di intelligenza artificiale sviluppato da Anthropic, considerato uno dei più capaci e affidabili sul mercato. In questa recensione completa analizziamo tutto quello che devi sapere.

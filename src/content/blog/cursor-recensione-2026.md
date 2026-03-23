@@ -3,6 +3,8 @@ title: 'Cursor Recensione 2026: Il Miglior Editor AI per Sviluppatori?'
 description: 'Recensione completa di Cursor, l''editor AI che sta sostituendo VS Code. Test reali su autocompletamento, chat contestuale, refactoring e confronto con GitHub Copilot.'
 pubDate: '2026-03-23T00:00:00Z'
 updatedDate: '2026-03-23T00:00:00Z'
+reviewedToolId: 'cursor'
+author: 'davide'
 ---
 
 Ho usato VS Code per sei anni. Poi ho provato Cursor per una settimana e non sono tornato indietro. Non perché VS Code sia diventato peggio — ma perché Cursor ha cambiato cosa significa avere un assistente AI nel proprio editor.

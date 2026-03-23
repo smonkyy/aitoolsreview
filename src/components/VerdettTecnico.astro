@@ -1,0 +1,166 @@
+---
+import type { AITool } from '../data/tools';
+
+interface Props {
+  tool: AITool;
+}
+
+const { tool } = Astro.props;
+
+const { ratings } = tool;
+
+// Score bar color — purple for excellent, green for good, amber for average
+function barColor(score: number): string {
+  if (score >= 4.5) return 'var(--color-ai-purple)';
+  if (score >= 4.0) return 'var(--color-ai-green)';
+  if (score >= 3.0) return '#f59e0b';
+  return '#ef4444';
+}
+
+// Auto-generated verdict sentence from score + category
+const CAT_LABEL: Record<string, string> = {
+  scrittura: 'scrittura AI',
+  immagini: 'generazione immagini',
+  video: 'video AI',
+  audio: 'audio AI',
+  produttivita: 'produttività AI',
+  coding: 'coding AI',
+};
+const catLabel = CAT_LABEL[tool.category] ?? 'AI';
+
+function verdictSentence(score: number): string {
+  if (score >= 4.8) return `Eccellente — tra i migliori tool per ${catLabel} disponibili oggi.`;
+  if (score >= 4.5) return `Ottimo — consigliato per chi cerca qualità professionale in ${catLabel}.`;
+  if (score >= 4.0) return `Buono — solido per ${catLabel}, con alcune limitazioni da considerare.`;
+  if (score >= 3.5) return `Discreto — valido per casi d'uso specifici in ${catLabel}.`;
+  return `Sufficiente — ci sono alternative migliori per ${catLabel}.`;
+}
+
+const verdict = verdictSentence(ratings.overall);
+
+const scoreMetrics = [
+  { label: 'Qualità output',   score: ratings.outputQuality },
+  { label: 'Facilità d\'uso',  score: ratings.easeOfUse },
+  { label: 'Qualità/Prezzo',   score: ratings.valueForMoney },
+  { label: 'Voto globale',     score: ratings.overall },
+];
+
+const priceLabel =
+  tool.pricing.type === 'free'          ? 'Gratuito'
+  : tool.pricing.type === 'open-source' ? 'Open Source'
+  : tool.pricing.hasFreeOption          ? `Gratis + da $${tool.pricing.startingPriceUsd}/mo`
+  : tool.pricing.startingPriceUsd       ? `Da $${tool.pricing.startingPriceUsd}/mo`
+  : 'A pagamento';
+
+const ctaUrl = tool.affiliateUrl ?? tool.link;
+const ctaExternal = !!tool.affiliateUrl;
+---
+
+<section
+  class="my-10 rounded-2xl border overflow-hidden not-prose
+    bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border"
+  aria-label={`Verdetto tecnico: ${tool.name}`}
+>
+  <!-- Header bar -->
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-light-border dark:border-ai-border
+    bg-gradient-to-r from-ai-purple/10 to-transparent">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="text-ai-purple shrink-0" aria-hidden="true">
+      <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+    <h2 class="text-sm font-extrabold uppercase tracking-wide text-ai-purple m-0">
+      Verdetto Tecnico
+    </h2>
+    {tool.badge && (
+      <span class="ml-auto px-2.5 py-0.5 text-xs font-bold rounded-full
+        bg-ai-purple/15 text-ai-purple border border-ai-purple/30">
+        {tool.badge}
+      </span>
+    )}
+  </div>
+
+  <div class="p-6">
+    <div class="flex flex-col sm:flex-row gap-6">
+      <!-- Big score -->
+      <div class="flex flex-col items-center justify-center shrink-0
+        sm:w-28 sm:border-r sm:border-light-border dark:sm:border-ai-border sm:pr-6">
+        <span
+          class="text-5xl font-extrabold tabular-nums leading-none"
+          style={`color: ${barColor(ratings.overall)}`}
+        >
+          {ratings.overall.toFixed(1)}
+        </span>
+        <span class="text-xs text-light-muted dark:text-ai-muted mt-1">su 5.0</span>
+        <!-- Stars -->
+        <div class="flex gap-0.5 mt-2" aria-label={`${ratings.overall} stelle su 5`}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <svg
+              width="12" height="12" viewBox="0 0 24 24"
+              fill={ratings.overall >= n - 0.25 ? 'currentColor' : 'none'}
+              stroke="currentColor" stroke-width="1.5"
+              class="text-amber-400"
+              aria-hidden="true"
+            >
+              <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          ))}
+        </div>
+      </div>
+
+      <!-- Score bars -->
+      <div class="flex-1 space-y-3">
+        {scoreMetrics.map(({ label, score }) => (
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-medium text-light-muted dark:text-ai-muted">{label}</span>
+              <span class="text-xs font-bold tabular-nums text-light-text dark:text-ai-text">
+                {score.toFixed(1)}
+              </span>
+            </div>
+            <div class="h-1.5 rounded-full bg-light-bg2 dark:bg-ai-bg2 overflow-hidden">
+              <div
+                class="h-full rounded-full transition-all duration-500"
+                style={`width: ${(score / 5) * 100}%; background: ${barColor(score)};`}
+                role="progressbar"
+                aria-valuenow={score}
+                aria-valuemin={0}
+                aria-valuemax={5}
+                aria-label={label}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Verdict sentence + price -->
+    <div class="mt-5 pt-5 border-t border-light-border dark:border-ai-border
+      flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <p class="flex-1 text-sm text-light-muted dark:text-ai-muted leading-relaxed italic">
+        {verdict}
+      </p>
+      <div class="flex items-center gap-3 shrink-0">
+        <span class="text-xs font-medium px-2.5 py-1 rounded-full
+          bg-light-bg2 dark:bg-ai-bg2 text-light-muted dark:text-ai-muted
+          border border-light-border dark:border-ai-border">
+          {priceLabel}
+        </span>
+        <a
+          href={ctaUrl}
+          target={ctaExternal ? '_blank' : undefined}
+          rel={ctaExternal ? 'noopener noreferrer' : undefined}
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold
+            bg-ai-purple hover:bg-ai-purple-dark text-white
+            transition-all duration-150 no-underline whitespace-nowrap"
+        >
+          Prova {tool.name}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,64 @@
+---
+interface Props {
+  pros: string[];
+  cons: string[];
+}
+
+const { pros, cons } = Astro.props;
+---
+
+<div class="my-10 grid grid-cols-1 sm:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-light-border dark:border-ai-border not-prose">
+  <!-- Pros -->
+  <div class="p-6 bg-emerald-50 dark:bg-emerald-950/30 border-b sm:border-b-0 sm:border-r border-light-border dark:border-ai-border">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/15 shrink-0" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </span>
+      <h3 class="text-sm font-extrabold uppercase tracking-wide text-emerald-600 dark:text-emerald-400 m-0">
+        Punti di forza
+      </h3>
+    </div>
+    <ul class="space-y-2.5 m-0 list-none p-0">
+      {pros.map((item) => (
+        <li class="flex items-start gap-2.5 text-sm text-light-text dark:text-ai-text leading-snug">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"
+            class="text-emerald-500 shrink-0 mt-0.5" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          {item}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Cons -->
+  <div class="p-6 bg-red-50 dark:bg-red-950/30">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/15 shrink-0" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </span>
+      <h3 class="text-sm font-extrabold uppercase tracking-wide text-red-600 dark:text-red-400 m-0">
+        Punti deboli
+      </h3>
+    </div>
+    <ul class="space-y-2.5 m-0 list-none p-0">
+      {cons.map((item) => (
+        <li class="flex items-start gap-2.5 text-sm text-light-text dark:text-ai-text leading-snug">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"
+            class="text-red-500 shrink-0 mt-0.5" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          {item}
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
