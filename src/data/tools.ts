@@ -27,7 +27,8 @@ export interface AITool {
   strengths: string[];
   weaknesses: string[];
   badge?: string;
-  link: string; // link interno (recensione o pagina strumenti)
+  link: string;         // link interno (recensione o pagina strumenti)
+  affiliateUrl?: string; // link affiliato esterno — sostituisci con il tuo tracking link
 }
 
 // ─── Tool Database ─────────────────────────────────────────────────────────────
@@ -67,6 +68,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Top Pick',
     link: '/blog/claude-ai-recensione',
+    affiliateUrl: 'https://claude.ai',
   },
 
   {
@@ -100,6 +102,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Più Usato',
     link: '/blog/chatgpt-vs-claude',
+    affiliateUrl: 'https://chatgpt.com',
   },
 
   {
@@ -132,6 +135,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Marketing',
     link: '/blog/migliori-tool-ai-scrittura',
+    affiliateUrl: 'https://www.jasper.ai',
   },
 
   {
@@ -163,6 +167,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Facile',
     link: '/blog/migliori-tool-ai-scrittura',
+    affiliateUrl: 'https://www.copy.ai',
   },
 
   {
@@ -194,6 +199,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'SEO',
     link: '/blog/migliori-tool-ai-scrittura',
+    affiliateUrl: 'https://writesonic.com',
   },
 
   {
@@ -226,6 +232,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Research',
     link: '/strumenti#produttivita',
+    affiliateUrl: 'https://www.perplexity.ai',
   },
 
   // ── IMMAGINI ───────────────────────────────────────────────────────────────
@@ -260,6 +267,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Qualità Pro',
     link: '/blog/midjourney-recensione',
+    affiliateUrl: 'https://www.midjourney.com',
   },
 
   {
@@ -291,6 +299,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Adobe',
     link: '/strumenti#immagini',
+    affiliateUrl: 'https://www.adobe.com/it/products/firefly.html',
   },
 
   {
@@ -353,6 +362,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Best Free',
     link: '/strumenti#immagini',
+    affiliateUrl: 'https://leonardo.ai',
   },
 
   {
@@ -418,6 +428,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Innovativo',
     link: '/strumenti#video',
+    affiliateUrl: 'https://runwayml.com',
   },
 
   {
@@ -480,6 +491,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Business',
     link: '/strumenti#video',
+    affiliateUrl: 'https://www.heygen.com',
   },
 
   // ── AUDIO ──────────────────────────────────────────────────────────────────
@@ -513,6 +525,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Best in Class',
     link: '/strumenti#audio',
+    affiliateUrl: 'https://elevenlabs.io',
   },
 
   {
@@ -577,6 +590,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'All-in-One',
     link: '/strumenti#produttivita',
+    affiliateUrl: 'https://www.notion.so',
   },
 
   {
@@ -608,6 +622,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Potente',
     link: '/strumenti#produttivita',
+    affiliateUrl: 'https://www.make.com',
   },
 
   {
@@ -639,6 +654,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Facile',
     link: '/strumenti#produttivita',
+    affiliateUrl: 'https://zapier.com',
   },
 
   // ── CODING ─────────────────────────────────────────────────────────────────
@@ -672,6 +688,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Standard Dev',
     link: '/strumenti#coding',
+    affiliateUrl: 'https://github.com/features/copilot',
   },
 
   {
@@ -704,6 +721,7 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Editor AI',
     link: '/strumenti#coding',
+    affiliateUrl: 'https://www.cursor.com',
   },
 
   {
@@ -735,5 +753,6 @@ export const TOOLS: AITool[] = [
     ],
     badge: 'Per Imparare',
     link: '/strumenti#coding',
+    affiliateUrl: 'https://replit.com',
   },
 ];
