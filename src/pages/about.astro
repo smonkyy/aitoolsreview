@@ -5,31 +5,147 @@ import Footer from '../components/Footer.astro';
 ---
 
 <!doctype html>
-<html lang="it">
+<html lang="it" class="dark">
 	<head>
-		<BaseHead title="Chi siamo | AI Tools Review" description="Scopri chi siamo e cosa facciamo su AI Tools Review." />
+		<BaseHead
+			title="Chi siamo | AI Tools Review"
+			description="AI Tools Review nasce per risolvere il caos dell'AI: testiamo, analizziamo e confrontiamo tool reali per professionisti, creativi e PMI italiane. Imparziali per scelta."
+		/>
 	</head>
-	<body>
+	<body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
 		<Header />
-		<main>
-			<section style="max-width: 700px; margin: 0 auto; padding: 3rem 2rem;">
-				<h1>Chi siamo</h1>
-				<p>
-					Benvenuto su <strong>AI Tools Review</strong> — il sito italiano dedicato alle recensioni e ai confronti dei migliori strumenti di intelligenza artificiale.
+
+		<main class="max-w-3xl mx-auto px-4 sm:px-6 py-16">
+
+			<!-- ── Hero ── -->
+			<header class="mb-14">
+				<p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-3">Chi siamo</p>
+				<h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-6 text-light-text dark:text-ai-text">
+					Benvenuti su<br/>AI Tools Review.
+				</h1>
+				<p class="text-lg text-light-muted dark:text-ai-muted leading-relaxed">
+					Nel panorama caotico dell'intelligenza artificiale, dove ogni giorno nasce un nuovo software,
+					la difficoltà non è la mancanza di strumenti, ma l'eccesso di opzioni.
+					<strong class="text-light-text dark:text-ai-text font-semibold">AI Tools Review nasce per risolvere questo problema.</strong>
 				</p>
-				<p>
-					Il nostro obiettivo è semplice: aiutarti a trovare il tool AI giusto per le tue esigenze, senza perderti tra centinaia di opzioni. Testiamo, confrontiamo e recensiamo i principali strumenti AI disponibili sul mercato, con un occhio particolare al pubblico italiano.
-				</p>
-				<h2>Cosa trovi su questo sito</h2>
-				<p>
-					Recensioni approfondite, confronti diretti tra tool, guide pratiche e aggiornamenti sulle novità del mondo AI. Tutto in italiano, tutto gratuito.
-				</p>
-				<h2>Contatti</h2>
-				<p>
-					Hai domande, suggerimenti o vuoi segnalarci un tool da recensire? Scrivici a <a href="mailto:shekokri18@gmail.com">shekokri18@gmail.com</a>
+			</header>
+
+			<!-- ── Il nostro approccio ── -->
+			<section class="mb-14">
+				<h2 class="text-2xl font-extrabold mb-4 text-light-text dark:text-ai-text">Il nostro approccio</h2>
+				<p class="text-light-muted dark:text-ai-muted leading-relaxed">
+					Non ci limitiamo a elencare tool. Testiamo, analizziamo e confrontiamo le soluzioni AI per capire
+					se sono realmente in grado di aumentare la produttività o se sono solo puro marketing.
+					Il nostro obiettivo è fornire a professionisti, creativi e piccole imprese italiane
+					una guida tecnica, imparziale e orientata ai risultati.
 				</p>
 			</section>
+
+			<!-- ── Cosa ci distingue ── -->
+			<section class="mb-14">
+				<h2 class="text-2xl font-extrabold mb-6 text-light-text dark:text-ai-text">Cosa ci distingue</h2>
+
+				<div class="flex flex-col gap-4">
+
+					<!-- Card 1 -->
+					<div class="flex items-start gap-4 p-5 rounded-2xl border
+						bg-light-card border-light-border
+						dark:bg-ai-card dark:border-ai-border">
+						<div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center
+							bg-ai-purple/10 border border-ai-purple/20">
+							<!-- beaker / test icon -->
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+								stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+								aria-hidden="true">
+								<path d="M9 3h6M9 3v7l-4.5 9A1 1 0 0 0 5.4 21h13.2a1 1 0 0 0 .9-1.45L15 10V3"/>
+								<path d="M6.5 14h11"/>
+							</svg>
+						</div>
+						<div>
+							<p class="font-bold text-light-text dark:text-ai-text mb-1">Analisi basata sull'uso reale</p>
+							<p class="text-sm text-light-muted dark:text-ai-muted leading-relaxed">
+								Ogni confronto nasce dall'integrazione pratica dei tool nel workflow quotidiano —
+								non da schede prodotto o comunicati stampa.
+							</p>
+						</div>
+					</div>
+
+					<!-- Card 2 -->
+					<div class="flex items-start gap-4 p-5 rounded-2xl border
+						bg-light-card border-light-border
+						dark:bg-ai-card dark:border-ai-border">
+						<div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center
+							bg-ai-purple/10 border border-ai-purple/20">
+							<!-- shield-off icon -->
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+								stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+								aria-hidden="true">
+								<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+								<line x1="4.5" y1="4.5" x2="19.5" y2="19.5"/>
+							</svg>
+						</div>
+						<div>
+							<p class="font-bold text-light-text dark:text-ai-text mb-1">Nessun filtro marketing</p>
+							<p class="text-sm text-light-muted dark:text-ai-muted leading-relaxed">
+								Evitiamo le descrizioni preconfezionate. Analizziamo i limiti tecnici,
+								le curve di apprendimento e il reale ritorno sull'investimento.
+							</p>
+						</div>
+					</div>
+
+					<!-- Card 3 -->
+					<div class="flex items-start gap-4 p-5 rounded-2xl border
+						bg-light-card border-light-border
+						dark:bg-ai-card dark:border-ai-border">
+						<div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center
+							bg-ai-purple/10 border border-ai-purple/20">
+							<!-- eye / transparency icon -->
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+								stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+								aria-hidden="true">
+								<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+								<circle cx="12" cy="12" r="3"/>
+							</svg>
+						</div>
+						<div>
+							<p class="font-bold text-light-text dark:text-ai-text mb-1">Trasparenza</p>
+							<p class="text-sm text-light-muted dark:text-ai-muted leading-relaxed">
+								Il nostro valore è l'imparzialità. Non siamo influenzati da accordi commerciali
+								e puntiamo solo a evidenziare ciò che funziona davvero.
+							</p>
+						</div>
+					</div>
+
+				</div>
+			</section>
+
+			<!-- ── Contatti ── -->
+			<section class="p-6 sm:p-8 rounded-2xl border
+				bg-gradient-to-br from-ai-purple/5 to-transparent
+				border-ai-purple/20 dark:border-ai-purple/20">
+				<h2 class="text-xl font-extrabold mb-2 text-light-text dark:text-ai-text">Contatti</h2>
+				<p class="text-light-muted dark:text-ai-muted mb-4 leading-relaxed">
+					Hai un tool da segnalare, vuoi discutere di una collaborazione tecnica
+					o hai un feedback su come migliorare i nostri test?
+				</p>
+				<a
+					href="mailto:shekokri18@gmail.com"
+					class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+						bg-ai-purple hover:bg-ai-purple-dark text-white font-bold text-sm
+						transition-all duration-150 no-underline"
+				>
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+						stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+						aria-hidden="true">
+						<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+						<polyline points="22,6 12,13 2,6"/>
+					</svg>
+					shekokri18@gmail.com
+				</a>
+			</section>
+
 		</main>
+
 		<Footer />
 	</body>
 </html>
