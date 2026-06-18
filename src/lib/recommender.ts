@@ -123,7 +123,7 @@ function buildExplanations(
   } else if (selections.budget === 'free' && tool.pricing.priceRange === 'free') {
     bullets.push('Completamente gratuito e open source');
   } else if (selections.budget === 'paid' && tool.pricing.hasFreeOption) {
-    bullets.push(`Prova gratuita inclusa, poi da $${tool.pricing.startingPriceUsd}/mese`);
+    bullets.push(`Prova gratuita inclusa, poi da $${tool.pricing.startingPriceEur}/mese`);
   }
 
   // Qualità output
@@ -154,7 +154,7 @@ function buildTradeoffs(tool: AITool, selections: UserSelections): string[] {
 
   // Avvisi budget specifici
   if (selections.budget === 'free' && !tool.pricing.hasFreeOption) {
-    t.push(`Nessun piano gratuito — parte da $${tool.pricing.startingPriceUsd}/mese`);
+    t.push(`Nessun piano gratuito — parte da $${tool.pricing.startingPriceEur}/mese`);
   }
 
   // Avvisi skill

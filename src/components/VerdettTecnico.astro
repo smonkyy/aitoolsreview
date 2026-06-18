@@ -48,8 +48,8 @@ const scoreMetrics = [
 const priceLabel =
   tool.pricing.type === 'free'          ? 'Gratuito'
   : tool.pricing.type === 'open-source' ? 'Open Source'
-  : tool.pricing.hasFreeOption          ? `Gratis + da $${tool.pricing.startingPriceUsd}/mo`
-  : tool.pricing.startingPriceUsd       ? `Da $${tool.pricing.startingPriceUsd}/mo`
+  : tool.pricing.hasFreeOption          ? `Gratis + da €${tool.pricing.startingPriceEur}/mese`
+  : tool.pricing.startingPriceEur       ? `Da €${tool.pricing.startingPriceEur}/mese`
   : 'A pagamento';
 
 const ctaUrl = tool.affiliateUrl ?? tool.link;

@@ -27,12 +27,12 @@ const CATEGORY_MAP: Record<string, string> = {
 // ─── Offers builder ───────────────────────────────────────────────────────────
 
 function buildOffers(tool: AITool): object | object[] {
-  const paidOffer = tool.pricing.startingPriceUsd
+  const paidOffer = tool.pricing.startingPriceEur
     ? {
         '@type': 'Offer',
         name: 'Pro',
-        price: tool.pricing.startingPriceUsd.toFixed(2),
-        priceCurrency: 'USD',
+        price: tool.pricing.startingPriceEur.toFixed(2),
+        priceCurrency: 'EUR',
         billingDuration: 'P1M', // mensile
       }
     : null;

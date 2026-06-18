@@ -57,9 +57,9 @@ function ToolCard({ tool }: { tool: AITool }) {
   const cat = CAT_MAP[tool.category as CategoryId]
   const priceLabel =
     tool.pricing.type === 'free'        ? 'Gratuito'
-    : tool.pricing.type === 'freemium'  ? `Gratis + €${tool.pricing.startingPriceUsd}/mo`
+    : tool.pricing.type === 'freemium'  ? `Gratis + €${tool.pricing.startingPriceEur}/mese`
     : tool.pricing.type === 'open-source' ? 'Open Source'
-    : tool.pricing.startingPriceUsd     ? `Da $${tool.pricing.startingPriceUsd}/mo`
+    : tool.pricing.startingPriceEur     ? `Da €${tool.pricing.startingPriceEur}/mese`
     : 'A pagamento'
 
   const stars = Math.round(tool.ratings.overall * 2) / 2

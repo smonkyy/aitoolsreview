@@ -14,7 +14,7 @@ export interface AITool {
   pricing: {
     type: 'free' | 'freemium' | 'paid' | 'open-source';
     hasFreeOption: boolean;
-    startingPriceUsd: number | null; // per mese, null = gratis
+    startingPriceEur: number | null; // per mese, null = gratis
     priceRange: PriceRange;
   };
   targetUsers: TargetUser[];
@@ -46,7 +46,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'advanced', 'developer', 'business', 'creator'],
@@ -80,7 +80,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'intermediate', 'business', 'creator'],
@@ -113,7 +113,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'paid',
       hasFreeOption: false,
-      startingPriceUsd: 49,
+      startingPriceEur: 49,
       priceRange: 'mid',
     },
     targetUsers: ['intermediate', 'business', 'creator'],
@@ -129,7 +129,7 @@ export const TOOLS: AITool[] = [
       'Integrazione con SurferSEO per ottimizzazione',
     ],
     weaknesses: [
-      'Costoso: parte da $49/mese',
+      'Costoso: parte da €49/mese',
       'Output a volte ripetitivo senza prompt curati',
       'Overkill per uso personale',
     ],
@@ -146,7 +146,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 49,
+      startingPriceEur: 49,
       priceRange: 'mid',
     },
     targetUsers: ['beginner', 'creator', 'business'],
@@ -178,7 +178,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'business', 'creator'],
@@ -211,7 +211,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'advanced', 'developer', 'business', 'creator'],
@@ -245,7 +245,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 8,
+      startingPriceEur: 8,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'advanced', 'creator', 'business'],
@@ -279,7 +279,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'advanced', 'business'],
@@ -313,7 +313,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'paid',
       hasFreeOption: false,
-      startingPriceUsd: 10,
+      startingPriceEur: 10,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'advanced', 'creator', 'business'],
@@ -345,7 +345,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 5,
+      startingPriceEur: 5,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'intermediate', 'creator', 'business'],
@@ -377,7 +377,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'paid',
       hasFreeOption: false,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'intermediate', 'creator'],
@@ -389,7 +389,7 @@ export const TOOLS: AITool[] = [
     },
     strengths: [
       'Facilissimo: basta scrivere in italiano in ChatGPT',
-      'Incluso nel piano ChatGPT Plus ($20/mo)',
+      'Incluso nel piano ChatGPT Plus (€20/mese)',
       'Ottimo per illustrazioni e immagini concettuali',
     ],
     weaknesses: [
@@ -408,7 +408,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 12,
+      startingPriceEur: 12,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'intermediate', 'creator'],
@@ -440,7 +440,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'open-source',
       hasFreeOption: true,
-      startingPriceUsd: 0,
+      startingPriceEur: 0,
       priceRange: 'free',
     },
     targetUsers: ['advanced', 'developer'],
@@ -474,7 +474,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'creator', 'business'],
@@ -485,13 +485,13 @@ export const TOOLS: AITool[] = [
       valueForMoney: 4.1,
     },
     strengths: [
-      'Incluso in ChatGPT Plus ($20/mese) — zero costi aggiuntivi',
+      'Incluso in ChatGPT Plus (€20/mese) — zero costi aggiuntivi',
       'Generazione video da testo e da immagine',
       'Qualità visiva e coerenza tra frame molto alta',
     ],
     weaknesses: [
       'Limiti di utilizzo mensili anche sul piano Plus',
-      'Piano Pro ($200/mese) necessario per uso intenso',
+      'Piano Pro (€200/mese) necessario per uso intenso',
       'Ancora limitato su scene ad alta complessità',
     ],
     badge: 'OpenAI',
@@ -507,7 +507,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 15,
+      startingPriceEur: 15,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'advanced', 'creator', 'business'],
@@ -539,7 +539,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 10,
+      startingPriceEur: 10,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'intermediate', 'creator'],
@@ -570,7 +570,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'paid',
       hasFreeOption: false,
-      startingPriceUsd: 29,
+      startingPriceEur: 29,
       priceRange: 'mid',
     },
     targetUsers: ['business', 'creator', 'intermediate'],
@@ -604,7 +604,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 22,
+      startingPriceEur: 22,
       priceRange: 'mid',
     },
     targetUsers: ['intermediate', 'creator', 'business', 'developer'],
@@ -636,7 +636,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'open-source',
       hasFreeOption: true,
-      startingPriceUsd: 0,
+      startingPriceEur: 0,
       priceRange: 'free',
     },
     targetUsers: ['developer', 'intermediate', 'advanced'],
@@ -669,7 +669,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'paid',
       hasFreeOption: false,
-      startingPriceUsd: 10,
+      startingPriceEur: 10,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'intermediate', 'business'],
@@ -701,7 +701,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 9,
+      startingPriceEur: 9,
       priceRange: 'low',
     },
     targetUsers: ['intermediate', 'advanced', 'business', 'developer'],
@@ -733,7 +733,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'intermediate', 'business'],
@@ -767,7 +767,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 10,
+      startingPriceEur: 10,
       priceRange: 'low',
     },
     targetUsers: ['developer', 'intermediate', 'advanced'],
@@ -799,7 +799,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['developer', 'intermediate', 'advanced'],
@@ -832,7 +832,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 20,
+      startingPriceEur: 20,
       priceRange: 'low',
     },
     targetUsers: ['beginner', 'developer'],
@@ -864,7 +864,7 @@ export const TOOLS: AITool[] = [
     pricing: {
       type: 'freemium',
       hasFreeOption: true,
-      startingPriceUsd: 15,
+      startingPriceEur: 15,
       priceRange: 'low',
     },
     targetUsers: ['developer', 'intermediate', 'advanced'],

@@ -101,7 +101,7 @@ const faqSchema = {
         '@type': 'Answer',
         text: toolA.pricing.hasFreeOption
           ? `Sì, ${toolA.name} offre un piano gratuito o freemium.`
-          : `No, ${toolA.name} è a pagamento, a partire da $${toolA.pricing.startingPriceUsd}/mese.`,
+          : `No, ${toolA.name} è a pagamento, a partire da $${toolA.pricing.startingPriceEur}/mese.`,
       },
     },
     {
@@ -111,7 +111,7 @@ const faqSchema = {
         '@type': 'Answer',
         text: toolB.pricing.hasFreeOption
           ? `Sì, ${toolB.name} offre un piano gratuito o freemium.`
-          : `No, ${toolB.name} è a pagamento, a partire da $${toolB.pricing.startingPriceUsd}/mese.`,
+          : `No, ${toolB.name} è a pagamento, a partire da $${toolB.pricing.startingPriceEur}/mese.`,
       },
     },
   ],

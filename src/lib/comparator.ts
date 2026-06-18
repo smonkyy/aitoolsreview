@@ -429,7 +429,7 @@ function buildWhoShouldUse(tool: AITool, other: AITool): string[] {
 
   // Line 2: the single strongest quantified advantage over the competitor
   if (hasFreeAdvantage)
-    lines.push(`Chi vuole testare prima di pagare: ${tool.name} ha un piano gratuito, ${other.name} parte da $${other.pricing.startingPriceUsd}/mese`);
+    lines.push(`Chi vuole testare prima di pagare: ${tool.name} ha un piano gratuito, ${other.name} parte da $${other.pricing.startingPriceEur}/mese`);
   else if (isOpenSrc)
     lines.push(`Chi ha zero budget: completamente gratuito, open source, auto-ospitabile su GPU propria`);
   else if (qualDiff >= 0.4)
