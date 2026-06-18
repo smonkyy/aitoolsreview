@@ -37,19 +37,14 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
     category: 'scrittura',
     slug: 'scrittura',
     h1: 'Miglior AI per Scrivere nel 2026',
-    metaDescription: 'Claude 4, ChatGPT-4o o Jasper AI? Guida aggiornata ai migliori tool AI per scrivere in italiano: articoli SEO, copy, email, blog. Confronto onesto con verdetto finale.',
-    intro: 'Non esiste un\'unica "miglior AI per scrivere" — dipende da cosa stai scrivendo. Claude 4 produce il testo di qualità più alta su contenuti lunghi e complessi. ChatGPT-4o è il punto di partenza ideale se parti da zero. Jasper AI è costruito per chi fa marketing professionale. Ecco come orientarsi.',
-    topToolIds: ['claude-4', 'chatgpt-4o', 'jasper-ai'],
+    metaDescription: 'Claude 4, ChatGPT-4o o Gemini 2.5 Pro? Guida aggiornata ai migliori tool AI per scrivere in italiano: articoli SEO, copy, email, blog. Confronto onesto con verdetto finale.',
+    intro: 'Nel 2026 il mercato si è consolidato attorno a quattro modelli forti: Claude 4 resta il migliore per qualità di testo pura, ChatGPT-4o è il più versatile per chi parte da zero, Gemini 2.5 Pro è la scelta naturale per chi lavora nell\'ecosistema Google, Grok-3 è l\'unico con dati real-time da X. Ecco come orientarsi.',
+    topToolIds: ['claude-4', 'chatgpt-4o', 'gemini-2-5-pro'],
     useCases: [
       {
-        task: 'Scrivere un articolo SEO da 2.000 parole con keyword integrate',
-        toolId: 'writesonic',
-        reason: 'Unico con SEO checker integrato e Surfer SEO nativo nel workflow',
-      },
-      {
-        task: 'Generare 5 varianti di headline e copy per una landing page',
-        toolId: 'jasper-ai',
-        reason: 'Template di marketing specifici + brand voice configurabile',
+        task: 'Blog post narrativi, editing approfondito, testi tecnici lunghi',
+        toolId: 'claude-4',
+        reason: 'Qualità di testo superiore su contenuti lunghi e ragionamento complesso',
       },
       {
         task: 'Scrivere email professionali, riassumere PDF, brainstorming quotidiano',
@@ -57,9 +52,24 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
         reason: 'Piano free generoso, interfaccia immediata, zero curva di apprendimento',
       },
       {
-        task: 'Blog post narrativi, editing approfondito, testi tecnici lunghi',
-        toolId: 'claude-4',
-        reason: 'Qualità di testo superiore su contenuti lunghi e ragionamento complesso',
+        task: 'Lavorare su documenti Google Docs, riassumere email Gmail, analisi dati Sheets',
+        toolId: 'gemini-2-5-pro',
+        reason: 'Integrazione nativa Google Workspace, finestra contesto da 1M token',
+      },
+      {
+        task: 'Ricerche su trend attuali, notizie recenti, argomenti legati a X/Twitter',
+        toolId: 'grok-3',
+        reason: 'Unico modello con accesso real-time a X — nessun altro ha questa fonte',
+      },
+      {
+        task: 'Scrivere un articolo SEO da 2.000 parole con keyword integrate',
+        toolId: 'writesonic',
+        reason: 'SEO checker integrato e Surfer SEO nativo nel workflow',
+      },
+      {
+        task: 'Generare headline e copy per landing page in varianti multiple',
+        toolId: 'jasper-ai',
+        reason: 'Template di marketing specifici + brand voice configurabile',
       },
     ],
     userProfiles: [
@@ -76,34 +86,34 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
         badge: 'Top Pick',
       },
       {
+        profile: 'Utente Google Workspace',
+        description: 'Usi già Docs, Gmail, Drive: vuoi AI integrata senza cambiare tool',
+        toolId: 'gemini-2-5-pro',
+        badge: 'Google',
+      },
+      {
         profile: 'Marketer / Agenzia',
         description: 'Produci copy per clienti, hai bisogno di template e brand voice',
         toolId: 'jasper-ai',
         badge: 'Marketing',
       },
-      {
-        profile: 'SEO specialist',
-        description: 'Articoli ottimizzati, keyword research integrata, scalabilità',
-        toolId: 'writesonic',
-        badge: 'SEO',
-      },
     ],
     faqs: [
       {
         question: 'Qual è il miglior AI per scrivere testi in italiano?',
-        answer: 'Claude 4 produce il testo più naturale e accurato in italiano, seguito da ChatGPT-4o. Entrambi hanno piano gratuito. Per articoli SEO, Writesonic aggiunge ottimizzazione integrata.',
+        answer: 'Claude 4 produce il testo più naturale e accurato in italiano, seguito da ChatGPT-4o e Gemini 2.5 Pro. Tutti e tre hanno piano gratuito. Per articoli SEO, Writesonic aggiunge ottimizzazione integrata.',
+      },
+      {
+        question: 'Claude 4, ChatGPT-4o o Gemini 2.5 Pro: quale scegliere?',
+        answer: 'Claude 4 vince sulla qualità pura del testo. ChatGPT-4o è il più versatile con generazione immagini e web search. Gemini 2.5 Pro è la scelta ovvia se usi già Google Workspace — si integra direttamente in Docs e Gmail.',
       },
       {
         question: 'Esistono AI gratuiti per scrivere testi?',
-        answer: 'Sì: ChatGPT-4o e Claude 4 offrono entrambi piani free con limitazioni sui messaggi giornalieri. Copy.ai include 2.000 parole/mese gratis. Per uso professionale intenso serve un piano a pagamento.',
+        answer: 'Sì: Claude 4, ChatGPT-4o e Gemini 2.5 Pro offrono tutti piani free. Grok-3 è gratuito su grok.com. Copy.ai include 2.000 parole/mese. Per uso professionale intenso serve un piano a pagamento.',
       },
       {
-        question: 'Claude 4 o ChatGPT-4o: quale scegliere?',
-        answer: 'Claude 4 vince sulla qualità del testo — soprattutto su testi lunghi, editing e contenuti che richiedono ragionamento. ChatGPT-4o è più versatile: ha accesso internet, genera immagini ed è più facile per i principianti. Se scrivi tanto, parti da Claude.',
-      },
-      {
-        question: 'Jasper AI vale i $49/mese?',
-        answer: 'Solo se fai marketing professionale: copy per campagne, sequenze email, landing page per clienti. Per uso personale o blogging occasionale è eccessivo — Claude 4 a $20/mese fa di più per la maggior parte dei casi.',
+        question: 'Cos\'è Grok-3 e perché è diverso dagli altri?',
+        answer: 'Grok-3 è il modello AI di xAI (Elon Musk). Il vantaggio unico è l\'accesso in tempo reale ai dati di X (Twitter): può rispondere su trend del momento, notizie recenti e conversazioni attuali. Gratuito su grok.com, accesso completo con X Premium.',
       },
     ],
   },
@@ -167,7 +177,7 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
     faqs: [
       {
         question: 'Midjourney è ancora il miglior generatore di immagini AI?',
-        answer: 'Per qualità pura sì — nessun altro tool raggiunge la coerenza estetica e il fotorealismo di Midjourney v6. Il limite è che non ha piano gratuito (parte da $10/mese) e funziona solo via Discord.',
+        answer: 'Per qualità pura sì — nessun altro tool raggiunge la coerenza estetica e il fotorealismo di Midjourney. Il limite principale è che non ha piano gratuito (parte da $10/mese). Ha ora un\'interfaccia web propria, non più solo Discord.',
       },
       {
         question: 'Quali generatori di immagini AI sono gratuiti?',
@@ -189,14 +199,19 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
     category: 'video',
     slug: 'video',
     h1: 'Miglior AI per Creare Video nel 2026',
-    metaDescription: 'Runway Gen-3, Kling AI o HeyGen? Confronto aggiornato ai migliori tool AI per creare video: da testo, da immagini, con avatar. Qual è giusto per te?',
-    intro: 'I tool video AI si dividono in due categorie: generativi (Runway, Kling) che creano scene da prompt o immagini, e avatar (HeyGen) che trasformano uno script in un presentatore virtuale. Il caso d\'uso decide tutto.',
-    topToolIds: ['runway-gen3', 'heygen', 'kling-ai'],
+    metaDescription: 'Sora, Runway Gen-3 o HeyGen? Confronto aggiornato ai migliori tool AI per creare video: da testo, da immagini, con avatar. Qual è giusto per te?',
+    intro: 'Nel 2026 la video AI ha tre anime distinte: Sora e Runway per chi genera scene da prompt o immagini con qualità cinematografica, Kling AI per chi vuole qualità alta a zero costo, HeyGen per chi trasforma uno script in un presentatore virtuale. Il caso d\'uso decide tutto.',
+    topToolIds: ['runway-gen3', 'sora', 'heygen'],
     useCases: [
       {
         task: 'Clip creative e transizioni cinematografiche per reel e short film',
         toolId: 'runway-gen3',
         reason: 'Qualità video più alta disponibile, controllo avanzato su motion e camera',
+      },
+      {
+        task: 'Video da testo o immagini già incluso nell\'abbonamento ChatGPT Plus',
+        toolId: 'sora',
+        reason: 'Incluso a $20/mese in ChatGPT Plus — nessun costo aggiuntivo se lo usi già',
       },
       {
         task: 'Video aziendale con presentatore che parla il tuo script',
@@ -217,6 +232,12 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
         badge: 'Innovativo',
       },
       {
+        profile: 'Già abbonato ChatGPT Plus',
+        description: 'Vuoi generare video senza pagare un servizio extra',
+        toolId: 'sora',
+        badge: 'OpenAI',
+      },
+      {
         profile: 'Azienda / HR',
         description: 'Video onboarding, corsi e-learning, presentazioni multilingua',
         toolId: 'heygen',
@@ -224,15 +245,19 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
       },
       {
         profile: 'Principiante / Budget zero',
-        description: 'Vuoi sperimentare la video AI senza spendere',
+        description: 'Vuoi sperimentare la video AI senza spendere nulla',
         toolId: 'kling-ai',
         badge: 'Rising Star',
       },
     ],
     faqs: [
       {
-        question: 'Qual è il miglior AI per creare video da testo?',
-        answer: 'Runway Gen-3 produce la qualità più alta su video generativi da testo o immagini. Kling AI è l\'alternativa gratuita con risultati sorprendenti per il prezzo (zero).',
+        question: 'Qual è il miglior AI per creare video da testo nel 2026?',
+        answer: 'Runway Gen-3 produce la qualità più alta su video generativi. Sora (OpenAI) è incluso in ChatGPT Plus e offre ottima qualità senza costi aggiuntivi. Kling AI è la migliore opzione gratuita con crediti giornalieri.',
+      },
+      {
+        question: 'Cos\'è Sora e come si usa?',
+        answer: 'Sora è il generatore video di OpenAI, accessibile direttamente da ChatGPT Plus ($20/mese). Descrivi la scena in testo o carica un\'immagine e Sora genera il video. Non richiede abbonamento separato — è incluso nel piano Plus.',
       },
       {
         question: 'HeyGen serve per fare video con presentatori AI?',
@@ -240,7 +265,7 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
       },
       {
         question: 'Esistono AI per video completamente gratuiti?',
-        answer: 'Kling AI offre crediti gratuiti giornalieri. Runway Gen-3 ha un piano free ma con crediti limitati (circa 125/mese). Per uso intenso serve un piano a pagamento.',
+        answer: 'Kling AI offre crediti gratuiti giornalieri. Runway Gen-3 ha un piano free con crediti limitati. Sora è incluso in ChatGPT Plus ($20/mese). Per uso professionale intenso serve un piano dedicato.',
       },
     ],
   },
@@ -383,9 +408,9 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
     category: 'coding',
     slug: 'coding',
     h1: 'Miglior AI per Programmare nel 2026',
-    metaDescription: 'Cursor, GitHub Copilot o Replit AI? Confronto aggiornato ai migliori tool AI per sviluppatori: autocompletamento, refactoring, debugging. Quale usare nel 2026.',
-    intro: 'Cursor sta sostituendo VS Code per molti sviluppatori grazie all\'AI contestuale sull\'intero progetto. GitHub Copilot è ancora il riferimento per chi vuole rimanere nel proprio editor. Replit AI è la scelta giusta per chi sta imparando. Il caso d\'uso decide.',
-    topToolIds: ['cursor', 'github-copilot', 'replit-ai'],
+    metaDescription: 'Cursor, Windsurf o GitHub Copilot? Confronto aggiornato ai migliori tool AI per sviluppatori: autocompletamento, refactoring, debugging. Quale usare nel 2026.',
+    intro: 'Nel 2026 sono tre i player seri per il coding AI: Cursor per chi vuole l\'AI integrata nell\'editor con contesto sull\'intera codebase, Windsurf per chi usa JetBrains o vuole un\'alternativa con piano free generoso, GitHub Copilot per chi vuole rimanere nel proprio editor con il minor attrito possibile — ora con piano gratuito.',
+    topToolIds: ['cursor', 'windsurf', 'github-copilot'],
     useCases: [
       {
         task: 'Refactoring di una codebase intera con un singolo prompt',
@@ -393,53 +418,63 @@ export const CATEGORY_PAGES: CategoryPageData[] = [
         reason: 'Chat contestuale sull\'intero progetto, modifica blocchi di codice in un colpo',
       },
       {
-        task: 'Autocompletamento inline mentre scrivi codice in VS Code o JetBrains',
+        task: 'AI coding su IntelliJ, PyCharm o altri IDE JetBrains',
+        toolId: 'windsurf',
+        reason: 'Supporto plugin JetBrains nativo — Cursor non lo ha, Copilot è più limitato',
+      },
+      {
+        task: 'Autocompletamento inline gratuito in VS Code senza cambiare editor',
         toolId: 'github-copilot',
-        reason: 'Integrazione nativa negli editor più usati, suggerimenti in tempo reale',
+        reason: 'Piano free con 2.000 completamenti/mese, integrazione nativa, zero migrazione',
       },
       {
         task: 'Imparare a programmare, spiegare errori, primi progetti nel browser',
         toolId: 'replit-ai',
         reason: 'Zero setup, tutto nel browser, AI che spiega e corregge mentre impari',
       },
-      {
-        task: 'Debugging di logica complessa e ottimizzazione query SQL lente',
-        toolId: 'cursor',
-        reason: 'Supporta Claude 4 come backend — il miglior ragionamento disponibile',
-      },
     ],
     userProfiles: [
       {
-        profile: 'Principiante',
-        description: 'Stai imparando a programmare, vuoi un ambiente guidato',
-        toolId: 'replit-ai',
-        badge: 'Per Imparare',
+        profile: 'Developer senior (VS Code)',
+        description: 'Lavori su codebase grandi, vuoi AI che ragioni sull\'intero progetto',
+        toolId: 'cursor',
+        badge: 'Editor AI',
+      },
+      {
+        profile: 'Developer su JetBrains',
+        description: 'Usi IntelliJ, PyCharm o CLion — non vuoi cambiare IDE',
+        toolId: 'windsurf',
+        badge: 'Alternativa Cursor',
       },
       {
         profile: 'Developer junior/mid',
-        description: 'Usi VS Code o JetBrains, vuoi autocompletamento intelligente',
+        description: 'Vuoi autocompletamento AI gratis senza cambiare nulla del tuo setup',
         toolId: 'github-copilot',
         badge: 'Standard Dev',
       },
       {
-        profile: 'Developer senior',
-        description: 'Lavori su codebase grandi, vuoi AI che ragioni sull\'intero contesto',
-        toolId: 'cursor',
-        badge: 'Editor AI',
+        profile: 'Principiante',
+        description: 'Stai imparando a programmare, vuoi un ambiente guidato nel browser',
+        toolId: 'replit-ai',
+        badge: 'Per Imparare',
       },
     ],
     faqs: [
       {
-        question: 'Cursor o GitHub Copilot: quale è meglio nel 2026?',
-        answer: 'Cursor vince per chi lavora su progetti complessi: ragiona sull\'intera codebase, non solo sul file corrente. Copilot vince per chi non vuole cambiare editor e preferisce l\'integrazione nativa in VS Code o JetBrains.',
+        question: 'Cursor o Windsurf: quale scegliere nel 2026?',
+        answer: 'Cursor vince per chi lavora su VS Code e codebase complesse: ha la community più grande e il contesto più profondo. Windsurf vince per chi usa JetBrains (supporto nativo) o vuole un piano free più generoso. Entrambi supportano Claude 4 e GPT-4o come backend.',
+      },
+      {
+        question: 'GitHub Copilot ha ancora senso nel 2026?',
+        answer: 'Sì, per due casi specifici: chi non vuole cambiare editor (funziona in VS Code, JetBrains, Neovim) e chi vuole iniziare gratis — il piano free offre 2.000 completamenti/mese. Per chi fa refactoring intenso su codebase grandi, Cursor o Windsurf rimangono superiori.',
       },
       {
         question: 'Cursor ha un piano gratuito?',
-        answer: 'Sì, Cursor ha un piano free con un numero limitato di richieste AI al mese. Il piano Pro è $20/mese e rimuove i limiti — lo stesso prezzo di Copilot ma con funzionalità più avanzate.',
+        answer: 'Sì, Cursor ha un piano free con un numero limitato di richieste AI al mese. Il piano Pro è $20/mese. Windsurf ha un piano free simile, entrambi permettono di testare prima di pagare.',
       },
       {
         question: 'Qual è il miglior AI per imparare a programmare?',
-        answer: 'Replit AI: tutto nel browser, nessun setup, AI che spiega gli errori in linguaggio semplice. Per chi ha già basi, Claude 4 o ChatGPT sono ottimi per farsi spiegare concetti e debuggare.',
+        answer: 'Replit AI: tutto nel browser, nessun setup, AI che spiega gli errori in linguaggio semplice. Per chi ha già basi, Claude 4 o ChatGPT sono ottimi per farsi spiegare concetti e debuggare da qualsiasi editor.',
       },
     ],
   },

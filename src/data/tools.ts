@@ -57,10 +57,10 @@ export const TOOLS: AITool[] = [
       valueForMoney: 4.7,
     },
     strengths: [
-      'Piano gratuito disponibile',
+      'Piano gratuito disponibile (Sonnet 4.6)',
       'Qualità di testo eccezionale, tono naturale',
       'Ragionamento su testi lunghi e complessi',
-      'Ottimo per editing, riassunti, blog, email',
+      'Famiglia completa: Sonnet 4.6 (veloce) e Opus 4.8 (massima potenza)',
     ],
     weaknesses: [
       'Limite messaggi sul piano free',
@@ -74,7 +74,7 @@ export const TOOLS: AITool[] = [
   {
     id: 'chatgpt-4o',
     name: 'ChatGPT-4o',
-    tagline: 'Il più versatile, con accesso internet e generazione immagini',
+    tagline: 'Il più versatile, con accesso internet e generazione immagini nativa',
     category: 'scrittura',
     secondaryCategories: ['immagini', 'coding', 'produttivita'],
     pricing: {
@@ -93,7 +93,7 @@ export const TOOLS: AITool[] = [
     strengths: [
       'Piano gratuito generoso',
       'Interfaccia semplicissima, perfetto per iniziare',
-      'Accesso internet e immagini DALL-E integrati',
+      'Generazione immagini nativa in 4o (non solo DALL-E)',
       'Community enorme, tonnellate di risorse online',
     ],
     weaknesses: [
@@ -203,6 +203,74 @@ export const TOOLS: AITool[] = [
   },
 
   {
+    id: 'gemini-2-5-pro',
+    name: 'Gemini 2.5 Pro',
+    tagline: "Il modello Google con 1M di token di contesto e pensiero avanzato",
+    category: 'scrittura',
+    secondaryCategories: ['produttivita', 'coding'],
+    pricing: {
+      type: 'freemium',
+      hasFreeOption: true,
+      startingPriceUsd: 20,
+      priceRange: 'low',
+    },
+    targetUsers: ['intermediate', 'advanced', 'developer', 'business', 'creator'],
+    ratings: {
+      overall: 4.7,
+      easeOfUse: 4.7,
+      outputQuality: 4.7,
+      valueForMoney: 4.6,
+    },
+    strengths: [
+      'Finestra di contesto da 1 milione di token (la più grande)',
+      'Pensiero "step-by-step" attivabile per ragionamento complesso',
+      'Integrazione nativa con Google Workspace (Docs, Gmail, Drive)',
+      'Piano gratuito generoso sull\'app Gemini',
+    ],
+    weaknesses: [
+      'Qualità testi creativi leggermente sotto Claude 4',
+      'Alcune funzioni avanzate richiedono Google One AI Premium',
+    ],
+    badge: 'Google',
+    link: '/strumenti#scrittura',
+    affiliateUrl: 'https://gemini.google.com',
+  },
+
+  {
+    id: 'grok-3',
+    name: 'Grok-3',
+    tagline: "L'AI di xAI con dati in tempo reale da X e ricerca web",
+    category: 'scrittura',
+    secondaryCategories: ['produttivita'],
+    pricing: {
+      type: 'freemium',
+      hasFreeOption: true,
+      startingPriceUsd: 8,
+      priceRange: 'low',
+    },
+    targetUsers: ['intermediate', 'advanced', 'creator', 'business'],
+    ratings: {
+      overall: 4.4,
+      easeOfUse: 4.5,
+      outputQuality: 4.5,
+      valueForMoney: 4.3,
+    },
+    strengths: [
+      'Accesso dati real-time da X (Twitter) — unico nel settore',
+      'Ricerca web integrata senza piano a pagamento',
+      'Modalità "Think" per ragionamento passo passo',
+      'Piano free disponibile su grok.com',
+    ],
+    weaknesses: [
+      'Accesso illimitato richiede X Premium',
+      'Meno affidabile di Claude/ChatGPT su contenuti professionali lunghi',
+    ],
+    badge: 'Real-Time',
+    link: '/strumenti#scrittura',
+    affiliateUrl: 'https://grok.com',
+  },
+
+  {
     id: 'perplexity-ai',
     name: 'Perplexity AI',
     tagline: 'Motore di ricerca AI con fonti citate in tempo reale',
@@ -251,19 +319,18 @@ export const TOOLS: AITool[] = [
     targetUsers: ['intermediate', 'advanced', 'creator', 'business'],
     ratings: {
       overall: 4.9,
-      easeOfUse: 3.8,
+      easeOfUse: 4.1,
       outputQuality: 5.0,
       valueForMoney: 4.6,
     },
     strengths: [
       'Qualità visiva imbattibile, lo standard del settore',
       'Stile artistico e coerenza estetica superiori',
-      'Ottimo rapporto qualità/prezzo a $10/mese',
+      'Interfaccia web disponibile — non più solo Discord',
     ],
     weaknesses: [
       'Nessun piano gratuito',
       'Curva di apprendimento per i prompt',
-      'Solo via Discord (nessuna app dedicata)',
     ],
     badge: 'Qualità Pro',
     link: '/blog/midjourney-recensione',
@@ -397,7 +464,40 @@ export const TOOLS: AITool[] = [
     link: '/strumenti#immagini',
   },
 
-  // ── VIDEO ──────────────────────────────────────────────────────────────────
+  // ── VIDEO ─────────────────────────────────────────────────────────────────
+
+  {
+    id: 'sora',
+    name: 'Sora',
+    tagline: 'Il generatore video di OpenAI, incluso in ChatGPT Plus',
+    category: 'video',
+    pricing: {
+      type: 'freemium',
+      hasFreeOption: true,
+      startingPriceUsd: 20,
+      priceRange: 'low',
+    },
+    targetUsers: ['intermediate', 'creator', 'business'],
+    ratings: {
+      overall: 4.4,
+      easeOfUse: 4.6,
+      outputQuality: 4.5,
+      valueForMoney: 4.1,
+    },
+    strengths: [
+      'Incluso in ChatGPT Plus ($20/mese) — zero costi aggiuntivi',
+      'Generazione video da testo e da immagine',
+      'Qualità visiva e coerenza tra frame molto alta',
+    ],
+    weaknesses: [
+      'Limiti di utilizzo mensili anche sul piano Plus',
+      'Piano Pro ($200/mese) necessario per uso intenso',
+      'Ancora limitato su scene ad alta complessità',
+    ],
+    badge: 'OpenAI',
+    link: '/strumenti#video',
+    affiliateUrl: 'https://sora.com',
+  },
 
   {
     id: 'runway-gen3',
@@ -657,7 +757,7 @@ export const TOOLS: AITool[] = [
     affiliateUrl: 'https://zapier.com',
   },
 
-  // ── CODING ─────────────────────────────────────────────────────────────────
+  // ── CODING ────────────────────────────────────────────────────────────────
 
   {
     id: 'github-copilot',
@@ -665,8 +765,8 @@ export const TOOLS: AITool[] = [
     tagline: 'Il riferimento per autocompletamento intelligente nel codice',
     category: 'coding',
     pricing: {
-      type: 'paid',
-      hasFreeOption: false,
+      type: 'freemium',
+      hasFreeOption: true,
       startingPriceUsd: 10,
       priceRange: 'low',
     },
@@ -675,15 +775,15 @@ export const TOOLS: AITool[] = [
       overall: 4.5,
       easeOfUse: 4.7,
       outputQuality: 4.4,
-      valueForMoney: 4.5,
+      valueForMoney: 4.6,
     },
     strengths: [
+      'Piano gratuito con 2.000 completamenti/mese',
       'Integrazione nativa in VS Code e JetBrains',
       'Suggerimenti inline in tempo reale',
-      'Ottimo su linguaggi comuni (Python, JS, TypeScript)',
     ],
     weaknesses: [
-      'Nessun piano gratuito (eccetto studenti)',
+      'Contesto limitato al file aperto (vs codebase intera di Cursor)',
       'Meno utile per spiegare e debuggare logica complessa',
     ],
     badge: 'Standard Dev',
@@ -754,5 +854,38 @@ export const TOOLS: AITool[] = [
     badge: 'Per Imparare',
     link: '/strumenti#coding',
     affiliateUrl: 'https://replit.com',
+  },
+
+  {
+    id: 'windsurf',
+    name: 'Windsurf',
+    tagline: "L'alternativa a Cursor con supporto JetBrains e piano free generoso",
+    category: 'coding',
+    pricing: {
+      type: 'freemium',
+      hasFreeOption: true,
+      startingPriceUsd: 15,
+      priceRange: 'low',
+    },
+    targetUsers: ['developer', 'intermediate', 'advanced'],
+    ratings: {
+      overall: 4.5,
+      easeOfUse: 4.6,
+      outputQuality: 4.6,
+      valueForMoney: 4.7,
+    },
+    strengths: [
+      'Piano gratuito con crediti AI mensili generosi',
+      'Supporto plugin VS Code e JetBrains (Cursor non ce l\'ha)',
+      'Cascade: agente AI che opera su più file in autonomia',
+      'Powered by Claude e GPT-4o a scelta',
+    ],
+    weaknesses: [
+      'Community e documentazione più piccola di Cursor',
+      'Alcune funzioni avanzate solo su piano Pro',
+    ],
+    badge: 'Alternativa Cursor',
+    link: '/strumenti#coding',
+    affiliateUrl: 'https://windsurf.com',
   },
 ];

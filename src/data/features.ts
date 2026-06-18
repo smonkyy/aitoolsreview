@@ -203,7 +203,7 @@ export const TOOL_FEATURES: Record<string, Record<string, FeatureValue>> = {
   // ── Coding ─────────────────────────────────────────────────────────────────
 
   'github-copilot': {
-    free_plan: false, api_access: false, web_app: false, mobile_app: false,
+    free_plan: true, api_access: false, web_app: false, mobile_app: false,
     italian_support: true, no_data_training: 'partial',
     ide_integration: true, autocomplete: true, code_review: 'partial', multi_language: true,
   },
@@ -218,5 +218,35 @@ export const TOOL_FEATURES: Record<string, Record<string, FeatureValue>> = {
     free_plan: true, api_access: false, web_app: true, mobile_app: false,
     italian_support: 'partial', no_data_training: false,
     ide_integration: false, autocomplete: true, code_review: false, multi_language: true,
+  },
+
+  'windsurf': {
+    free_plan: true, api_access: false, web_app: false, mobile_app: false,
+    italian_support: true, no_data_training: 'partial',
+    ide_integration: true, autocomplete: true, code_review: true, multi_language: true,
+  },
+
+  // ── Scrittura (nuovi) ──────────────────────────────────────────────────────
+
+  'gemini-2-5-pro': {
+    free_plan: true, api_access: true, web_app: true, mobile_app: true,
+    italian_support: true, no_data_training: 'partial',
+    long_form: true, seo_tools: false, tone_presets: false, web_search: true,
+    workflow_automation: false, no_code: true, many_integrations: false, ai_native: true,
+    ide_integration: false, autocomplete: false, code_review: true, multi_language: true,
+  },
+
+  'grok-3': {
+    free_plan: true, api_access: false, web_app: true, mobile_app: true,
+    italian_support: 'partial', no_data_training: false,
+    long_form: 'partial', seo_tools: false, tone_presets: false, web_search: true,
+  },
+
+  // ── Video (nuovi) ──────────────────────────────────────────────────────────
+
+  'sora': {
+    free_plan: true, api_access: false, web_app: true, mobile_app: false,
+    italian_support: 'partial', no_data_training: false,
+    img2video: true, audio_sync: false, long_video: false, commercial_ok: 'partial',
   },
 };

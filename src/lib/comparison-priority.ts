@@ -13,8 +13,10 @@ import type { ComparisonFeedback } from './feedback';
 const SEARCH_INTEREST: Record<string, number> = {
   'chatgpt-4o':       100, // most-searched AI tool globally
   'midjourney':        88,
-  'claude-4':          85,
-  'github-copilot':    74,
+  'claude-4':          87,
+  'gemini-2-5-pro':    82, // forte crescita dopo lancio
+  'github-copilot':    76, // free tier aumenta mindshare
+  'grok-3':            72,
   'stable-diffusion':  70,
   'perplexity-ai':     68,
   'zapier':            66,
@@ -22,9 +24,11 @@ const SEARCH_INTEREST: Record<string, number> = {
   'elevenlabs':        62,
   'adobe-firefly':     58,
   'notion-ai':         57,
-  'cursor':            55,
+  'cursor':            56,
+  'sora':              55,
   'whisper':           52,
   'runway-gen3':       50,
+  'windsurf':          48,
   'leonardo-ai':       46,
   'heygen':            46,
   'make':              44,
