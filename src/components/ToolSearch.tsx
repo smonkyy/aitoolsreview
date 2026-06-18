@@ -263,8 +263,41 @@ export default function ToolSearch() {
   const activeFilterCount = [activeCategory, activePrice, hasFreeOnly, minRating].filter(Boolean).length
 
   // ── Render ──────────────────────────────────────────────────────────────────
+
+  // Problem-based quick queries — first person, maps to synonyms in search index
+  const PROBLEMS = [
+    { label: '📧 Scrivo email',        query: 'email scrittura testi' },
+    { label: '🎬 Faccio video',        query: 'video animazione' },
+    { label: '📊 Analizzo dati',       query: 'produttivita workflow analisi' },
+    { label: '🎨 Genero immagini',     query: 'immagini grafica disegno' },
+    { label: '💻 Scrivo codice',       query: 'coding programmazione sviluppo' },
+    { label: '🎙️ Clono la mia voce',  query: 'voce clonazione audio tts' },
+  ] as const
+
   return (
     <div>
+      {/* ── Problem chips ──────────────────────────────────────────────────── */}
+      <div className="mb-4">
+        <p className="text-xs font-semibold text-light-muted dark:text-ai-muted mb-2 uppercase tracking-wide">
+          Cosa vuoi fare?
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {PROBLEMS.map((p) => (
+            <button
+              key={p.query}
+              onClick={() => { setQuery(p.query); setActiveCategory(''); setActivePrice(''); setHasFreeOnly(false); setMinRating(null); }}
+              className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-150
+                ${query === p.query
+                  ? 'bg-ai-purple text-white border-ai-purple'
+                  : 'text-light-muted dark:text-ai-muted border-light-border dark:border-ai-border hover:border-ai-purple hover:text-ai-purple dark:hover:border-ai-purple dark:hover:text-ai-purple bg-light-card dark:bg-ai-card'
+                }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Search input */}
       <div className="relative mb-5">
         <svg
@@ -279,7 +312,7 @@ export default function ToolSearch() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder='Cerca per nome, uso o "disegno", "gratis", "coding"…'
+          placeholder='Oppure scrivi: "scrivo email", "faccio video", "analizzo dati"…'
           aria-label="Cerca strumenti AI"
           className="w-full py-3.5 pl-11 pr-4 rounded-2xl border text-base
             bg-light-card dark:bg-ai-card

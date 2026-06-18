@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import AIToolFinder from '../components/AIToolFinder.jsx';
+import NewsletterForm from '../components/NewsletterForm';
 import { TOOLS } from '../data/tools';
 import { CATEGORY_PAGES } from '../data/category-pages';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
@@ -451,7 +452,16 @@ const USE_CASES = [
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         8. FINAL CTA — reinforce the primary action
+         8. NEWSLETTER
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section class="py-12 px-4">
+      <div class="max-w-xl mx-auto" data-reveal>
+        <NewsletterForm client:visible />
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         9. FINAL CTA — reinforce the primary action
     ══════════════════════════════════════════════════════════════════════ -->
     <section class="py-16 px-4 bg-light-bg2 dark:bg-ai-bg2">
       <div class="max-w-xl mx-auto text-center rounded-2xl border p-10 relative overflow-hidden
