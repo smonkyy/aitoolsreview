@@ -4,6 +4,7 @@ description: 'Recensione approfondita di Claude AI di Anthropic. Scopri funziona
 pubDate: '2026-03-17T00:00:00Z'
 updatedDate: '2026-03-22T00:00:00Z'
 reviewedToolId: 'claude-4'
+testDuration: '2 settimane'
 author: 'sara'
 ---
 

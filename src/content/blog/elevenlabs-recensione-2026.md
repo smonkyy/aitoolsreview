@@ -4,6 +4,7 @@ description: 'Recensione completa di ElevenLabs aggiornata al 2026. Test sulla q
 pubDate: '2026-03-23T00:00:00Z'
 updatedDate: '2026-03-23T00:00:00Z'
 reviewedToolId: 'elevenlabs'
+testDuration: '3 settimane'
 author: 'redazione'
 ---
 

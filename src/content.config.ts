@@ -18,6 +18,8 @@ const blog = defineCollection({
 			reviewedToolId: z.string().optional(),
 			/** ID autore (da data/authors.ts) — default: 'redazione' */
 			author: z.string().optional().default('redazione'),
+			/** Durata del test sul campo, es. "3 settimane", "1 mese" */
+			testDuration: z.string().optional(),
 		}),
 });
 

@@ -4,6 +4,7 @@ description: 'Recensione completa di Grok-3 aggiornata al 2026. Test su scrittur
 pubDate: '2026-06-18T00:00:00Z'
 updatedDate: '2026-06-18T00:00:00Z'
 reviewedToolId: 'grok-3'
+testDuration: '3 settimane'
 author: 'redazione'
 ---
 

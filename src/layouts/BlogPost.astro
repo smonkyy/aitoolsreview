@@ -36,6 +36,7 @@ const {
   toolSchemas = [],
   reviewedTool = null,
   author,
+  testDuration,
 } = Astro.props;
 
 const ogImage   = slug ? `/og/${slug}.png` : undefined;
@@ -189,6 +190,41 @@ const breadcrumbSchema = {
               <span class="italic">· aggiornato <FormattedDate date={updatedDate} /></span>
             )}
           </div>
+
+          <!-- Trust strip — mostrata solo sulle recensioni di tool -->
+          {reviewedTool && (
+            <div class="flex flex-wrap items-center gap-2 mb-6">
+              {testDuration && (
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
+                  bg-light-bg2 dark:bg-ai-bg2 border border-light-border dark:border-ai-border
+                  text-light-text dark:text-ai-text">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M9 3h6M9 3v7l-4.5 9A1 1 0 0 0 5.4 21h13.2a1 1 0 0 0 .9-1.45L15 10V3"/>
+                    <path d="M6.5 14h11"/>
+                  </svg>
+                  Testato per {testDuration}
+                </span>
+              )}
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
+                bg-ai-green/10 border border-ai-green/25 text-ai-green">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Test indipendente
+              </span>
+              <a href="/metodologia"
+                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold
+                  text-ai-purple border border-ai-purple/25 hover:bg-ai-purple/10 transition-colors no-underline">
+                Come testiamo
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+          )}
 
           <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4 text-light-text dark:text-ai-text">
             {title}

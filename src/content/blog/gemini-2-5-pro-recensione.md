@@ -4,6 +4,7 @@ description: 'Recensione completa di Gemini 2.5 Pro aggiornata al 2026. Test rea
 pubDate: '2026-06-18T00:00:00Z'
 updatedDate: '2026-06-18T00:00:00Z'
 reviewedToolId: 'gemini-2-5-pro'
+testDuration: '1 mese'
 author: 'sara'
 ---
 

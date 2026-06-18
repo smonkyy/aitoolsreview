@@ -4,6 +4,7 @@ description: 'Recensione completa di Windsurf (Codeium) aggiornata al 2026. Test
 pubDate: '2026-06-18T00:00:00Z'
 updatedDate: '2026-06-18T00:00:00Z'
 reviewedToolId: 'windsurf'
+testDuration: '1 mese'
 author: 'davide'
 ---
 

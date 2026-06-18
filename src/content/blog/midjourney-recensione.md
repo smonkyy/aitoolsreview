@@ -4,6 +4,7 @@ description: 'Recensione completa di Midjourney. Scopri funzionalità, prezzi, p
 pubDate: '2026-03-18T00:00:00Z'
 updatedDate: '2026-03-22T00:00:00Z'
 reviewedToolId: 'midjourney'
+testDuration: '2 settimane'
 author: 'marco'
 ---
 

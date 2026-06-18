@@ -1,0 +1,182 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!doctype html>
+<html lang="it" class="dark">
+  <head>
+    <BaseHead
+      title="Come testiamo i tool AI | AI Tools Review"
+      description="La nostra metodologia di test: come valutiamo ogni strumento AI, quali criteri usiamo, come assegniamo i voti e perché le nostre recensioni sono indipendenti."
+    />
+  </head>
+  <body class="bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text">
+    <Header />
+
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 py-16">
+
+      <!-- Hero -->
+      <header class="mb-14">
+        <p class="text-xs font-bold uppercase tracking-widest text-ai-purple mb-3">Metodologia</p>
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-6
+          text-light-text dark:text-ai-text">
+          Come testiamo<br/>i tool AI.
+        </h1>
+        <p class="text-lg text-light-muted dark:text-ai-muted leading-relaxed">
+          Ogni recensione su questo sito segue un processo strutturato e ripetibile.
+          Questa pagina descrive esattamente come lavoriamo — così puoi valutare
+          da solo l'attendibilità di quello che leggi.
+        </p>
+      </header>
+
+      <!-- Principio base -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-extrabold mb-4 text-light-text dark:text-ai-text">Il principio base</h2>
+        <p class="text-light-muted dark:text-ai-muted leading-relaxed mb-4">
+          Non descriviamo i tool partendo dalla loro documentazione ufficiale.
+          Li usiamo su task reali, negli stessi contesti in cui li userebbe
+          un professionista, un content creator o un developer italiano ogni giorno.
+        </p>
+        <p class="text-light-muted dark:text-ai-muted leading-relaxed">
+          Il nostro punto di partenza è sempre la stessa domanda:
+          <strong class="text-light-text dark:text-ai-text">
+            "Vale i soldi che costa, per questo specifico caso d'uso?"
+          </strong>
+        </p>
+      </section>
+
+      <!-- Fasi del test -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-extrabold mb-6 text-light-text dark:text-ai-text">Le fasi di ogni test</h2>
+
+        <ol class="flex flex-col gap-4">
+          {[
+            {
+              n: '01',
+              title: 'Setup e onboarding',
+              desc: 'Installiamo o accediamo al tool partendo da zero, come farebbe un nuovo utente. Misuriamo quanto tempo serve per essere operativi e cosa si incontra lungo la strada.',
+            },
+            {
+              n: '02',
+              title: 'Test su task reali',
+              desc: 'Definiamo 4–6 task specifici e rappresentativi per la categoria. Li eseguiamo con prompt reali, non costruiti per far sembrare il tool migliore. Documentiamo il numero di iterazioni necessarie e la qualità dell\'output.',
+            },
+            {
+              n: '03',
+              title: 'Test comparativo',
+              desc: 'Eseguiamo gli stessi prompt sui principali competitor nella categoria. Il confronto è diretto, a parità di contesto. I risultati sono documentati prima di scrivere il verdetto.',
+            },
+            {
+              n: '04',
+              title: 'Uso continuativo',
+              desc: 'Integriamo il tool nel workflow per il periodo indicato nell\'articolo (solitamente 2–4 settimane). Le recensioni istantanee non intercettano i problemi che emergono con l\'uso quotidiano.',
+            },
+            {
+              n: '05',
+              title: 'Aggiornamento',
+              desc: 'I tool AI cambiano rapidamente. Quando una versione significativa viene rilasciata, aggiorniamo la recensione e mostriamo la data di revisione nell\'articolo.',
+            },
+          ].map(({ n, title, desc }) => (
+            <li class="flex gap-4 p-5 rounded-2xl border
+              bg-light-card border-light-border dark:bg-ai-card dark:border-ai-border">
+              <span class="shrink-0 text-2xl font-extrabold text-ai-purple/30 leading-none pt-0.5">{n}</span>
+              <div>
+                <p class="font-bold text-light-text dark:text-ai-text mb-1">{title}</p>
+                <p class="text-sm text-light-muted dark:text-ai-muted leading-relaxed">{desc}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- Come assegniamo i voti -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-extrabold mb-6 text-light-text dark:text-ai-text">Come assegniamo i voti</h2>
+        <p class="text-light-muted dark:text-ai-muted leading-relaxed mb-6">
+          Ogni tool viene valutato su quattro dimensioni. Il voto globale è una media ponderata,
+          non una media semplice — la qualità dell'output pesa di più della facilità d'uso.
+        </p>
+
+        <div class="rounded-2xl border border-light-border dark:border-ai-border overflow-hidden">
+          <div class="grid grid-cols-[1fr_auto] bg-light-bg2 dark:bg-ai-bg2 px-5 py-3
+            border-b border-light-border dark:border-ai-border">
+            <span class="text-xs font-bold uppercase tracking-widest text-light-muted dark:text-ai-muted">Dimensione</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-light-muted dark:text-ai-muted">Peso</span>
+          </div>
+          {[
+            { dim: 'Qualità output', peso: '40%', note: 'Accuratezza, naturalezza, utilità reale del risultato' },
+            { dim: 'Voto complessivo', peso: '30%', note: 'Impressione globale dopo uso continuativo' },
+            { dim: 'Rapporto qualità/prezzo', peso: '20%', note: 'Risultati ottenibili per euro speso' },
+            { dim: 'Facilità d\'uso', peso: '10%', note: 'Curva di apprendimento, UX, onboarding' },
+          ].map(({ dim, peso, note }, i) => (
+            <div class={`grid grid-cols-[1fr_auto] px-5 py-4 gap-4 items-start
+              ${i % 2 === 0 ? 'bg-light-card dark:bg-ai-card' : 'bg-light-bg dark:bg-ai-bg'}`}>
+              <div>
+                <p class="text-sm font-semibold text-light-text dark:text-ai-text">{dim}</p>
+                <p class="text-xs text-light-muted dark:text-ai-muted mt-0.5">{note}</p>
+              </div>
+              <span class="text-sm font-bold text-ai-purple shrink-0">{peso}</span>
+            </div>
+          ))}
+        </div>
+
+        <p class="text-sm text-light-faint dark:text-ai-faint mt-4">
+          I voti vanno da 1.0 a 5.0. Un 4.5+ indica eccellenza nella categoria.
+          Non assegniamo mai 5.0 globale — nessun tool è perfetto.
+        </p>
+      </section>
+
+      <!-- Indipendenza -->
+      <section class="mb-12 p-6 sm:p-8 rounded-2xl border
+        bg-gradient-to-br from-ai-green/5 to-transparent border-ai-green/20">
+        <div class="flex items-start gap-3 mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="shrink-0 mt-0.5" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+          <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text">Indipendenza editoriale</h2>
+        </div>
+        <div class="space-y-3 text-sm text-light-muted dark:text-ai-muted leading-relaxed">
+          <p>
+            <strong class="text-light-text dark:text-ai-text">Non accettiamo pagamenti per recensioni positive.</strong>
+            Alcuni articoli contengono link affiliati: se acquisti un tool tramite il nostro link,
+            riceviamo una commissione. Questo non influenza il verdetto — le recensioni negative
+            riguardano anche tool con programmi affiliati attivi.
+          </p>
+          <p>
+            <strong class="text-light-text dark:text-ai-text">Non riceviamo accessi gratuiti in cambio di copertura.</strong>
+            Usiamo i piani pubblici disponibili a chiunque — gli stessi che userebbe un lettore.
+            Quando testiamo piani a pagamento, li acquistiamo direttamente.
+          </p>
+          <p>
+            <strong class="text-light-text dark:text-ai-text">I voti non vengono modificati su richiesta dei produttori.</strong>
+            Se un tool viene aggiornato e il voto cambia, lo diciamo esplicitamente nell'articolo
+            con la data di revisione.
+          </p>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="text-center">
+        <p class="text-light-muted dark:text-ai-muted mb-4">
+          Hai un dubbio sulla nostra metodologia o vuoi segnalare un errore in una recensione?
+        </p>
+        <a
+          href="mailto:shekokri18@gmail.com"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+            bg-ai-purple hover:bg-ai-purple-dark text-white font-bold text-sm
+            transition-all duration-150 no-underline"
+        >
+          Scrivici
+        </a>
+      </section>
+
+    </main>
+
+    <Footer />
+  </body>
+</html>

@@ -4,6 +4,7 @@ description: 'Recensione completa di Claude 4 di Anthropic aggiornata a marzo 20
 pubDate: '2026-03-19T00:00:00Z'
 updatedDate: '2026-03-22T00:00:00Z'
 reviewedToolId: 'claude-4'
+testDuration: '3 settimane'
 author: 'sara'
 ---
 

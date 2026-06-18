@@ -4,6 +4,7 @@ description: 'Recensione completa di Cursor, l''editor AI che sta sostituendo VS
 pubDate: '2026-03-23T00:00:00Z'
 updatedDate: '2026-03-23T00:00:00Z'
 reviewedToolId: 'cursor'
+testDuration: '1 mese'
 author: 'davide'
 ---
 
