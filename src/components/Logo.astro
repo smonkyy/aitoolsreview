@@ -1,0 +1,35 @@
+---
+interface Props {
+  /** 'md' per header (default), 'sm' per footer */
+  size?: 'sm' | 'md';
+}
+const { size = 'md' } = Astro.props;
+
+const boxSize  = size === 'sm' ? 24 : 28;
+const fontSize = size === 'sm' ? 'text-sm' : 'text-base';
+---
+
+<span class={`flex items-center gap-2 ${size === 'sm' ? 'gap-1.5' : 'gap-2'}`}>
+  <!-- Mark: rounded square viola con sparkle bianco -->
+  <svg
+    width={boxSize}
+    height={boxSize}
+    viewBox="0 0 28 28"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    style="flex-shrink:0"
+  >
+    <rect width="28" height="28" rx="7" fill="#a855f7"/>
+    <!-- 4-point sparkle -->
+    <path
+      d="M14 6.5 L15.6 12.4 L21.5 14 L15.6 15.6 L14 21.5 L12.4 15.6 L6.5 14 L12.4 12.4 Z"
+      fill="white"
+    />
+  </svg>
+
+  <!-- Wordmark -->
+  <span class={`font-bold leading-none tracking-tight text-light-text dark:text-ai-text ${fontSize}`}>
+    AI<span class="font-normal text-light-muted dark:text-ai-muted"> Tools Review</span>
+  </span>
+</span>

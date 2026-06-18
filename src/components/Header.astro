@@ -1,5 +1,6 @@
 ---
 import { SITE_TITLE } from '../consts';
+import Logo from './Logo.astro';
 ---
 
 <header
@@ -14,15 +15,7 @@ import { SITE_TITLE } from '../consts';
 			class="flex items-center no-underline hover:opacity-85 transition-opacity duration-150"
 			aria-label={SITE_TITLE}
 		>
-			<img
-				src="/assets/logo.png"
-				alt={SITE_TITLE}
-				width="180"
-				height="45"
-				class="h-9 w-auto object-contain"
-				loading="eager"
-				decoding="sync"
-			/>
+			<Logo size="md" />
 		</a>
 
 		<!-- Desktop Navigation -->
