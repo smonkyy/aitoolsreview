@@ -39,7 +39,7 @@ export const AUTHORS: Record<string, Author> = {
     toolsReviewed: 47,
     yearsExp: 3,
     initial: 'AI',
-    avatarGradient: 'from-ai-purple to-blue-500',
+    avatarGradient: 'from-ai-gold to-blue-500',
     schemaId: 'https://aitoolsreview.it/#redazione',
     knowsAbout: [
       'Artificial Intelligence',

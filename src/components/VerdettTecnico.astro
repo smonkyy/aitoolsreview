@@ -11,7 +11,7 @@ const { ratings } = tool;
 
 // Score bar color — purple for excellent, green for good, amber for average
 function barColor(score: number): string {
-  if (score >= 4.5) return 'var(--color-ai-purple)';
+  if (score >= 4.5) return 'var(--color-ai-gold)';
   if (score >= 4.0) return 'var(--color-ai-green)';
   if (score >= 3.0) return '#f59e0b';
   return '#ef4444';
@@ -63,18 +63,18 @@ const ctaExternal = !!tool.affiliateUrl;
 >
   <!-- Header bar -->
   <div class="flex items-center gap-3 px-6 py-4 border-b border-light-border dark:border-ai-border
-    bg-gradient-to-r from-ai-purple/10 to-transparent">
+    bg-gradient-to-r from-ai-gold/10 to-transparent">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-      class="text-ai-purple shrink-0" aria-hidden="true">
+      class="text-ai-gold shrink-0" aria-hidden="true">
       <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
     </svg>
-    <h2 class="text-sm font-extrabold uppercase tracking-wide text-ai-purple m-0">
+    <h2 class="text-sm font-extrabold uppercase tracking-wide text-ai-gold m-0">
       Verdetto Tecnico
     </h2>
     {tool.badge && (
       <span class="ml-auto px-2.5 py-0.5 text-xs font-bold rounded-full
-        bg-ai-purple/15 text-ai-purple border border-ai-purple/30">
+        bg-ai-gold/15 text-ai-gold border border-ai-gold/30">
         {tool.badge}
       </span>
     )}
@@ -151,7 +151,7 @@ const ctaExternal = !!tool.affiliateUrl;
           target={ctaExternal ? '_blank' : undefined}
           rel={ctaExternal ? 'noopener noreferrer' : undefined}
           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold
-            bg-ai-purple hover:bg-ai-purple-dark text-white
+            bg-ai-gold hover:bg-ai-gold-light text-[#0d0d0d]
             transition-all duration-150 no-underline whitespace-nowrap"
         >
           Prova {tool.name}
@@ -170,7 +170,7 @@ const ctaExternal = !!tool.affiliateUrl;
         Voto calcolato su test reali · nessun accordo commerciale con il produttore
       </p>
       <a href="/metodologia"
-        class="text-xs text-ai-purple hover:underline no-underline whitespace-nowrap shrink-0">
+        class="text-xs text-ai-gold hover:underline no-underline whitespace-nowrap shrink-0">
         Come calcoliamo il voto →
       </a>
     </div>

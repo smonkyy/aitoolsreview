@@ -92,7 +92,7 @@ export default function NewsletterForm() {
     <div className="mt-12 p-6 sm:p-8 rounded-2xl border
       bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border">
 
-      <p className="text-xs font-semibold uppercase tracking-widest text-ai-purple mb-2">
+      <p className="text-xs font-semibold uppercase tracking-widest text-ai-gold mb-2">
         Newsletter
       </p>
       <h2 className="text-xl font-extrabold text-light-text dark:text-ai-text mb-1">
@@ -115,13 +115,13 @@ export default function NewsletterForm() {
             border-light-border dark:border-ai-border
             text-light-text dark:text-ai-text
             placeholder:text-light-faint dark:placeholder:text-ai-faint
-            focus:outline-none focus:ring-2 focus:ring-ai-purple/50
+            focus:outline-none focus:ring-2 focus:ring-ai-gold/50
             disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={state === 'loading'}
-          className="px-5 py-2.5 rounded-xl bg-ai-purple hover:bg-ai-purple-dark
+          className="px-5 py-2.5 rounded-xl bg-ai-gold hover:bg-ai-gold-dark
             text-white font-bold text-sm transition-all duration-200
             disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
         >

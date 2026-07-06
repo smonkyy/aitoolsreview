@@ -58,16 +58,16 @@ const toolOrder      = TOOLS.map(t => t.id);
           <div id="wrapA"
             class="flex items-center gap-2 px-3 py-2.5 rounded-xl border cursor-text
               bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-              focus-within:ring-2 focus-within:ring-ai-purple/40 focus-within:border-ai-purple/40
+              focus-within:ring-2 focus-within:ring-ai-gold/40 focus-within:border-ai-gold/40
               transition-all duration-150"
           >
             <!-- Chip: shown when a tool is selected -->
             <span id="chipA"
               class="hidden items-center gap-1.5 shrink-0
-                px-2 py-0.5 rounded-full bg-ai-purple/10 text-ai-purple text-sm font-medium">
+                px-2 py-0.5 rounded-full bg-ai-gold/10 text-ai-gold text-sm font-medium">
               <span id="chipLabelA"></span>
               <button id="clearA" type="button"
-                class="text-ai-purple/60 hover:text-ai-purple leading-none text-base"
+                class="text-ai-gold/60 hover:text-ai-gold leading-none text-base"
                 aria-label="Rimuovi selezione">×</button>
             </span>
             <!-- Input: hidden when chip is shown -->
@@ -97,7 +97,7 @@ const toolOrder      = TOOLS.map(t => t.id);
           <div id="wrapB"
             class="flex items-center gap-2 px-3 py-2.5 rounded-xl border cursor-text
               bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-              focus-within:ring-2 focus-within:ring-ai-purple/40 focus-within:border-ai-purple/40
+              focus-within:ring-2 focus-within:ring-ai-gold/40 focus-within:border-ai-gold/40
               transition-all duration-150"
           >
             <span id="chipB"
@@ -124,7 +124,7 @@ const toolOrder      = TOOLS.map(t => t.id);
         <!-- CTA -->
         <button id="compareBtn" disabled type="button"
           class="sm:mb-px px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 shrink-0
-            bg-ai-purple text-white hover:bg-ai-purple-dark
+            bg-ai-gold text-[#0d0d0d] hover:bg-ai-gold-light
             disabled:opacity-35 disabled:cursor-not-allowed">
           Confronta →
         </button>
@@ -143,18 +143,18 @@ const toolOrder      = TOOLS.map(t => t.id);
               class="group flex items-center gap-2 px-4 py-3 rounded-xl border no-underline
                 transition-all duration-150
                 bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-                hover:border-ai-purple/40 hover:shadow-md hover:shadow-ai-purple/5"
+                hover:border-ai-gold/40 hover:shadow-md hover:shadow-ai-gold/5"
             >
               <span class="text-sm font-semibold text-light-text dark:text-ai-text
-                group-hover:text-ai-purple transition-colors truncate">
+                group-hover:text-ai-gold transition-colors truncate">
                 {toolA.name}
               </span>
               <span class="text-xs text-light-muted dark:text-ai-muted shrink-0">vs</span>
               <span class="text-sm font-semibold text-light-text dark:text-ai-text
-                group-hover:text-ai-purple transition-colors truncate">
+                group-hover:text-ai-gold transition-colors truncate">
                 {toolB.name}
               </span>
-              <span class="ml-auto text-ai-purple opacity-0 group-hover:opacity-100
+              <span class="ml-auto text-ai-gold opacity-0 group-hover:opacity-100
                 transition-opacity text-xs shrink-0">→</span>
             </a>
           ))}
@@ -265,7 +265,7 @@ const toolOrder      = TOOLS.map(t => t.id);
           li.setAttribute('role', 'option');
           li.className = `flex items-center justify-between px-4 py-2.5 text-sm cursor-pointer
             text-light-text dark:text-ai-text
-            hover:bg-ai-purple/5`;
+            hover:bg-ai-gold/5`;
           li.innerHTML = `
             <span class="font-medium">${tool.name}</span>
             <span class="text-xs text-light-muted dark:text-ai-muted capitalize">${tool.category}</span>
@@ -289,7 +289,7 @@ const toolOrder      = TOOLS.map(t => t.id);
 
     function setActive(idx) {
       const items = dropdown.querySelectorAll('li[data-idx]');
-      items.forEach((el, i) => el.classList.toggle('bg-ai-purple/5', i === idx));
+      items.forEach((el, i) => el.classList.toggle('bg-ai-gold/5', i === idx));
       activeIdx = idx;
     }
 

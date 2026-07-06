@@ -31,7 +31,7 @@ const updatedLabel = updatedDate
     <!-- Avatar -->
     <div
       class={`shrink-0 h-16 w-16 rounded-full flex items-center justify-center text-white font-extrabold text-lg
-        bg-gradient-to-br ${author.avatarGradient ?? 'from-ai-purple to-blue-500'}`}
+        bg-gradient-to-br ${author.avatarGradient ?? 'from-ai-gold to-blue-500'}`}
       aria-hidden="true"
     >
       {author.initial ?? author.name.charAt(0)}
@@ -46,14 +46,14 @@ const updatedLabel = updatedDate
         </strong>
         <!-- Verified reviewer badge — E-E-A-T signal -->
         <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full
-          bg-ai-purple/10 text-ai-purple border border-ai-purple/25">
+          bg-ai-gold/10 text-ai-gold border border-ai-gold/25">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"/>
           </svg>
           Recensore verificato
         </span>
       </div>
-      <p class="text-sm font-medium text-ai-purple mb-3">{author.role}</p>
+      <p class="text-sm font-medium text-ai-gold mb-3">{author.role}</p>
 
       <!-- Bio -->
       <p class="text-sm text-light-muted dark:text-ai-muted leading-relaxed mb-4">
@@ -118,7 +118,7 @@ const updatedLabel = updatedDate
             <a
               href={`https://x.com/${author.social.twitter}`}
               target="_blank" rel="noopener noreferrer"
-              class="text-xs text-light-faint dark:text-ai-faint hover:text-ai-purple transition-colors no-underline"
+              class="text-xs text-light-faint dark:text-ai-faint hover:text-ai-gold transition-colors no-underline"
               aria-label={`Profilo X di ${author.name}`}
             >
               𝕏 @{author.social.twitter}
@@ -128,7 +128,7 @@ const updatedLabel = updatedDate
             <a
               href={author.social.linkedin}
               target="_blank" rel="noopener noreferrer"
-              class="text-xs text-light-faint dark:text-ai-faint hover:text-ai-purple transition-colors no-underline"
+              class="text-xs text-light-faint dark:text-ai-faint hover:text-ai-gold transition-colors no-underline"
               aria-label={`Profilo LinkedIn di ${author.name}`}
             >
               LinkedIn →

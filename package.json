@@ -16,6 +16,7 @@
     "@astrojs/react": "^5.0.1",
     "@astrojs/rss": "^4.0.17",
     "@fontsource/inter": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
     "@orama/orama": "^3.1.18",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^6.0.4",

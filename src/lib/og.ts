@@ -46,7 +46,7 @@ async function buildSvg(title: string, desc: string): Promise<string> {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '60px 72px',
-          background: '#0d0d18',
+          background: '#0d0d0d',
           fontFamily: 'Atkinson',
           position: 'relative',
         },
@@ -59,7 +59,7 @@ async function buildSvg(title: string, desc: string): Promise<string> {
           left: 0,
           right: 0,
           height: '4px',
-          background: 'linear-gradient(90deg, #a855f7 0%, #7c3aed 50%, transparent 100%)',
+          background: 'linear-gradient(90deg, #c9a84c 0%, #a8863a 50%, transparent 100%)',
         },
       }),
       // Glow
@@ -71,7 +71,7 @@ async function buildSvg(title: string, desc: string): Promise<string> {
           width: '500px',
           height: '500px',
           borderRadius: '50%',
-          background: 'radial-gradient(ellipse, rgba(168,85,247,0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse, rgba(201,168,76,0.15) 0%, transparent 70%)',
         },
       }),
       // Content area
@@ -91,14 +91,14 @@ async function buildSvg(title: string, desc: string): Promise<string> {
           'div',
           { style: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' } },
           h('div', {
-            style: { width: '10px', height: '10px', borderRadius: '50%', background: '#a855f7' },
+            style: { width: '10px', height: '10px', borderRadius: '50%', background: '#c9a84c' },
           }),
           h(
             'span',
             {
               style: {
                 fontSize: '18px',
-                color: '#a855f7',
+                color: '#c9a84c',
                 fontWeight: 400,
                 letterSpacing: '0.05em',
                 textTransform: 'uppercase',
@@ -137,12 +137,12 @@ async function buildSvg(title: string, desc: string): Promise<string> {
             alignItems: 'center',
             justifyContent: 'space-between',
             paddingTop: '32px',
-            borderTop: '1px solid rgba(168,85,247,0.2)',
+            borderTop: '1px solid rgba(201,168,76,0.2)',
           },
         },
         h(
           'span',
-          { style: { fontSize: '20px', color: '#7c3aed', fontWeight: 700 } },
+          { style: { fontSize: '20px', color: '#a8863a', fontWeight: 700 } },
           'AIToolsReview.it',
         ),
         h(

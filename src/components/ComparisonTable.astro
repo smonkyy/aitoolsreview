@@ -73,7 +73,7 @@ const RATING_LABELS = [
               <p class="text-xs italic text-light-muted dark:text-ai-muted mb-2.5 leading-relaxed">
                 es. {v.example}
               </p>
-              <p class="text-xs font-bold text-ai-purple mb-1">→ {v.winner.name}</p>
+              <p class="text-xs font-bold text-ai-gold mb-1">→ {v.winner.name}</p>
               <p class="text-xs text-light-muted dark:text-ai-muted leading-relaxed">{v.reason}</p>
             </div>
           );
@@ -99,7 +99,7 @@ const RATING_LABELS = [
                 <span class={`text-sm font-bold ${winnerA ? 'text-emerald-500' : 'text-light-text dark:text-ai-text'}`}>{a.toFixed(1)}</span>
                 <div class="w-28 h-2 bg-ai-border rounded-full overflow-hidden">
                   <div
-                    class={`h-full rounded-full ${winnerA ? 'bg-emerald-500' : 'bg-ai-purple/50'}`}
+                    class={`h-full rounded-full ${winnerA ? 'bg-emerald-500' : 'bg-ai-gold/50'}`}
                     style={`width: ${(a/5)*100}%; margin-left: auto;`}
                   />
                 </div>
@@ -110,7 +110,7 @@ const RATING_LABELS = [
               <div class="flex items-center gap-2">
                 <div class="w-28 h-2 bg-ai-border rounded-full overflow-hidden">
                   <div
-                    class={`h-full rounded-full ${winnerB ? 'bg-emerald-500' : 'bg-ai-purple/50'}`}
+                    class={`h-full rounded-full ${winnerB ? 'bg-emerald-500' : 'bg-ai-gold/50'}`}
                     style={`width: ${(b/5)*100}%`}
                   />
                 </div>
@@ -177,7 +177,7 @@ const RATING_LABELS = [
       <!-- Toggle button -->
       {hiddenRows.length > 0 && (
         <div id="feature-toggle-row" class="px-4 py-3 bg-light-bg2 dark:bg-ai-bg2 border-t border-light-border dark:border-ai-border text-center">
-          <button id="feature-toggle" class="text-sm text-ai-purple font-semibold hover:underline cursor-pointer">
+          <button id="feature-toggle" class="text-sm text-ai-gold font-semibold hover:underline cursor-pointer">
             Mostra tutte le {hiddenRows.length} funzionalità rimanenti ↓
           </button>
         </div>

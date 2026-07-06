@@ -7,7 +7,6 @@ import ReviewCard from '../components/ReviewCard.astro';
 import AIToolFinder from '../components/AIToolFinder.jsx';
 import NewsletterForm from '../components/NewsletterForm';
 import { TOOLS } from '../data/tools';
-import { CATEGORY_PAGES } from '../data/category-pages';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 const allPosts = await getCollection('blog');
@@ -37,60 +36,18 @@ const toolsByCategory = Object.entries(CATEGORY_LABELS).map(([key, label]) => ({
   tools: TOOLS.filter(t => t.category === key),
 }));
 
-// Popular comparisons — 6 high-intent pairs, hardcoded for performance
-const POPULAR = [
-  {
-    aId: 'claude-4',        aName: 'Claude 4',
-    bId: 'chatgpt-4o',      bName: 'ChatGPT-4o',
-    slug: 'claude-4-vs-chatgpt-4o',
-    label: 'Il confronto più cercato',
-    category: 'Scrittura',
-  },
-  {
-    aId: 'midjourney',      aName: 'Midjourney',
-    bId: 'leonardo-ai',     bName: 'Leonardo.ai',
-    slug: 'midjourney-vs-leonardo-ai',
-    label: 'Qualità pro vs gratuito',
-    category: 'Immagini',
-  },
-  {
-    aId: 'github-copilot',  aName: 'GitHub Copilot',
-    bId: 'cursor',          bName: 'Cursor',
-    slug: 'github-copilot-vs-cursor',
-    label: 'Quale editor AI nel 2026?',
-    category: 'Coding',
-  },
-  {
-    aId: 'make',            aName: 'Make',
-    bId: 'zapier',          bName: 'Zapier',
-    slug: 'make-vs-zapier',
-    label: 'Potente vs semplice',
-    category: 'Produttività',
-  },
-  {
-    aId: 'runway-gen3',     aName: 'Runway Gen-3',
-    bId: 'kling-ai',        bName: 'Kling AI',
-    slug: 'runway-gen3-vs-kling-ai',
-    label: 'Pro vs economico',
-    category: 'Video',
-  },
-  {
-    aId: 'elevenlabs',      aName: 'ElevenLabs',
-    bId: 'whisper',         bName: 'Whisper',
-    slug: 'elevenlabs-vs-whisper',
-    label: 'Voce vs trascrizione',
-    category: 'Audio',
-  },
-];
+// Strip categorie — conteggi reali dal database tool
+const categoriesStrip = toolsByCategory.map(c => ({
+  label: c.label,
+  slug: c.key,
+  count: c.tools.length,
+}));
 
-// Use case entry points — one per category
-const USE_CASES = [
-  { icon: '✍️', label: 'Scrivere',       sub: 'Claude, ChatGPT, Jasper',       slug: 'scrittura'    },
-  { icon: '🎨', label: 'Immagini',       sub: 'Midjourney, Leonardo, Firefly', slug: 'immagini'     },
-  { icon: '🎬', label: 'Video',          sub: 'Runway, Kling, HeyGen',         slug: 'video'        },
-  { icon: '🎙️', label: 'Audio',          sub: 'ElevenLabs, Whisper',           slug: 'audio'        },
-  { icon: '⚡', label: 'Produttività',   sub: 'Make, Zapier, Notion AI',       slug: 'produttivita' },
-  { icon: '💻', label: 'Programmare',    sub: 'Cursor, Copilot, Replit',       slug: 'coding'       },
+// Quick links hero — 3 coppie ad alto intent
+const QUICK_LINKS = [
+  { slug: 'claude-4-vs-chatgpt-4o',      label: 'Claude 4 vs ChatGPT-4o' },
+  { slug: 'midjourney-vs-leonardo-ai',   label: 'Midjourney vs Leonardo' },
+  { slug: 'github-copilot-vs-cursor',    label: 'GitHub Copilot vs Cursor' },
 ];
 ---
 
@@ -103,65 +60,114 @@ const USE_CASES = [
     <Header />
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         1. HERO — above the fold, one job: get the user to compare
+         1. HERO — display typography + picker VS integrato (Noir & Gold)
     ══════════════════════════════════════════════════════════════════════ -->
-    <section class="relative min-h-[82vh] flex items-center justify-center overflow-hidden px-4">
+    <section id="compara" class="relative overflow-hidden px-4 pt-24 pb-20 sm:pt-32 sm:pb-24">
 
       <!-- Background grid -->
-      <div class="absolute inset-0 opacity-[0.04] dark:opacity-[0.07] pointer-events-none"
+      <div class="absolute inset-0 opacity-[0.04] dark:opacity-[0.06] pointer-events-none"
         style="background-image: linear-gradient(var(--color-ai-border) 1px, transparent 1px),
                linear-gradient(90deg, var(--color-ai-border) 1px, transparent 1px);
                background-size: 40px 40px;"></div>
       <!-- Glow -->
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none"
-        style="background: radial-gradient(ellipse at center, rgba(168,85,247,0.13) 0%, transparent 65%);"></div>
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full pointer-events-none"
+        style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.12) 0%, transparent 65%);"></div>
 
-      <div class="relative z-10 text-center max-w-3xl mx-auto">
+      <div class="relative z-10 text-center max-w-5xl mx-auto">
 
         <!-- Eyebrow -->
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-7
-            bg-purple-50 border-purple-200 text-purple-700
-            dark:bg-ai-purple/10 dark:border-ai-purple/30 dark:text-ai-purple
-            text-sm font-medium">
-          <span class="w-2 h-2 rounded-full bg-ai-green animate-pulse shrink-0"></span>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border mb-8
+            border-ai-gold/25 bg-ai-gold/5
+            text-[10px] font-bold uppercase tracking-[0.2em] text-ai-gold">
+          <span class="w-1.5 h-1.5 rounded-full bg-ai-gold animate-pulse shrink-0"></span>
           Confronti aggiornati ogni settimana
         </div>
 
-        <!-- H1 — what it does, not what it is -->
-        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-5
+        <!-- H1 — display scale, seconda riga oro gradient -->
+        <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.05] tracking-tighter mb-6
             text-light-text dark:text-ai-text">
           Confronta i tool AI.<br />
-          <span class="text-ai-purple">Scegli quello giusto.</span>
+          <span class="text-gold-gradient italic">Scegli quello giusto.</span>
         </h1>
 
-        <!-- Subhead — concrete, not vague -->
-        <p class="text-lg sm:text-xl text-light-muted dark:text-ai-muted max-w-xl mx-auto mb-9 leading-relaxed">
-          Confronti onesti, testati sul campo e in italiano.<br class="hidden sm:inline" />
+        <!-- Subhead -->
+        <p class="text-lg sm:text-xl text-light-muted dark:text-ai-muted max-w-2xl mx-auto mb-12 leading-relaxed">
+          Confronti onesti, testati sul campo e in italiano.
           Scopri quale AI vale i tuoi soldi — prima di pagare.
         </p>
 
-        <!-- Primary CTA -->
-        <a href="#compara"
-          class="inline-flex items-center gap-2 px-7 py-3.5
-            bg-ai-purple hover:bg-ai-purple-dark text-white font-bold rounded-xl
-            transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(168,85,247,0.40)]
-            text-base mb-8">
-          Inizia un confronto
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
-        </a>
+        <!-- Picker VS — card elevata dentro il hero -->
+        <div class="max-w-3xl mx-auto mb-10 p-2 rounded-2xl border
+            bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+            shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]">
+          <div class="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
 
-        <!-- Quick-start pills — reduce friction, suggest popular pairs -->
-        <div class="flex flex-wrap gap-2 justify-center">
-          <span class="text-xs text-light-muted dark:text-ai-muted self-center mr-1">Oppure vai diretto:</span>
-          {POPULAR.slice(0, 3).map(p => (
-            <a href={`/confronta/${p.slug}`}
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium
-                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-                text-light-text dark:text-ai-text
-                hover:border-ai-purple/50 hover:text-ai-purple transition-colors">
-              {p.aName} <span class="text-light-muted dark:text-ai-muted text-xs">vs</span> {p.bName}
+            <div class="relative flex-1">
+              <label for="sel-a" class="sr-only">Primo tool</label>
+              <select id="sel-a"
+                class="w-full px-4 py-4 rounded-xl border border-transparent cursor-pointer
+                  bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text text-sm font-medium
+                  focus:outline-none focus:ring-1 focus:ring-ai-gold/40 focus:border-ai-gold/40
+                  transition-colors">
+                <option value="">Scegli primo tool…</option>
+                {toolsByCategory.map(cat => (
+                  <optgroup label={cat.label}>
+                    {cat.tools.map(t => (
+                      <option value={t.id}>{t.name}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+
+            <span class="hidden md:inline px-2 text-xs font-bold uppercase tracking-widest
+              text-light-muted dark:text-ai-muted">vs</span>
+
+            <div class="relative flex-1">
+              <label for="sel-b" class="sr-only">Secondo tool</label>
+              <select id="sel-b"
+                class="w-full px-4 py-4 rounded-xl border border-transparent cursor-pointer
+                  bg-light-bg dark:bg-ai-bg text-light-text dark:text-ai-text text-sm font-medium
+                  focus:outline-none focus:ring-1 focus:ring-ai-gold/40 focus:border-ai-gold/40
+                  transition-colors">
+                <option value="">Scegli secondo tool…</option>
+                {toolsByCategory.map(cat => (
+                  <optgroup label={cat.label}>
+                    {cat.tools.map(t => (
+                      <option value={t.id}>{t.name}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+
+            <button id="compare-btn"
+              class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl
+                bg-gold-gradient text-[#0d0d0d] text-sm font-bold uppercase tracking-wider
+                transition-transform duration-200 hover:scale-[1.02] cursor-pointer">
+              Confronta
+              <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </button>
+
+          </div>
+
+          <!-- Error msg -->
+          <p id="compare-error" class="hidden text-xs text-red-400 pt-3 text-center">
+            Seleziona due tool diversi per continuare.
+          </p>
+        </div>
+
+        <!-- Quick links — underline style -->
+        <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3
+            text-[11px] font-bold uppercase tracking-widest text-light-muted dark:text-ai-muted">
+          <span class="opacity-60">Vai diretto:</span>
+          {QUICK_LINKS.map(q => (
+            <a href={`/confronta/${q.slug}`}
+              class="border-b pb-1 border-light-border dark:border-ai-border
+                transition-colors hover:border-ai-gold hover:text-ai-gold">
+              {q.label}
             </a>
           ))}
         </div>
@@ -170,221 +176,239 @@ const USE_CASES = [
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         2. ACTION BLOCK — compare two tools right now
+         2. POPULAR COMPARISONS — bento grid
     ══════════════════════════════════════════════════════════════════════ -->
-    <section id="compara" class="py-16 px-4 bg-light-bg2 dark:bg-ai-bg2">
-      <div class="max-w-2xl mx-auto">
+    <section class="px-4 pb-24">
+      <div class="max-w-6xl mx-auto">
 
-        <div class="text-center mb-8">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-2">
-            Confronta due tool adesso
-          </h2>
-          <p class="text-sm text-light-muted dark:text-ai-muted">
-            Seleziona due strumenti e vedi il confronto completo: funzionalità, prezzi, casi d'uso reali.
-          </p>
-        </div>
-
-        <!-- Picker -->
-        <div class="flex flex-col sm:flex-row items-stretch gap-3">
-
-          <!-- Select A -->
-          <div class="flex-1">
-            <label for="sel-a" class="block text-xs font-bold uppercase tracking-widest
-              text-light-muted dark:text-ai-muted mb-1.5">Primo tool</label>
-            <select id="sel-a"
-              class="w-full px-4 py-3 rounded-xl border cursor-pointer
-                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-                text-light-text dark:text-ai-text text-sm font-medium
-                focus:outline-none focus:ring-2 focus:ring-ai-purple/40 focus:border-ai-purple/40
-                transition-all duration-150">
-              <option value="">Scegli un tool…</option>
-              {toolsByCategory.map(cat => (
-                <optgroup label={cat.label}>
-                  {cat.tools.map(t => (
-                    <option value={t.id}>{t.name}</option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </div>
-
-          <!-- VS divider -->
-          <div class="flex items-end justify-center pb-3 sm:pb-0">
-            <span class="text-xs font-bold text-light-muted dark:text-ai-muted uppercase tracking-widest
-              sm:mt-6">vs</span>
-          </div>
-
-          <!-- Select B -->
-          <div class="flex-1">
-            <label for="sel-b" class="block text-xs font-bold uppercase tracking-widest
-              text-light-muted dark:text-ai-muted mb-1.5">Secondo tool</label>
-            <select id="sel-b"
-              class="w-full px-4 py-3 rounded-xl border cursor-pointer
-                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-                text-light-text dark:text-ai-text text-sm font-medium
-                focus:outline-none focus:ring-2 focus:ring-ai-purple/40 focus:border-ai-purple/40
-                transition-all duration-150">
-              <option value="">Scegli un tool…</option>
-              {toolsByCategory.map(cat => (
-                <optgroup label={cat.label}>
-                  {cat.tools.map(t => (
-                    <option value={t.id}>{t.name}</option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </div>
-
-        </div>
-
-        <!-- Error msg -->
-        <p id="compare-error" class="hidden text-xs text-red-400 mt-2 text-center">
-          Seleziona due tool diversi per continuare.
-        </p>
-
-        <!-- CTA -->
-        <button id="compare-btn"
-          class="mt-4 w-full py-3.5 rounded-xl font-bold text-base
-            bg-ai-purple hover:bg-ai-purple-dark text-white
-            transition-all duration-200 hover:shadow-[0_6px_24px_rgba(168,85,247,0.35)]
-            disabled:opacity-40 disabled:cursor-not-allowed">
-          Confronta →
-        </button>
-
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════════════════
-         3. POPULAR COMPARISONS — 6 high-intent pairs
-    ══════════════════════════════════════════════════════════════════════ -->
-    <section class="py-20 px-4">
-      <div class="max-w-4xl mx-auto">
-
-        <div class="flex items-end justify-between gap-4 mb-8" data-reveal>
+        <div class="flex items-end justify-between gap-4 mb-10" data-reveal>
           <div>
-            <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-2">
+            <p class="text-ai-gold text-[10px] font-bold uppercase tracking-[0.25em] mb-2">
               I più cercati
             </p>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-light-text dark:text-ai-text">
               Confronti popolari
             </h2>
           </div>
           <a href="/confronta"
-            class="shrink-0 text-sm font-semibold text-ai-purple hover:underline">
-            Tutti i confronti →
+            class="hidden sm:inline-block shrink-0 border-b border-ai-gold pb-1
+              text-xs font-bold uppercase tracking-widest text-ai-gold
+              transition-colors hover:text-ai-gold-light">
+            Vedi tutti →
           </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {POPULAR.map(p => (
-            <a href={`/confronta/${p.slug}`}
-              class="group flex flex-col p-4 rounded-xl border no-underline
-                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-                hover:border-ai-purple/40 hover:shadow-lg hover:shadow-ai-purple/5
-                transition-all duration-200">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-12 md:grid-rows-2 md:h-[560px]" data-reveal>
 
-              <!-- Category badge -->
-              <span class="text-xs font-bold text-light-muted dark:text-ai-muted mb-3 uppercase tracking-widest">
-                {p.category}
-              </span>
-
-              <!-- Tool names -->
-              <div class="flex items-center gap-2 mb-2">
-                <span class="text-sm font-extrabold text-light-text dark:text-ai-text
-                  group-hover:text-ai-purple transition-colors">
-                  {p.aName}
-                </span>
-                <span class="text-xs text-light-muted dark:text-ai-muted">vs</span>
-                <span class="text-sm font-extrabold text-light-text dark:text-ai-text
-                  group-hover:text-ai-purple transition-colors">
-                  {p.bName}
-                </span>
-              </div>
-
-              <!-- Intent label -->
-              <p class="text-xs text-light-muted dark:text-ai-muted mt-auto pt-2
-                border-t border-light-border dark:border-ai-border">
-                {p.label}
+          <!-- Featured: Scrittura -->
+          <a href="/confronta/claude-4-vs-chatgpt-4o"
+            class="group relative flex flex-col justify-end overflow-hidden rounded-3xl border p-8
+              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+              transition-all hover:border-ai-gold/40 hover:-translate-y-0.5 md:col-span-8">
+            <div class="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-ai-gold/5 blur-3xl
+              transition-all group-hover:bg-ai-gold/10 pointer-events-none"></div>
+            <div class="relative">
+              <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.25em] text-ai-gold">
+                Top category
               </p>
-            </a>
-          ))}
+              <h3 class="mb-3 text-3xl md:text-4xl font-bold tracking-tight text-light-text dark:text-ai-text">
+                Scrittura &amp; Testo
+              </h3>
+              <p class="mb-6 max-w-md text-sm md:text-base leading-relaxed text-light-muted dark:text-ai-muted">
+                Claude 4 vs ChatGPT-4o: chi ragiona meglio in italiano? Test su copywriting,
+                codice e analisi di documenti.
+              </p>
+              <div class="flex flex-wrap items-center gap-2">
+                {['Claude 4', 'ChatGPT-4o', 'Gemini 2.5'].map(t => (
+                  <span class="rounded-full border px-3 py-1 text-xs font-medium
+                    border-light-border dark:border-ai-border
+                    bg-light-bg/50 dark:bg-ai-bg/50 text-light-text/80 dark:text-ai-text/80">
+                    {t}
+                  </span>
+                ))}
+                <svg class="ml-auto h-6 w-6 text-light-muted dark:text-ai-muted transition-all
+                  group-hover:text-ai-gold group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H8M17 7v9" />
+                </svg>
+              </div>
+            </div>
+          </a>
+
+          <!-- Tall: Immagini -->
+          <a href="/confronta/midjourney-vs-leonardo-ai"
+            class="group relative flex flex-col overflow-hidden rounded-3xl border p-8
+              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+              transition-all hover:border-ai-gold/40 hover:-translate-y-0.5 md:col-span-4 md:row-span-2">
+            <div class="mb-6 inline-flex h-11 w-11 items-center justify-center rounded-lg border
+              border-light-border dark:border-ai-border bg-light-bg dark:bg-ai-bg text-ai-gold">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+              </svg>
+            </div>
+            <h3 class="mb-3 text-2xl md:text-3xl font-bold tracking-tight text-light-text dark:text-ai-text">
+              Generazione Immagini
+            </h3>
+            <p class="text-sm leading-relaxed text-light-muted dark:text-ai-muted">
+              Midjourney, DALL-E 3, Leonardo.ai e Stable Diffusion messi a confronto
+              su qualità, controllo e prezzo.
+            </p>
+            <div class="mt-auto pt-8">
+              <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ai-gold">
+                Confronta i modelli
+                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gold-gradient
+                  text-[#0d0d0d] transition-transform group-hover:translate-x-1">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </span>
+              </span>
+            </div>
+            <div class="absolute -bottom-12 -right-12 h-56 w-56 rounded-full bg-ai-gold/10 blur-3xl
+              transition-all group-hover:bg-ai-gold/20 pointer-events-none"></div>
+          </a>
+
+          <!-- Medium: Coding -->
+          <a href="/confronta/github-copilot-vs-cursor"
+            class="group flex flex-col justify-between rounded-3xl border p-8
+              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+              transition-all hover:border-ai-gold/40 hover:-translate-y-0.5 md:col-span-4">
+            <div>
+              <div class="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg border
+                border-light-border dark:border-ai-border bg-light-bg dark:bg-ai-bg text-ai-gold">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>
+                </svg>
+              </div>
+              <h3 class="mb-2 text-xl font-bold tracking-tight text-light-text dark:text-ai-text">
+                Coding &amp; IDE
+              </h3>
+              <p class="text-sm text-light-muted dark:text-ai-muted">
+                Copilot vs Cursor vs Windsurf: quale AI ti fa scrivere codice più veloce?
+              </p>
+            </div>
+            <span class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-ai-gold">
+              Esplora
+              <svg class="h-3 w-3 transition-transform group-hover:translate-x-1"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </span>
+          </a>
+
+          <!-- Mini: Video -->
+          <a href="/confronta/runway-gen3-vs-kling-ai"
+            class="group flex flex-col items-start justify-between rounded-3xl border p-6
+              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+              transition-all hover:border-ai-gold/40 hover:-translate-y-0.5 md:col-span-2">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg border
+              border-light-border dark:border-ai-border bg-light-bg dark:bg-ai-bg text-ai-gold">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>
+                <rect x="2" y="6" width="14" height="12" rx="2"/>
+              </svg>
+            </div>
+            <div class="mt-6">
+              <h3 class="text-lg font-bold tracking-tight text-light-text dark:text-ai-text">Video AI</h3>
+              <span class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest
+                text-light-muted dark:text-ai-muted transition-colors group-hover:text-ai-gold">
+                Vedi →
+              </span>
+            </div>
+          </a>
+
+          <!-- Mini: Audio -->
+          <a href="/confronta/elevenlabs-vs-whisper"
+            class="group flex flex-col items-start justify-between rounded-3xl border p-6
+              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+              transition-all hover:border-ai-gold/40 hover:-translate-y-0.5 md:col-span-2">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg border
+              border-light-border dark:border-ai-border bg-light-bg dark:bg-ai-bg text-ai-gold">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
+            <div class="mt-6">
+              <h3 class="text-lg font-bold tracking-tight text-light-text dark:text-ai-text">Audio &amp; Voice</h3>
+              <span class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest
+                text-light-muted dark:text-ai-muted transition-colors group-hover:text-ai-gold">
+                Vedi →
+              </span>
+            </div>
+          </a>
+
         </div>
 
       </div>
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         4. USE CASE ENTRY POINTS — "Miglior AI per X"
+         3. CATEGORIES STRIP — entry point "miglior AI per…"
     ══════════════════════════════════════════════════════════════════════ -->
-    <section class="py-20 px-4 bg-light-bg2 dark:bg-ai-bg2">
-      <div class="max-w-4xl mx-auto">
-
-        <div class="text-center mb-8" data-reveal>
-          <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-2">Guide per caso d'uso</p>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">
-            Miglior AI per…
-          </h2>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {USE_CASES.map(uc => (
-            <a href={`/migliore-ai-per/${uc.slug}`}
-              class="group flex flex-col items-start p-4 rounded-xl border no-underline
-                bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
-                hover:border-ai-purple/40 hover:shadow-lg hover:shadow-ai-purple/5
-                transition-all duration-200">
-              <span class="text-2xl mb-3" aria-hidden="true">{uc.icon}</span>
-              <span class="text-sm font-extrabold text-light-text dark:text-ai-text
-                group-hover:text-ai-purple transition-colors mb-1">
-                {uc.label}
-              </span>
-              <span class="text-xs text-light-muted dark:text-ai-muted leading-snug">
-                {uc.sub}
-              </span>
-            </a>
-          ))}
-        </div>
-
+    <section class="border-y px-4 py-8
+        border-light-border dark:border-ai-border bg-light-bg2/60 dark:bg-ai-bg2/40">
+      <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-light-muted dark:text-ai-muted">
+          Miglior AI per
+        </span>
+        {categoriesStrip.map(c => (
+          <a href={`/migliore-ai-per/${c.slug}`}
+            class="group inline-flex items-baseline gap-1.5 text-sm font-medium
+              text-light-text/80 dark:text-ai-text/80 transition-colors hover:text-ai-gold">
+            {c.label}
+            <span class="text-[10px] font-bold text-light-faint dark:text-ai-faint group-hover:text-ai-gold">
+              {c.count}
+            </span>
+          </a>
+        ))}
       </div>
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         5. TRUST — why believe us (no paragraphs)
+         4. TRUST — perché fidarsi
     ══════════════════════════════════════════════════════════════════════ -->
-    <section class="py-20 px-4">
-      <div class="max-w-3xl mx-auto">
+    <section class="px-4 py-24">
+      <div class="max-w-6xl mx-auto">
 
-        <div class="text-center mb-8" data-reveal>
-          <h2 class="text-xl font-extrabold text-light-text dark:text-ai-text">
-            Perché fidarsi di questi confronti?
+        <div class="mb-12 max-w-2xl" data-reveal>
+          <p class="mb-2 text-[10px] font-bold uppercase tracking-[0.25em] text-ai-gold">
+            Come lavoriamo
+          </p>
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-light-text dark:text-ai-text">
+            Recensioni oneste, in italiano, di chi usa questi tool tutti i giorni.
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid gap-4 md:grid-cols-3" data-reveal>
           {[
             {
               icon: '🔍',
               label: 'Testati davvero',
-              desc: 'Ogni tool usato per almeno 2 settimane — non visto su YouTube',
+              desc: 'Ogni tool usato per almeno 2 settimane sui casi d\'uso reali — non visto su YouTube.',
             },
             {
               icon: '💬',
               label: 'Senza filtri',
-              desc: 'Se fa schifo, lo diciamo. Nessun link affiliato che gonfia il voto',
+              desc: 'Se fa schifo, lo diciamo. Nessun link affiliato che gonfia il voto.',
             },
             {
               icon: '🇮🇹',
               label: 'In italiano',
-              desc: 'Scritto da zero in italiano — nessuna traduzione automatica',
+              desc: 'Scritto da zero in italiano — nessuna traduzione automatica.',
             },
           ].map(badge => (
-            <div class="flex items-start gap-4 p-5 rounded-xl border
-              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border">
-              <span class="text-2xl shrink-0" aria-hidden="true">{badge.icon}</span>
-              <div>
-                <p class="text-sm font-bold text-light-text dark:text-ai-text mb-1">{badge.label}</p>
-                <p class="text-xs text-light-muted dark:text-ai-muted leading-relaxed">{badge.desc}</p>
+            <div class="rounded-3xl border p-8
+              bg-light-card dark:bg-ai-card border-light-border dark:border-ai-border
+              transition-colors hover:border-ai-gold/30">
+              <div class="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-lg border text-xl
+                border-light-border dark:border-ai-border bg-light-bg dark:bg-ai-bg" aria-hidden="true">
+                {badge.icon}
               </div>
+              <h3 class="mb-2 text-xl font-bold tracking-tight text-light-text dark:text-ai-text">
+                {badge.label}
+              </h3>
+              <p class="text-sm leading-relaxed text-light-muted dark:text-ai-muted">{badge.desc}</p>
             </div>
           ))}
         </div>
@@ -393,20 +417,22 @@ const USE_CASES = [
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         6. RECENT BLOG — freshness signal
+         5. RECENT BLOG — freshness signal
     ══════════════════════════════════════════════════════════════════════ -->
     {recentPosts.length > 0 && (
       <section class="py-20 px-4 bg-light-bg2 dark:bg-ai-bg2">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-6xl mx-auto">
 
           <div class="flex items-end justify-between gap-4 mb-8" data-reveal>
             <div>
-              <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-2">Sempre freschi</p>
-              <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text">
+              <p class="text-ai-gold text-[10px] font-bold uppercase tracking-[0.25em] mb-2">Sempre freschi</p>
+              <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-light-text dark:text-ai-text">
                 Ultime recensioni
               </h2>
             </div>
-            <a href="/blog" class="shrink-0 text-sm font-semibold text-ai-purple hover:underline">
+            <a href="/blog"
+              class="shrink-0 border-b border-ai-gold pb-1 text-xs font-bold uppercase tracking-widest
+                text-ai-gold transition-colors hover:text-ai-gold-light">
               Vedi tutte →
             </a>
           </div>
@@ -431,16 +457,16 @@ const USE_CASES = [
     )}
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         7. AI TOOL ADVISOR — fallback for undecided users
+         6. AI TOOL ADVISOR — fallback for undecided users
          id="ai-advisor" required — other pages deep-link here
     ══════════════════════════════════════════════════════════════════════ -->
     <section id="ai-advisor" class="py-24 px-4">
       <div class="max-w-4xl mx-auto">
         <div class="text-center mb-10" data-reveal>
-          <p class="text-ai-purple text-xs font-bold uppercase tracking-widest mb-3">
+          <p class="text-ai-gold text-[10px] font-bold uppercase tracking-[0.25em] mb-3">
             Non sai da dove partire?
           </p>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-light-text dark:text-ai-text mb-3">
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-light-text dark:text-ai-text mb-3">
             AI Tool Advisor
           </h2>
           <p class="text-light-muted dark:text-ai-muted max-w-md mx-auto text-sm leading-relaxed">
@@ -452,7 +478,7 @@ const USE_CASES = [
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         8. NEWSLETTER
+         7. NEWSLETTER
     ══════════════════════════════════════════════════════════════════════ -->
     <section class="py-12 px-4">
       <div class="max-w-xl mx-auto" data-reveal>
@@ -461,25 +487,25 @@ const USE_CASES = [
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         9. FINAL CTA — reinforce the primary action
+         8. FINAL CTA — reinforce the primary action
     ══════════════════════════════════════════════════════════════════════ -->
     <section class="py-16 px-4 bg-light-bg2 dark:bg-ai-bg2">
-      <div class="max-w-xl mx-auto text-center rounded-2xl border p-10 relative overflow-hidden
-          bg-gradient-to-br from-ai-purple/10 via-transparent to-indigo-500/5
-          border-ai-purple/20" data-reveal>
+      <div class="max-w-xl mx-auto text-center rounded-3xl border p-10 relative overflow-hidden
+          bg-gradient-to-br from-ai-gold/10 via-transparent to-ai-gold/5
+          border-ai-gold/20" data-reveal>
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-24 pointer-events-none"
-          style="background: radial-gradient(ellipse at top, rgba(168,85,247,0.2) 0%, transparent 70%);"></div>
+          style="background: radial-gradient(ellipse at top, rgba(201,168,76,0.2) 0%, transparent 70%);"></div>
         <div class="relative z-10">
-          <h2 class="text-2xl font-extrabold text-light-text dark:text-ai-text mb-3">
+          <h2 class="text-2xl font-bold tracking-tight text-light-text dark:text-ai-text mb-3">
             Hai ancora dubbi su quale tool scegliere?
           </h2>
           <p class="text-sm text-light-muted dark:text-ai-muted mb-7">
             Scegli la coppia che ti interessa e ottieni il confronto completo in 30 secondi.
           </p>
           <a href="#compara"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-ai-purple hover:bg-ai-purple-dark
-              text-white font-bold rounded-xl transition-all duration-200
-              hover:shadow-[0_8px_30px_rgba(168,85,247,0.40)] text-sm">
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl
+              bg-gold-gradient text-[#0d0d0d] font-bold text-sm uppercase tracking-wider
+              transition-transform duration-200 hover:scale-[1.02]">
             Confronta adesso →
           </a>
         </div>

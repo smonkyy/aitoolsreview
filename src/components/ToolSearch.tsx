@@ -19,8 +19,8 @@ const CAT_MAP = Object.fromEntries(CATEGORIES.map((c) => [c.id, c])) as Record<C
 
 const PRICE_FILTERS = [
   { id: 'free',         label: '🆓 Solo free',    activeClass: 'bg-green-500 text-white border-green-500' },
-  { id: 'freemium',     label: '↑ Freemium',      activeClass: 'bg-ai-purple text-white border-ai-purple' },
-  { id: 'paid',         label: '💳 A pagamento',  activeClass: 'bg-ai-purple text-white border-ai-purple' },
+  { id: 'freemium',     label: '↑ Freemium',      activeClass: 'bg-ai-gold text-[#0d0d0d] border-ai-gold' },
+  { id: 'paid',         label: '💳 A pagamento',  activeClass: 'bg-ai-gold text-[#0d0d0d] border-ai-gold' },
   { id: 'open-source',  label: '🔓 Open Source',  activeClass: 'bg-amber-500 text-white border-amber-500' },
 ] as const
 
@@ -43,7 +43,7 @@ function Pill({
       className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-150 whitespace-nowrap
         ${active
           ? activeClass
-          : 'text-light-muted dark:text-ai-muted border-light-border dark:border-ai-border hover:border-ai-purple hover:text-ai-purple dark:hover:border-ai-purple dark:hover:text-ai-purple'
+          : 'text-light-muted dark:text-ai-muted border-light-border dark:border-ai-border hover:border-ai-gold hover:text-ai-gold dark:hover:border-ai-gold dark:hover:text-ai-gold'
         }`}
     >
       {children}
@@ -77,7 +77,7 @@ function ToolCard({ tool }: { tool: AITool }) {
       {/* Header row */}
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex-1 min-w-0">
-          <strong className="block font-bold text-light-text dark:text-ai-text group-hover:text-ai-purple transition-colors duration-150 truncate">
+          <strong className="block font-bold text-light-text dark:text-ai-text group-hover:text-ai-gold transition-colors duration-150 truncate">
             {tool.name}
           </strong>
           {cat && (
@@ -88,7 +88,7 @@ function ToolCard({ tool }: { tool: AITool }) {
         </div>
         {tool.badge && (
           <span className={`shrink-0 px-2 py-0.5 text-xs rounded-full border font-semibold
-            ${cat ? `${cat.bg} ${cat.text} ${cat.border}` : 'bg-ai-purple/10 text-ai-purple border-ai-purple/20'}`}>
+            ${cat ? `${cat.bg} ${cat.text} ${cat.border}` : 'bg-ai-gold/10 text-ai-gold border-ai-gold/20'}`}>
             {tool.badge}
           </span>
         )}
@@ -114,7 +114,7 @@ function ToolCard({ tool }: { tool: AITool }) {
         </span>
       </div>
 
-      <div className="mt-2 text-xs text-ai-purple font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+      <div className="mt-2 text-xs text-ai-gold font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-150">
         {tool.affiliateUrl ? 'Visita il sito →' : 'Leggi la recensione →'}
       </div>
     </a>
@@ -288,8 +288,8 @@ export default function ToolSearch() {
               onClick={() => { setQuery(p.query); setActiveCategory(''); setActivePrice(''); setHasFreeOnly(false); setMinRating(null); }}
               className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-150
                 ${query === p.query
-                  ? 'bg-ai-purple text-white border-ai-purple'
-                  : 'text-light-muted dark:text-ai-muted border-light-border dark:border-ai-border hover:border-ai-purple hover:text-ai-purple dark:hover:border-ai-purple dark:hover:text-ai-purple bg-light-card dark:bg-ai-card'
+                  ? 'bg-ai-gold text-[#0d0d0d] border-ai-gold'
+                  : 'text-light-muted dark:text-ai-muted border-light-border dark:border-ai-border hover:border-ai-gold hover:text-ai-gold dark:hover:border-ai-gold dark:hover:text-ai-gold bg-light-card dark:bg-ai-card'
                 }`}
             >
               {p.label}
@@ -319,13 +319,13 @@ export default function ToolSearch() {
             border-light-border dark:border-ai-border
             text-light-text dark:text-ai-text
             placeholder:text-light-faint dark:placeholder:text-ai-faint
-            focus:outline-none focus:border-ai-purple focus:ring-2 focus:ring-ai-purple/20
+            focus:outline-none focus:border-ai-gold focus:ring-2 focus:ring-ai-gold/20
             transition-all duration-150"
         />
         {loading && (
           <div
             className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2
-              w-4 h-4 border-2 border-ai-purple border-t-transparent rounded-full animate-spin"
+              w-4 h-4 border-2 border-ai-gold border-t-transparent rounded-full animate-spin"
             aria-label="Ricerca in corso"
           />
         )}
@@ -400,7 +400,7 @@ export default function ToolSearch() {
           : <><strong className="text-light-text dark:text-ai-text">{results.length}</strong> strumenti nel database</>
         }
         {query && !loading && results.length > 0 && (
-          <span className="ml-2 text-ai-purple text-xs">
+          <span className="ml-2 text-ai-gold text-xs">
             — ricerca semantica attiva
           </span>
         )}
@@ -414,7 +414,7 @@ export default function ToolSearch() {
           <p className="font-bold text-light-text dark:text-ai-text mb-2">Nessun risultato trovato</p>
           <p className="text-sm text-light-muted dark:text-ai-muted">
             Prova con un termine diverso oppure{' '}
-            <button onClick={clearAll} className="text-ai-purple underline hover:no-underline">
+            <button onClick={clearAll} className="text-ai-gold underline hover:no-underline">
               azzera i filtri
             </button>
             .
